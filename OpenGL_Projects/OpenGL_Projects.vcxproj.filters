@@ -16,6 +16,9 @@
     <Filter Include="Header Files\DrawObjects">
       <UniqueIdentifier>{2bb3c218-b86e-4b72-a24d-17e1423ba7ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\IchenLib">
+      <UniqueIdentifier>{af4faf14-3cdd-4ed1-83f3-3c9f8527dffb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,10 +27,43 @@
     <ClCompile Include="GraphicsBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="include\IchenLib\LoadMesh.cpp">
+      <Filter>Header Files\IchenLib</Filter>
+    </ClCompile>
+    <ClCompile Include="include\IchenLib\LoadTexture.cpp">
+      <Filter>Header Files\IchenLib</Filter>
+    </ClCompile>
+    <ClCompile Include="include\IchenLib\OpenGLHelpers.cpp">
+      <Filter>Header Files\IchenLib</Filter>
+    </ClCompile>
+    <ClCompile Include="include\IchenLib\ShaderProcessor.cpp">
+      <Filter>Header Files\IchenLib</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsSphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsBase.h">
       <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IchenLib\IchenGlut.h">
+      <Filter>Header Files\IchenLib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IchenLib\LoadMesh.h">
+      <Filter>Header Files\IchenLib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IchenLib\LoadTexture.h">
+      <Filter>Header Files\IchenLib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IchenLib\OpenGLHelpers.h">
+      <Filter>Header Files\IchenLib</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IchenLib\ShaderProcessor.h">
+      <Filter>Header Files\IchenLib</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsSphere.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
