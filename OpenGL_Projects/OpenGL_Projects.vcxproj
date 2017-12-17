@@ -29,7 +29,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -118,9 +118,14 @@
     <ClCompile Include="include\IchenLib\LoadTexture.cpp" />
     <ClCompile Include="include\IchenLib\OpenGLHelpers.cpp" />
     <ClCompile Include="include\IchenLib\ShaderProcessor.cpp" />
+    <ClCompile Include="include\imgui\imgui.cpp" />
+    <ClCompile Include="include\imgui\imgui_demo.cpp" />
+    <ClCompile Include="include\imgui\imgui_draw.cpp" />
+    <ClCompile Include="include\imgui\imgui_impl_glut.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common.h" />
     <ClInclude Include="GraphicsBase.h" />
     <ClInclude Include="GraphicsSphere.h" />
     <ClInclude Include="include\IchenLib\IchenGlut.h" />
@@ -128,6 +133,17 @@
     <ClInclude Include="include\IchenLib\LoadTexture.h" />
     <ClInclude Include="include\IchenLib\OpenGLHelpers.h" />
     <ClInclude Include="include\IchenLib\ShaderProcessor.h" />
+    <ClInclude Include="include\imgui\imconfig.h" />
+    <ClInclude Include="include\imgui\imgui.h" />
+    <ClInclude Include="include\imgui\imgui_impl_glut.h" />
+    <ClInclude Include="include\imgui\imgui_internal.h" />
+    <ClInclude Include="include\imgui\stb_rect_pack.h" />
+    <ClInclude Include="include\imgui\stb_textedit.h" />
+    <ClInclude Include="include\imgui\stb_truetype.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gs.glsl" />
+    <None Include="vs.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
