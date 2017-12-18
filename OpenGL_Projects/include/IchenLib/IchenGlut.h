@@ -1,5 +1,5 @@
 #pragma once
-#include "Common.h"
+
 // Glut Framework Functions
 void InitDefaultGlutEnvironment(int argc, char** argv);
 void GlutMainLoop();

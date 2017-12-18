@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "IchenLib/LoadMesh.h"
 #include <unordered_map>
+#include <regex>
 
 class GraphicsBase
 {
@@ -15,10 +16,14 @@ public:
 	bool Init_Shaders(const std::string vs, const std::string gs,const std::string fs);
 	void Load_Model(const std::string model);
 
+	// imgui auto generation
+	void Generate_ImGui(const std::string shader_name);
+	void Update_Uniforms();
+
 	// Get && Set
 	GLuint Get_Shader() const { return shader_program; }
 
-	virtual void Draw(glm::mat4 P, glm::mat4 V, glm::mat4 M) = 0;
+	virtual void Draw() = 0;
 	virtual void Draw_Shader_Uniforms() = 0;
 	virtual void Reload() = 0;
 	
@@ -41,5 +46,16 @@ protected:
 	std::unordered_map<std::string, glm::vec4> vec4_uniforms;
 
 private:
+	std::vector<std::string> allUniformNames;
+	std::vector<GLenum> uniformTypes;
+
+	void  Get_Uniforms_Names(const GLuint shader_program);
+	bool isColor(std::string name)
+	{
+		std::regex rx("color");
+		std::regex rx_upper("Color");
+		return (std::regex_search(name, rx) || regex_search(name, rx_upper));
+	}
+
 };
 
