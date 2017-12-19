@@ -21,7 +21,12 @@ public:
 
 	const std::string test_vs = ".\\vs.glsl";
 	const std::string test_fs = ".\\fs.glsl";
+	const std::string billboard_vs = ".\\billboard_vs.glsl";
+	const std::string billboard_gs = ".\\billboard_gs.glsl";
+	const std::string billboard_fs = ".\\billboard_fs.glsl";
 	const std::string fish = ".\\Materials\\Amago0.obj";
+	const std::string billBoard_texture = ".\\Materials\\monster_hellknight.png";
+
 private:
 	Global_Variables() {};
 	Global_Variables(Global_Variables const&) {};

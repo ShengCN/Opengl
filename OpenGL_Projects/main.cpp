@@ -1,5 +1,4 @@
 #include <iostream>
-<<<<<<< HEAD
 #include <GL/glew.h>
 #include <windows.h>
 #include <GL/glew.h>
@@ -24,7 +23,8 @@
 #include "IchenLib/LoadMesh.h"
 #include "IchenLib/LoadTexture.h"
 #include "Global_Variables.h"
-#include "GraphicsSphere.h"
+#include "GraphicsFish.h"
+#include "GraphicsBillboard.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 #define GET_VARIABLE_NAME(Variable) (#Variable)
@@ -52,8 +52,6 @@ int main(int argc, char** argv)
 	glutIdleFunc(Idle);
 	glutMouseWheelFunc(MouseWheel);
 
-	// OpenGL
-
 	GlutMainLoop();
 	return 0;
 }
@@ -64,15 +62,17 @@ void Init_Global()
 	gv->vec3_uniforms["cameraPos"] = glm::vec3(0.0f, -0.2f, 3.0f);
 	gv->vec3_uniforms["cameraFront"] = glm::vec3(0.0f, 0.0f, -1.0f);
 	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
+	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
 	gv->float_uniforms["cameraSpeed"] = 0.05f;
 	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(140.0f/255.0f, 200.0f/255.0f, 1.0f, 1.0f);
 
 	// Graphics
-	GraphicsBase *sphere = new GraphicsSphere();
-	sphere->Init_Shaders(gv->test_vs, gv->test_fs);
-	sphere->Load_Model(gv->fish);
+	GraphicsBase *billboard = new GraphicsBillboard();
+	billboard->Init_Shaders(gv->billboard_vs,gv->billboard_gs ,gv->billboard_fs);
+	billboard->Init_Buffers();
+	billboard->Load_Texture(gv->billBoard_texture);
 
-	gv->graphics.push_back(sphere);
+	gv->graphics.push_back(billboard);
 }
 
 void ImGui_Update()
@@ -83,7 +83,7 @@ void ImGui_Update()
 	static bool isShown = true;
 	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);
-	
+	ImGui::SliderFloat3("Billboard Position", &gv->vec3_uniforms["Billboard_Pos"][0], -5.0, 5.0f);
 	for (auto g : gv->graphics)
 	{
 		g->Generate_ImGui("test");
@@ -144,7 +144,12 @@ void MouseWheel(int butotm, int dir, int x, int y)
 
 void ReloadShaders()
 {
+	auto gv = Global_Variables::Instance();
 
+	for(auto g:gv->graphics)
+	{
+		g->Reload();
+	}
 }
 
 void Keyboard(unsigned char key, int x, int y)
@@ -198,15 +203,3 @@ void Keyboard(unsigned char key, int x, int y)
 		break;
 	}
 }
-=======
-#include "GraphicsBase.h"
-#include "GraphicsSphere.h"
-using namespace std;
-
-int main()
-{
-	GraphicsBase* sphere = new GraphicsSphere();
-
-	system("pause");
-}
->>>>>>> 6d2ea0ea3de1622d3487dfc54902fff3a9e5d880

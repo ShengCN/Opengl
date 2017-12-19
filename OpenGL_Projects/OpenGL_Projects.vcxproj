@@ -115,7 +115,8 @@
   <ItemGroup>
     <ClCompile Include="Global_Variables.cpp" />
     <ClCompile Include="GraphicsBase.cpp" />
-    <ClCompile Include="GraphicsSphere.cpp" />
+    <ClCompile Include="GraphicsBillboard.cpp" />
+    <ClCompile Include="GraphicsFish.cpp" />
     <ClCompile Include="include\IchenLib\IchenGlut.cpp" />
     <ClCompile Include="include\IchenLib\LoadMesh.cpp" />
     <ClCompile Include="include\IchenLib\LoadTexture.cpp" />
@@ -129,12 +130,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
-<<<<<<< HEAD
     <ClInclude Include="Global_Variables.h" />
-=======
->>>>>>> 6d2ea0ea3de1622d3487dfc54902fff3a9e5d880
     <ClInclude Include="GraphicsBase.h" />
-    <ClInclude Include="GraphicsSphere.h" />
+    <ClInclude Include="GraphicsBillboard.h" />
+    <ClInclude Include="GraphicsFish.h" />
     <ClInclude Include="include\IchenLib\IchenGlut.h" />
     <ClInclude Include="include\IchenLib\LoadMesh.h" />
     <ClInclude Include="include\IchenLib\LoadTexture.h" />
@@ -149,11 +148,7 @@
     <ClInclude Include="include\imgui\stb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <None Include="fs.glsl" />
-=======
-    <None Include="gs.glsl" />
->>>>>>> 6d2ea0ea3de1622d3487dfc54902fff3a9e5d880
     <None Include="vs.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -20,14 +20,10 @@
       <UniqueIdentifier>{af4faf14-3cdd-4ed1-83f3-3c9f8527dffb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\imgui">
-<<<<<<< HEAD
       <UniqueIdentifier>{29befe2c-27d2-4f29-b6b3-e43f5dcdcf75}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shaders">
       <UniqueIdentifier>{5b91812a-bd56-4d96-8ca8-104a36897e64}</UniqueIdentifier>
-=======
-      <UniqueIdentifier>{5bd2fb8d-d018-4b72-9bec-4d6a936fa188}</UniqueIdentifier>
->>>>>>> 6d2ea0ea3de1622d3487dfc54902fff3a9e5d880
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -49,12 +45,9 @@
     <ClCompile Include="Global_Variables.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="include\IchenLib\IchenGlut.cpp">
       <Filter>Header Files\IchenLib</Filter>
     </ClCompile>
-=======
->>>>>>> 6d2ea0ea3de1622d3487dfc54902fff3a9e5d880
     <ClCompile Include="include\imgui\imgui.cpp">
       <Filter>Header Files\imgui</Filter>
     </ClCompile>
@@ -67,15 +60,15 @@
     <ClCompile Include="include\imgui\imgui_impl_glut.cpp">
       <Filter>Header Files\imgui</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="GraphicsBase.cpp">
       <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsSphere.cpp">
+    <ClCompile Include="GraphicsFish.cpp">
       <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
-=======
->>>>>>> 6d2ea0ea3de1622d3487dfc54902fff3a9e5d880
+    <ClCompile Include="GraphicsBillboard.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsBase.h">
@@ -96,21 +89,12 @@
     <ClInclude Include="include\IchenLib\ShaderProcessor.h">
       <Filter>Header Files\IchenLib</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="Global_Variables.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-=======
-    <ClInclude Include="Common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsSphere.h">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClInclude>
->>>>>>> 6d2ea0ea3de1622d3487dfc54902fff3a9e5d880
     <ClInclude Include="include\imgui\imconfig.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
@@ -132,8 +116,10 @@
     <ClInclude Include="include\imgui\stb_truetype.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="GraphicsSphere.h">
+    <ClInclude Include="GraphicsFish.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsBillboard.h">
       <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
   </ItemGroup>
@@ -144,7 +130,5 @@
     <None Include="fs.glsl">
       <Filter>Shaders</Filter>
     </None>
-=======
->>>>>>> 6d2ea0ea3de1622d3487dfc54902fff3a9e5d880
   </ItemGroup>
 </Project>

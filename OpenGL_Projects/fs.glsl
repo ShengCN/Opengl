@@ -1,17 +1,15 @@
 #version 400
+uniform sampler2D colorMap;
 
-in DATA_VS
-{
-    float id;
-    vec2 tex_coord;
-    vec4 norm_coord;
-    vec4 pos_coord;
-    vec3 camera_position;
-} fs_in;
-
+in vec2 TexCoord;
 out vec4 FragColor;
 
 void main()
 {
-    FragColor =  vec4(0.3,0.3,0.3,1.0);
+    FragColor =  texture2D(colorMap,TexCoord);
+
+    if(FragColor.r == 0 && FragColor.g == 0 && FragColor.b == 0)
+    {
+        discard;
+    }
 }

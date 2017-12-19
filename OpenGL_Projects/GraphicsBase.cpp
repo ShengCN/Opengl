@@ -6,6 +6,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glut.h"
+#include "IchenLib/LoadTexture.h"
+#include "Global_Variables.h"
 
 
 GraphicsBase::GraphicsBase()
@@ -22,20 +24,34 @@ GraphicsBase::~GraphicsBase()
 bool GraphicsBase::Init_Shaders(const std::string vs, const std::string fs)
 {
 	shader_program = InitShader(vs.c_str(), fs.c_str());
+	m_vs_file = vs;
+	m_fs_file = fs;
+	m_isGeo = false;
 	return shader_program;
 }
-
 
 bool GraphicsBase::Init_Shaders(const std::string vs, const std::string gs, const std::string fs)
 {
 	shader_program = InitShader(vs.c_str(), gs.c_str(), fs.c_str());
+	m_vs_file = vs;
+	m_fs_file = fs;
+	m_gs_file = gs;
+	m_isGeo = true;
 	return shader_program;
 }
 
 void GraphicsBase::Load_Model(const std::string model)
 {
 	glUseProgram(shader_program);
-	mesh_data = LoadMesh(model);
+	m_mesh_file = model;
+	m_mesh_data = LoadMesh(model);
+}
+
+void GraphicsBase::Load_Texture(const std::string t)
+{
+	m_texture_file = t;
+	m_textureId = LoadTexture(m_texture_file);
+
 }
 
 void GraphicsBase::Generate_ImGui(const std::string shader_name)
@@ -68,7 +84,7 @@ void GraphicsBase::Generate_ImGui(const std::string shader_name)
 			break;
 
 		case 35666: // vec4
-			isColor(uniformName)
+			Is_Color(uniformName)
 				? ImGui::ColorEdit4(uniformName.c_str(), glm::value_ptr(vec4_uniforms[uniformName]))
 				: ImGui::SliderFloat4(uniformName.c_str(), glm::value_ptr(vec4_uniforms[uniformName]), -10.0f, 10.0f);
 
@@ -94,6 +110,10 @@ void GraphicsBase::Update_Uniforms()
 		switch (uniformTypes[i])
 		{
 		case 5126: // float
+			if(Check_Name(keyname,"time"))
+			{
+				float_uniforms[keyname] = Global_Variables::Instance()->float_uniforms["time"];
+			}
 			glUniform1f(glGetUniformLocation(shader_program, uniformName), float_uniforms[keyname]);
 			break;
 

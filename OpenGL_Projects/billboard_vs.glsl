@@ -25,9 +25,9 @@ const vec4 origin = vec4(0.0,0.0,0.0,1.0);
 
 void main()
 {
-    vec3 dis = vec3(sin(time)  * slider,0.0,0.0);
-    gl_Position = PVM* vec4(pos_attrib+dis,1.0);
+    // vec3 dis = vec3(sin(time)  * slider,0.0,0.0);
+    gl_Position = vec4(pos_attrib,1.0);
 
     // vs out
-    vs_out.camera_position = vec3(reverse(V) * origin);
+    vs_out.camera_position = vec3(inverse(V) * origin);
 }

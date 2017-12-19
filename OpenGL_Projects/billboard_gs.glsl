@@ -1,5 +1,6 @@
+#version 400
 layout (points) in;
-layout (triangle_strip ) out;
+layout (triangle_strip) out;
 layout (max_vertices = 4) out;
 
 uniform mat4 VP;
@@ -11,7 +12,7 @@ in DATA_VS
     vec4 norm_coord;
     vec4 pos_coord;
     vec3 camera_position;
-} vs_out;
+} vs_out[];
 
 out vec2 TexCoord;
 
@@ -28,18 +29,18 @@ void main()
     EmitVertex();
 
     Pos.y += 1.0;
-    gl_Position = gVP * vec4(Pos, 1.0);
+    gl_Position = VP * vec4(Pos, 1.0);
     TexCoord = vec2(0.0, 1.0);
     EmitVertex();
 
     Pos.y -= 1.0;
     Pos += right;
-    gl_Position = gVP * vec4(Pos, 1.0);
+    gl_Position = VP * vec4(Pos, 1.0);
     TexCoord = vec2(1.0, 0.0);
     EmitVertex();
 
     Pos.y += 1.0;
-    gl_Position = gVP * vec4(Pos, 1.0);
+    gl_Position = VP * vec4(Pos, 1.0);
     TexCoord = vec2(1.0, 1.0);
     EmitVertex();
 
