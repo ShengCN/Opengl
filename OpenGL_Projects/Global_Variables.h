@@ -25,7 +25,7 @@ public:
 	const std::string billboard_gs = ".\\billboard_gs.glsl";
 	const std::string billboard_fs = ".\\billboard_fs.glsl";
 	const std::string fish = ".\\Materials\\Amago0.obj";
-	const std::string billBoard_texture = ".\\Materials\\monster_hellknight.png";
+	const std::string billBoard_texture = ".\\Materials\\House.jpg";
 
 private:
 	Global_Variables() {};

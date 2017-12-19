@@ -3,7 +3,7 @@ layout (points) in;
 layout (triangle_strip) out;
 layout (max_vertices = 4) out;
 
-uniform mat4 VP;
+uniform mat4 PV;
 
 in DATA_VS
 {
@@ -24,23 +24,23 @@ void main()
     vec3 right = cross(toCamera, up);
 
     Pos -= right * 0.5;
-    gl_Position = VP * vec4(Pos,1.0);
+    gl_Position = PV * vec4(Pos,1.0);
     TexCoord = vec2(0.0,0.0);
     EmitVertex();
 
     Pos.y += 1.0;
-    gl_Position = VP * vec4(Pos, 1.0);
+    gl_Position = PV * vec4(Pos, 1.0);
     TexCoord = vec2(0.0, 1.0);
     EmitVertex();
 
     Pos.y -= 1.0;
     Pos += right;
-    gl_Position = VP * vec4(Pos, 1.0);
+    gl_Position = PV * vec4(Pos, 1.0);
     TexCoord = vec2(1.0, 0.0);
     EmitVertex();
 
     Pos.y += 1.0;
-    gl_Position = VP * vec4(Pos, 1.0);
+    gl_Position = PV * vec4(Pos, 1.0);
     TexCoord = vec2(1.0, 1.0);
     EmitVertex();
 

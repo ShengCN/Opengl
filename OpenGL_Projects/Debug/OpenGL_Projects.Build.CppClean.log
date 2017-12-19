@@ -2,7 +2,8 @@ c:\codes\github\opengl\opengl_projects\debug\vc141.pdb
 c:\codes\github\opengl\opengl_projects\debug\vc141.idb
 c:\codes\github\opengl\opengl_projects\debug\global_variables.obj
 c:\codes\github\opengl\opengl_projects\debug\graphicsbase.obj
-c:\codes\github\opengl\opengl_projects\debug\graphicssphere.obj
+c:\codes\github\opengl\opengl_projects\debug\graphicsbillboard.obj
+c:\codes\github\opengl\opengl_projects\debug\graphicsfish.obj
 c:\codes\github\opengl\opengl_projects\debug\ichenglut.obj
 c:\codes\github\opengl\opengl_projects\debug\loadmesh.obj
 c:\codes\github\opengl\opengl_projects\debug\loadtexture.obj
@@ -13,8 +14,6 @@ c:\codes\github\opengl\opengl_projects\debug\imgui_demo.obj
 c:\codes\github\opengl\opengl_projects\debug\imgui_draw.obj
 c:\codes\github\opengl\opengl_projects\debug\imgui_impl_glut.obj
 c:\codes\github\opengl\opengl_projects\debug\main.obj
-c:\codes\github\opengl\opengl_projects\debug\graphicsbillboard.obj
-c:\codes\github\opengl\opengl_projects\debug\graphicsfish.obj
 c:\codes\github\opengl\debug\opengl_projects.exe
 c:\codes\github\opengl\debug\opengl_projects.ilk
 c:\codes\github\opengl\debug\opengl_projects.pdb

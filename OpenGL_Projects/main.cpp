@@ -69,8 +69,10 @@ void Init_Global()
 	// Graphics
 	GraphicsBase *billboard = new GraphicsBillboard();
 	billboard->Init_Shaders(gv->billboard_vs,gv->billboard_gs ,gv->billboard_fs);
+	//billboard->Init_Shaders(gv->billboard_vs,gv->billboard_fs);
 	billboard->Init_Buffers();
 	billboard->Load_Texture(gv->billBoard_texture);
+	// billboard->Load_Model(gv->fish);
 
 	gv->graphics.push_back(billboard);
 }
@@ -84,6 +86,7 @@ void ImGui_Update()
 	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);
 	ImGui::SliderFloat3("Billboard Position", &gv->vec3_uniforms["Billboard_Pos"][0], -5.0, 5.0f);
+	//ImGui::SliderFloat("Camera Angle", &gv->float_uniforms["angle"], -50.0f, 50.0f);
 	for (auto g : gv->graphics)
 	{
 		g->Generate_ImGui("test");
@@ -103,7 +106,6 @@ void InitOpenGL()
 	ImGui_ImplGlut_Init();
 	Init_Global();
 
-	auto gv = Global_Variables::Instance();
 }
 
 void Display()
