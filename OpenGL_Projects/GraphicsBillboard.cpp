@@ -23,11 +23,13 @@ void GraphicsBillboard::Draw()
 
 	// PVM
 	glm::mat4 T = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
+	glm::mat4 M = glm::rotate(m_angle, glm::vec3(0.0, 1.0f, 0.0));
 	glm::mat4 V = glm::lookAt(gv->vec3_uniforms["cameraPos"], gv->vec3_uniforms["cameraPos"] + glm::vec3(0.0f, 0.0f, -0.1f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4 P = glm::perspective(40.0f, gv->float_uniforms["aspect"], 0.1f, 100.0f);
 
 	// variables
+	glUniformMatrix4fv(glGetUniformLocation(shader_program, "M"), 1, false, glm::value_ptr(M));
 	glUniformMatrix4fv(glGetUniformLocation(shader_program, "V"), 1, false, glm::value_ptr(V));
 	glUniformMatrix4fv(glGetUniformLocation(shader_program, "P"), 1, false, glm::value_ptr(P));
 	glUniformMatrix4fv(glGetUniformLocation(shader_program, "PV"), 1, false, glm::value_ptr(P*V));
@@ -42,11 +44,12 @@ void GraphicsBillboard::Draw()
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBillboard);
 	glVertexAttribPointer(pos_Attrib, 3, GL_FLOAT, GL_FALSE, 0, 0); // Position
 
-	glDrawArrays(GL_POINTS, 0, 1);
-	//glBindVertexArray(m_mesh_data.mVao);
-	//glDrawElements(GL_TRIANGLES, m_mesh_data.mNumIndices, GL_UNSIGNED_INT, nullptr);
+	// Check
+	const float delta_angle = static_cast<float>(360.0 / gv->data_files.size());
+	if(abs(gv->float_uniforms["angle"] - m_angle) < delta_angle)
+		glDrawArrays(GL_POINTS, 0, 1);
 
-//	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(0);
 }
 
 void GraphicsBillboard::Reload()
@@ -78,6 +81,7 @@ void GraphicsBillboard::ReleaseBuffers()
 void GraphicsBillboard::Init_Buffers()
 {
 	auto gv = Global_Variables::Instance();
+	// Init all billboards
 
 	glGenVertexArrays(1, &m_VAO);
 	glBindVertexArray(m_VAO);

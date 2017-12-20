@@ -51,7 +51,6 @@ void GraphicsBase::Load_Texture(const std::string t)
 {
 	m_texture_file = t;
 	m_textureId = LoadTexture(m_texture_file);
-
 }
 
 void GraphicsBase::Generate_ImGui(const std::string shader_name)

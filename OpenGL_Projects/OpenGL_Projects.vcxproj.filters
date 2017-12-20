@@ -69,6 +69,9 @@
     <ClCompile Include="GraphicsBillboard.cpp">
       <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Utilities.cpp">
+      <Filter>Header Files\IchenLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsBase.h">
@@ -121,6 +124,9 @@
     </ClInclude>
     <ClInclude Include="GraphicsBillboard.h">
       <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities.h">
+      <Filter>Header Files\IchenLib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

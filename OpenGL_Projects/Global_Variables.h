@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include "GraphicsBase.h"
+#include "GraphicsBillboard.h"
 
 class Global_Variables
 {
@@ -11,6 +12,7 @@ public:
 
 	// Variables
 	std::vector<GraphicsBase*> graphics;
+	std::vector<GraphicsBillboard*> billboards;
 
 	// Global variables
 	std::unordered_map<std::string, float> float_uniforms;
@@ -26,6 +28,8 @@ public:
 	const std::string billboard_fs = ".\\billboard_fs.glsl";
 	const std::string fish = ".\\Materials\\Amago0.obj";
 	const std::string billBoard_texture = ".\\Materials\\House.jpg";
+	const std::string dataset_dir = ".\\Materials\\Billboards\\";
+	std::vector<std::string> data_files;
 
 private:
 	Global_Variables() {};

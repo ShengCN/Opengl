@@ -17,6 +17,7 @@ public:
 	void ReleaseBuffers() override;
 	void Init_Buffers() override;
 
+	float m_angle;
 private:
 	GLuint m_VAO;
 	GLuint m_VBillboard;
