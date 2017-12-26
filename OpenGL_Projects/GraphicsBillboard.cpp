@@ -46,7 +46,7 @@ void GraphicsBillboard::Draw()
 
 	// Check
 	const float delta_angle = static_cast<float>(360.0 / gv->data_files.size());
-	if(abs(gv->float_uniforms["angle"] - m_angle) < delta_angle)
+	if(abs(gv->float_uniforms["angle"]+180.0 - m_angle) < delta_angle)
 		glDrawArrays(GL_POINTS, 0, 1);
 
 	glDisableVertexAttribArray(0);
