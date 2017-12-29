@@ -1,4 +1,4 @@
-#include "GraphicsFish.h"
+#include "GraphicsLight.h"
 #include "IchenLib/OpenGLHelpers.h"
 #include "Global_Variables.h"
 #include <glm/gtc/matrix_transform.hpp>
@@ -6,28 +6,28 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-GraphicsFish::GraphicsFish()
+GraphicsLight::GraphicsLight()
 {
 }
 
 
-GraphicsFish::~GraphicsFish()
+GraphicsLight::~GraphicsLight()
 {
 }
 
-void GraphicsFish::Init_Buffers()
+void GraphicsLight::Init_Buffers()
 {
 
 }
 
-void GraphicsFish::Draw()
+void GraphicsLight::Draw()
 {
 	glUseProgram(shader_program);
 	auto gv = Global_Variables::Instance();
 
 	// PVM
 	glm::mat4 T = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
-	glm::mat4 M = T * glm::scale(glm::vec3(m_mesh_data.mScaleFactor));
+	glm::mat4 M = T * glm::scale(glm::vec3(m_mesh_data.mScaleFactor*0.1f));
 	M = glm::rotate(float_uniforms["angle"], glm::vec3(0.0f, 1.0f, 0.0f)) * M;
 	glm::mat4 V = glm::lookAt(gv->vec3_uniforms["cameraPos"], gv->vec3_uniforms["cameraPos"] + glm::vec3(0.0f, 0.0f, -0.1f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
@@ -46,7 +46,7 @@ void GraphicsFish::Draw()
 	glBindVertexArray(0);
 }
 
-void GraphicsFish::Reload()
+void GraphicsLight::Reload()
 {
 	if(shader_program != -1)
 	{
@@ -60,17 +60,17 @@ void GraphicsFish::Reload()
 	}
 }
 
-void GraphicsFish::Draw_Shader_Uniforms()
+void GraphicsLight::Draw_Shader_Uniforms()
 {
 
 }
 
-void GraphicsFish::BufferManage()
+void GraphicsLight::BufferManage()
 {
 
 }
 
-void GraphicsFish::ReleaseBuffers()
+void GraphicsLight::ReleaseBuffers()
 {
 
 }

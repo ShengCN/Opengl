@@ -1,11 +1,11 @@
 #pragma once
 #include "GraphicsBase.h"
-class GraphicsFish :
+class GraphicsLight :
 	public GraphicsBase
 {
 public:
-	GraphicsFish();
-	~GraphicsFish();
+	GraphicsLight();
+	~GraphicsLight();
 
 	void Draw() override;
 	void Reload() override;

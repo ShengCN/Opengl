@@ -26,7 +26,7 @@ public:
 	const std::string billboard_vs = ".\\billboard_vs.glsl";
 	const std::string billboard_gs = ".\\billboard_gs.glsl";
 	const std::string billboard_fs = ".\\billboard_fs.glsl";
-	const std::string fish = ".\\Materials\\Amago0.obj";
+	const std::string fish_model = ".\\Materials\\Sphere.obj";
 	const std::string billBoard_texture = ".\\Materials\\House.jpg";
 	const std::string dataset_dir = ".\\Materials\\Billboards\\";
 	std::vector<std::string> data_files;

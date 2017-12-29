@@ -63,14 +63,14 @@
     <ClCompile Include="GraphicsBase.cpp">
       <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsFish.cpp">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClCompile>
     <ClCompile Include="GraphicsBillboard.cpp">
       <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
     <ClCompile Include="Utilities.cpp">
       <Filter>Header Files\IchenLib</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsLight.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -119,14 +119,14 @@
     <ClInclude Include="include\imgui\stb_truetype.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsFish.h">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsBillboard.h">
       <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
     <ClInclude Include="Utilities.h">
       <Filter>Header Files\IchenLib</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsLight.h">
+      <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

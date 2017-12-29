@@ -23,7 +23,7 @@
 #include "IchenLib/LoadMesh.h"
 #include "IchenLib/LoadTexture.h"
 #include "Global_Variables.h"
-#include "GraphicsFish.h"
+#include "GraphicsLight.h"
 #include "GraphicsBillboard.h"
 #include "Utilities.h"
 
@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 {
 	InitDefaultGlutEnvironment(argc, argv);
 	InitOpenGL();
-	
+
 	// Register callbacks
 	RegisterImGuiCallbacks();
 	glutDisplayFunc(Display);
@@ -55,33 +55,6 @@ int main(int argc, char** argv)
 
 	GlutMainLoop();
 	return 0;
-}
-
-void Init_Global()
-{
-	auto gv = Global_Variables::Instance();
-	gv->vec3_uniforms["cameraPos"] = glm::vec3(0.0f, -0.2f, 3.0f);
-	gv->vec3_uniforms["cameraFront"] = glm::vec3(0.0f, 0.0f, -1.0f);
-	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
-	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
-	gv->float_uniforms["cameraSpeed"] = 0.05f;
-	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(140.0f/255.0f, 200.0f/255.0f, 1.0f, 1.0f);
-
-	// Init data
-	gv->data_files = Get_All_Files(gv->dataset_dir);
-
-	// Graphics
-	const float delta_angle = static_cast<float>(360.0 / gv->data_files.size());
-	for (int i = 0; i < gv->data_files.size(); ++i)
-	{
-		GraphicsBillboard *billboard = new GraphicsBillboard();
-		billboard->Init_Shaders(gv->billboard_vs, gv->billboard_gs, gv->billboard_fs);
-		billboard->Init_Buffers();
-		billboard->Load_Texture(gv->dataset_dir + gv->data_files[i]);
-		billboard->m_angle = delta_angle * i;
-
-		gv->billboards.push_back(billboard);
-	}
 }
 
 void ImGui_Update()
@@ -95,7 +68,7 @@ void ImGui_Update()
 	ImGui::SliderFloat3("Billboard Position", &gv->vec3_uniforms["Billboard_Pos"][0], -5.0, 5.0f);
 	ImGui::SliderFloat("Camera Angle", &gv->float_uniforms["angle"], -180.0f, 180.0f);
 	int i = 0;
-	for (auto g : gv->billboards)
+	for (auto g : gv->graphics)
 	{
 		g->Generate_ImGui("test" + std::to_string(i++));
 	}
@@ -113,16 +86,58 @@ void InitOpenGL()
 
 	ImGui_ImplGlut_Init();
 	Init_Global();
+}
 
+
+void Init_Global()
+{
+	auto gv = Global_Variables::Instance();
+	gv->vec3_uniforms["cameraPos"] = glm::vec3(0.0f, -0.2f, 3.0f);
+	gv->vec3_uniforms["cameraFront"] = glm::vec3(0.0f, 0.0f, -1.0f);
+	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
+	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
+	gv->float_uniforms["cameraSpeed"] = 0.05f;
+	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(140.0f / 255.0f, 200.0f / 255.0f, 1.0f, 1.0f);
+
+	// Point Light
+	GraphicsBase* point_light = new GraphicsLight();
+	point_light->Init_Shaders(gv->test_vs, gv->test_fs);
+	point_light->Load_Model(gv->fish_model);
+	point_light->vec3_uniforms["light_position"] = glm::vec3(0.0f, 100.0f, 0.0f);
+	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
+	gv->graphics.push_back(point_light);
+
+	// Init data
+	gv->data_files = Get_All_Files(gv->dataset_dir);
+
+	// Graphics
+	const float delta_angle = static_cast<float>(360.0 / gv->data_files.size());
+	for (int i = 0; i < gv->data_files.size(); ++i)
+	{
+		GraphicsBillboard* billboard = new GraphicsBillboard();
+		billboard->Init_Shaders(gv->billboard_vs, gv->billboard_gs, gv->billboard_fs);
+		billboard->Init_Buffers();
+		billboard->Load_Texture(gv->dataset_dir + gv->data_files[i]);
+		billboard->m_angle = delta_angle * i;
+
+		gv->billboards.push_back(billboard);
+	}
 }
 
 void Display()
 {
 	auto gv = Global_Variables::Instance();
-	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y, gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
+	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
+	             gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	for(auto g:gv->billboards)
+	for (auto g : gv->graphics)
+	{
+		g->Update_Uniforms();
+		g->Draw();
+	}
+
+	for (auto g : gv->billboards)
 	{
 		g->Update_Uniforms();
 		g->Draw();
@@ -156,7 +171,7 @@ void ReloadShaders()
 {
 	auto gv = Global_Variables::Instance();
 
-	for(auto g:gv->graphics)
+	for (auto g : gv->graphics)
 	{
 		g->Reload();
 	}
@@ -191,7 +206,8 @@ void Keyboard(unsigned char key, int x, int y)
 
 	case 'a':
 	case 'A':
-		gv->vec3_uniforms["cameraPos"] -= glm::normalize(glm::cross(gv->vec3_uniforms["cameraFront"], gv->vec3_uniforms["cameraUp"])) *
+		gv->vec3_uniforms["cameraPos"] -= glm::normalize(glm::cross(gv->vec3_uniforms["cameraFront"],
+		                                                            gv->vec3_uniforms["cameraUp"])) *
 			gv->float_uniforms["cameraSpeed"];
 		std::cout << "cameraPos : " << gv->vec3_uniforms["cameraPos"].x << "," << gv->vec3_uniforms["cameraPos"].y << "," <<
 			gv->vec3_uniforms["cameraPos"].z << std::endl;
@@ -199,7 +215,8 @@ void Keyboard(unsigned char key, int x, int y)
 
 	case 'd':
 	case 'D':
-		gv->vec3_uniforms["cameraPos"] += glm::normalize(glm::cross(gv->vec3_uniforms["cameraFront"], gv->vec3_uniforms["cameraUp"])) *
+		gv->vec3_uniforms["cameraPos"] += glm::normalize(glm::cross(gv->vec3_uniforms["cameraFront"],
+		                                                            gv->vec3_uniforms["cameraUp"])) *
 			gv->float_uniforms["cameraSpeed"];
 		std::cout << "cameraPos : " << gv->vec3_uniforms["cameraPos"].x << "," << gv->vec3_uniforms["cameraPos"].y << "," <<
 			gv->vec3_uniforms["cameraPos"].z << std::endl;

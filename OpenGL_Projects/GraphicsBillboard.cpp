@@ -44,9 +44,11 @@ void GraphicsBillboard::Draw()
 	glBindBuffer(GL_ARRAY_BUFFER, m_VBillboard);
 	glVertexAttribPointer(pos_Attrib, 3, GL_FLOAT, GL_FALSE, 0, 0); // Position
 
+	glUniform1f(glGetUniformLocation(shader_program, "aspect"), aspect);
+
 	// Check
 	const float delta_angle = static_cast<float>(360.0 / gv->data_files.size());
-	if(abs(gv->float_uniforms["angle"]+180.0 - m_angle) < delta_angle)
+	if(abs(gv->float_uniforms["angle"]+180.0f - m_angle) < delta_angle)
 		glDrawArrays(GL_POINTS, 0, 1);
 
 	glDisableVertexAttribArray(0);

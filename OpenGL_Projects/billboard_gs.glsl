@@ -5,6 +5,7 @@ layout (max_vertices = 4) out;
 
 uniform mat4 PV;
 uniform mat4 M;
+uniform float aspect;
 
 in DATA_VS
 {
@@ -17,35 +18,41 @@ in DATA_VS
 
 out vec2 TexCoord;
 
+const float half_width = 0.5;
+
 void main()
 {
+    float half_length = half_width * aspect;
+
     vec3 Pos = gl_in[0].gl_Position.xyz;
     vec3 toCamera = normalize(vs_out[0].camera_position - Pos);
     vec3 up = vec3(0.0,1.0,0.0);
     vec3 right = cross(toCamera, up);
+    vec3 left = -right;
 
-    Pos -= right * 0.5;
-    //gl_Position = PV*M* vec4(Pos,1.0);
-    gl_Position = PV* vec4(Pos,1.0);
+    // bottom left
+    Pos -= left * half_width;
+    Pos.y -= half_length;
+    gl_Position = PV* vec4(Pos*1.5,1.0);
     TexCoord = vec2(0.0,0.0);
     EmitVertex();
 
-    Pos.y += 1.0;
-    //gl_Position = PV*M * vec4(Pos, 1.0);
-    gl_Position = PV* vec4(Pos,1.0);
+    // top left
+    Pos.y += half_length * 2.0;
+    gl_Position = PV* vec4(Pos*1.5,1.0);
     TexCoord = vec2(0.0, 1.0);
     EmitVertex();
 
-    Pos.y -= 1.0;
-    Pos += right;
-    //gl_Position = PV*M * vec4(Pos, 1.0);
-    gl_Position = PV* vec4(Pos,1.0);
+    //bottom right
+    Pos.y -= half_length * 2.0;
+    Pos += left * half_width * 2;
+    gl_Position = PV* vec4(Pos*1.5,1.0);
     TexCoord = vec2(1.0, 0.0);
     EmitVertex();
 
-    Pos.y += 1.0;
-    //gl_Position = PV*M * vec4(Pos, 1.0);
-    gl_Position = PV* vec4(Pos,1.0);
+    // top right
+    Pos.y += half_length * 2.0;
+    gl_Position = PV* vec4(Pos*1.5,1.0);
     TexCoord = vec2(1.0, 1.0);
     EmitVertex();
 

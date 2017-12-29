@@ -50,7 +50,7 @@ void GraphicsBase::Load_Model(const std::string model)
 void GraphicsBase::Load_Texture(const std::string t)
 {
 	m_texture_file = t;
-	m_textureId = LoadTexture(m_texture_file);
+	m_textureId = LoadTexture(m_texture_file, &aspect);
 }
 
 void GraphicsBase::Generate_ImGui(const std::string shader_name)
@@ -79,14 +79,13 @@ void GraphicsBase::Generate_ImGui(const std::string shader_name)
 			break;
 
 		case 35665: // vec3
-			ImGui::SliderFloat3(uniformName.c_str(), glm::value_ptr(vec4_uniforms[uniformName]), -10.0f, 10.0f);
+			ImGui::SliderFloat3(uniformName.c_str(), glm::value_ptr(vec3_uniforms[uniformName]), -10.0f, 10.0f);
 			break;
 
 		case 35666: // vec4
 			Is_Color(uniformName)
 				? ImGui::ColorEdit4(uniformName.c_str(), glm::value_ptr(vec4_uniforms[uniformName]))
 				: ImGui::SliderFloat4(uniformName.c_str(), glm::value_ptr(vec4_uniforms[uniformName]), -10.0f, 10.0f);
-
 			break;
 
 		default:
@@ -106,6 +105,7 @@ void GraphicsBase::Update_Uniforms()
 		const auto uniformName = allUniformNames[i].c_str();
 		//const auto keyname = allUniformNames[i] + std::to_string(shader_program);
 		const auto keyname = uniformName;
+		GLuint loc;
 		switch (uniformTypes[i])
 		{
 		case 5126: // float
@@ -125,6 +125,7 @@ void GraphicsBase::Update_Uniforms()
 			break;
 
 		case 35665: // vec3
+			loc = glGetUniformLocation(shader_program, uniformName);
 			glUniform3fv(glGetUniformLocation(shader_program, uniformName), 1, glm::value_ptr(vec3_uniforms[keyname]));
 			break;
 

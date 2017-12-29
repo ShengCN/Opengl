@@ -7,6 +7,7 @@
 #include "GL/gl.h"
 
 GLuint LoadTexture(const std::string& fname);
+GLuint LoadTexture(const std::string& fname,float* aspect);
 GLuint LoadCube(const std::string& fname);
 
 #endif

@@ -116,7 +116,7 @@
     <ClCompile Include="Global_Variables.cpp" />
     <ClCompile Include="GraphicsBase.cpp" />
     <ClCompile Include="GraphicsBillboard.cpp" />
-    <ClCompile Include="GraphicsFish.cpp" />
+    <ClCompile Include="GraphicsLight.cpp" />
     <ClCompile Include="include\IchenLib\IchenGlut.cpp" />
     <ClCompile Include="include\IchenLib\LoadMesh.cpp" />
     <ClCompile Include="include\IchenLib\LoadTexture.cpp" />
@@ -134,7 +134,7 @@
     <ClInclude Include="Global_Variables.h" />
     <ClInclude Include="GraphicsBase.h" />
     <ClInclude Include="GraphicsBillboard.h" />
-    <ClInclude Include="GraphicsFish.h" />
+    <ClInclude Include="GraphicsLight.h" />
     <ClInclude Include="include\IchenLib\IchenGlut.h" />
     <ClInclude Include="include\IchenLib\LoadMesh.h" />
     <ClInclude Include="include\IchenLib\LoadTexture.h" />
