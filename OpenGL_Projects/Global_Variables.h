@@ -5,6 +5,7 @@
 #include "GraphicsBase.h"
 #include "GraphicsBillboard.h"
 #include "CV_Lib.h"
+#include <map>
 
 class Global_Variables
 {
@@ -31,9 +32,18 @@ public:
 	std::string billboard_fs ;
 	std::string fish_model ;
 	std::string billBoard_texture ;
-	std::string dataset_dir;
+	std::vector<std::string> dataset_dirs;
 	std::string cv_des_dir;
-	std::vector<std::string> data_files;
+	std::map<int, std::vector<std::string>> data_files;
+
+	// BillBoard manipulation
+	std::map<int, int> layer_anglesize_map;
+	glm::vec2 current_dimension;
+	std::unordered_map<int,float> delta_angle;
+	float delta_layer;
+
+	int current_layer;
+	int current_angle;
 
 private:
 	Global_Variables();

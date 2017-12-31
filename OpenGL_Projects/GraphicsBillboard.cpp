@@ -47,8 +47,7 @@ void GraphicsBillboard::Draw()
 	glUniform1f(glGetUniformLocation(shader_program, "aspect"), aspect);
 
 	// Check
-	const float delta_angle = static_cast<float>(360.0 / gv->data_files.size());
-	if(abs(gv->float_uniforms["Y_angle"]+180.0f - m_angle) < delta_angle)
+	if(gv->current_layer == coordinate.x && gv->current_angle == coordinate.y)
 		glDrawArrays(GL_POINTS, 0, 1);
 
 	glDisableVertexAttribArray(0);

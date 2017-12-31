@@ -61,8 +61,8 @@ void ImGui_Update()
 	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);
 	ImGui::SliderFloat3("Billboard Position", &gv->vec3_uniforms["Billboard_Pos"][0], -5.0, 5.0f);
-	ImGui::SliderFloat("Camera Angle in Y axis", &gv->float_uniforms["Y_angle"], -180.0f, 180.0f);
-	ImGui::VSliderFloat("Camera Angle in X axis", ImVec2(18, 160),&gv->float_uniforms["X_angle"], -180.0f, 180.0f);
+	ImGui::SliderFloat("Camera Angle in Y axis", &gv->current_dimension.y, 0.0f, 360.0f);
+	ImGui::VSliderFloat("Camera Angle in X axis", ImVec2(25, 160),&gv->current_dimension.x, 0.0f, 90.0f);
 	int i = 0;
 	for (auto g : gv->graphics)
 	{
@@ -70,6 +70,10 @@ void ImGui_Update()
 	}
 	ImGui::End();
 	ImGui::Render();
+
+	// Calculate current dimension
+	gv->current_layer = static_cast<int>(floor(gv->current_dimension.x/gv->delta_layer));
+	gv->current_angle = static_cast<int>(floor(gv->current_dimension.y/gv->delta_angle[gv->current_layer]));
 }
 
 void InitOpenGL()
@@ -104,35 +108,34 @@ void Init_Global()
 	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
 	gv->graphics.push_back(point_light);
 
-	// Init data
-	gv->data_files = Get_All_Files(gv->dataset_dir);
-	
 	// Process photos
 	// Can be more efficient
 	// TODO
 //	std::string current_target = "Target.jpg";
 //	auto tmp = gv->data_files[0];
-//	Save_Feature_Img(gv->cv_des_dir + tmp.insert(gv->data_files[0].find(".jpg"), std::string("post")), gv->dataset_dir + current_target, gv->dataset_dir + gv->data_files[0]);
+//	Save_Feature_Img(gv->cv_des_dir + tmp.insert(gv->data_files[0].find(".jpg"), std::string("post")), gv->dataset_dirs + current_target, gv->dataset_dirs + gv->data_files[0]);
 //	current_target = tmp;
 //	for(int i = 1; i < gv->data_files.size();++i)
 //	{
 //		tmp = gv->data_files[i];
 //		std::string newFile = tmp.insert(gv->data_files[i].find(".jpg"), std::string("post"));
-//		Save_Feature_Img(gv->cv_des_dir + newFile, gv->cv_des_dir + current_target, gv->dataset_dir + gv->data_files[i]);
+//		Save_Feature_Img(gv->cv_des_dir + newFile, gv->cv_des_dir + current_target, gv->dataset_dirs + gv->data_files[i]);
 //		current_target = newFile;
 //	}
 
-	// Graphics
-	const float delta_angle = static_cast<float>(360.0 / gv->data_files.size());
+	// Graphics	
 	for (size_t i = 0; i < gv->data_files.size(); ++i)
 	{
-		GraphicsBillboard* billboard = new GraphicsBillboard();
-		billboard->Init_Shaders(gv->billboard_vs, gv->billboard_gs, gv->billboard_fs);
-		billboard->Init_Buffers();
-		billboard->Load_Texture(gv->dataset_dir + gv->data_files[i]);
-		billboard->m_angle = delta_angle * i;
+		for(int j = 0; j <gv->layer_anglesize_map[i]; ++j)
+		{
+			GraphicsBillboard* billboard = new GraphicsBillboard();
+			billboard->Init_Shaders(gv->billboard_vs, gv->billboard_gs, gv->billboard_fs);
+			billboard->Init_Buffers();
+			billboard->Load_Texture(gv->dataset_dirs[i] + gv->data_files[i][j]);
+			billboard->coordinate = glm::vec2(i,j);
 
-		gv->billboards.push_back(billboard);
+			gv->billboards.push_back(billboard);
+		}
 	}
 }
 

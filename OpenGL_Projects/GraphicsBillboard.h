@@ -18,6 +18,7 @@ public:
 	void Init_Buffers() override;
 
 	float m_angle;
+	glm::vec2 coordinate;  // x means layer, y means angle
 private:
 	GLuint m_VAO;
 	GLuint m_VBillboard;
