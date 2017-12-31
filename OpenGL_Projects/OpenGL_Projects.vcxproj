@@ -59,6 +59,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="OpenGL_Envrionment.props" />
+    <Import Project="OpenCV.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -113,6 +114,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CV_Lib.cpp" />
     <ClCompile Include="Global_Variables.cpp" />
     <ClCompile Include="GraphicsBase.cpp" />
     <ClCompile Include="GraphicsBillboard.cpp" />
@@ -131,6 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="CV_Lib.h" />
     <ClInclude Include="Global_Variables.h" />
     <ClInclude Include="GraphicsBase.h" />
     <ClInclude Include="GraphicsBillboard.h" />

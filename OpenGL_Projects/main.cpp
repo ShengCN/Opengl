@@ -5,27 +5,22 @@
 #include <GL/freeglut.h>
 #include <GL/gl.h>
 #include <GL/glext.h>
-#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 #include <vector>
 #include <stdio.h>
 #include <iostream>
-#include <math.h>
-#include <stdio.h>
 
 #include "imgui/imgui_impl_glut.h"
 #include "IchenLib/IchenGlut.h"
-#include "IchenLib/ShaderProcessor.h"
 #include "imgui/imgui.h"
 #include "IchenLib/OpenGLHelpers.h"
-#include "IchenLib/LoadMesh.h"
-#include "IchenLib/LoadTexture.h"
 #include "Global_Variables.h"
 #include "GraphicsLight.h"
 #include "GraphicsBillboard.h"
 #include "Utilities.h"
+#include "CV_Lib.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 #define GET_VARIABLE_NAME(Variable) (#Variable)
@@ -109,10 +104,25 @@ void Init_Global()
 
 	// Init data
 	gv->data_files = Get_All_Files(gv->dataset_dir);
+	
+	// Process photos
+	// Can be more efficient
+	// TODO
+//	std::string current_target = "Target.jpg";
+//	auto tmp = gv->data_files[0];
+//	Save_Feature_Img(gv->cv_des_dir + tmp.insert(gv->data_files[0].find(".jpg"), std::string("post")), gv->dataset_dir + current_target, gv->dataset_dir + gv->data_files[0]);
+//	current_target = tmp;
+//	for(int i = 1; i < gv->data_files.size();++i)
+//	{
+//		tmp = gv->data_files[i];
+//		std::string newFile = tmp.insert(gv->data_files[i].find(".jpg"), std::string("post"));
+//		Save_Feature_Img(gv->cv_des_dir + newFile, gv->cv_des_dir + current_target, gv->dataset_dir + gv->data_files[i]);
+//		current_target = newFile;
+//	}
 
 	// Graphics
 	const float delta_angle = static_cast<float>(360.0 / gv->data_files.size());
-	for (int i = 0; i < gv->data_files.size(); ++i)
+	for (size_t i = 0; i < gv->data_files.size(); ++i)
 	{
 		GraphicsBillboard* billboard = new GraphicsBillboard();
 		billboard->Init_Shaders(gv->billboard_vs, gv->billboard_gs, gv->billboard_fs);

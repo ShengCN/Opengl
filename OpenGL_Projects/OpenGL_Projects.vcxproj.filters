@@ -25,6 +25,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{5b91812a-bd56-4d96-8ca8-104a36897e64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\CVLib">
+      <UniqueIdentifier>{207d8c58-227f-4cd2-9750-5541860b0a69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -71,6 +74,9 @@
     </ClCompile>
     <ClCompile Include="GraphicsLight.cpp">
       <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="CV_Lib.cpp">
+      <Filter>Header Files\CVLib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -127,6 +133,9 @@
     </ClInclude>
     <ClInclude Include="GraphicsLight.h">
       <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="CV_Lib.h">
+      <Filter>Header Files\CVLib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
