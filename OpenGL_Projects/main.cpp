@@ -61,7 +61,8 @@ void ImGui_Update()
 	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);
 	ImGui::SliderFloat3("Billboard Position", &gv->vec3_uniforms["Billboard_Pos"][0], -5.0, 5.0f);
-	ImGui::SliderFloat("Camera Angle", &gv->float_uniforms["angle"], -180.0f, 180.0f);
+	ImGui::SliderFloat("Camera Angle in Y axis", &gv->float_uniforms["Y_angle"], -180.0f, 180.0f);
+	ImGui::VSliderFloat("Camera Angle in X axis", ImVec2(18, 160),&gv->float_uniforms["X_angle"], -180.0f, 180.0f);
 	int i = 0;
 	for (auto g : gv->graphics)
 	{
@@ -92,7 +93,8 @@ void Init_Global()
 	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
 	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
 	gv->float_uniforms["cameraSpeed"] = 0.05f;
-	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(140.0f / 255.0f, 200.0f / 255.0f, 1.0f, 1.0f);
+	//gv->vec4_uniforms["Backgound_Color"] = glm::vec4(140.0f / 255.0f, 200.0f / 255.0f, 1.0f, 1.0f);
+	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(1.0f,1.0f, 1.0f, 1.0f);
 
 	// Point Light
 	GraphicsBase* point_light = new GraphicsLight();
