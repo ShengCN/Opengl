@@ -38,6 +38,7 @@ public:
 
 	// BillBoard manipulation
 	std::map<int, int> layer_anglesize_map;
+	int layer_max;
 	glm::vec2 current_dimension;
 	std::unordered_map<int,float> delta_angle;
 	float delta_layer;

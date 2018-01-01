@@ -39,4 +39,5 @@ Global_Variables::Global_Variables()
 
 	current_layer = 0;
 	current_angle = 0;
+	layer_max = layer_anglesize_map.size();
 }
