@@ -13,6 +13,11 @@ Global_Variables* Global_Variables::Instance()
 
 Global_Variables::Global_Variables()
 {
+	isLBtnressed = false;
+	isRBtnPressed = false;
+	lastMMovement = glm::vec2(0.0f, 0.0f);
+	lastMousePos = glm::vec2(0);
+
 	test_vs = ".\\vs.glsl";
 	test_fs = ".\\fs.glsl";
 	billboard_vs = ".\\billboard_vs.glsl";

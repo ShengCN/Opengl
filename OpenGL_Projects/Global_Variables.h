@@ -12,7 +12,11 @@ class Global_Variables
 public:
 	static Global_Variables* Instance();
 
-
+	// Control Varibles
+	bool isLBtnressed;  // is left mouse button pressed
+	bool isRBtnPressed; // is right mouse button pressed
+	glm::vec2 lastMousePos;
+	glm::vec2 lastMMovement; // last mouse movement
 
 	// Variables
 	std::vector<GraphicsBase*> graphics;

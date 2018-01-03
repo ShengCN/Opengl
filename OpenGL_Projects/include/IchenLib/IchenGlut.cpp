@@ -65,16 +65,56 @@ void SpecialKeyboardEvents(int k, int x, int y)
 void MouseEvents(int button, int state, int x, int y)
 {
 	ImGui_ImplGlut_MouseButtonCallback(button,state);
+
+	auto gv = Global_Variables::Instance();
+	if(state == GLUT_UP)
+	{
+		gv->isLBtnressed = false;
+		gv->isRBtnPressed = false;
+		
+		gv->lastMMovement = glm::vec2(0);
+		return;
+	}
+	else  // Mouse pressed
+	{
+		if(button == GLUT_LEFT_BUTTON)
+		{
+			gv->isLBtnressed = true;
+			DEBUG("Current:" + to_string(x) + ",", y);
+			return;
+		}
+		else if(button == GLUT_RIGHT_BUTTON)
+		{
+			gv->isRBtnPressed = true;
+			DEBUG("Current:" + to_string(x) + ",", y);
+			return;
+		}
+	}
 }
 
 void MotionEvents(int x, int y)
 {
 	ImGui_ImplGlut_MouseMotionCallback(x, y);
+
+	auto gv = Global_Variables::Instance();
+	// Mouse control 
+	if(gv->isLBtnressed) // Mouse left button
+	{
+		gv->lastMMovement = glm::vec2(x - gv->lastMousePos.x, y - gv->lastMousePos.y);
+	}
+	else if(gv->isRBtnPressed) // Mouse right button
+	{
+		gv->lastMMovement = glm::vec2(x - gv->lastMousePos.x, y - gv->lastMousePos.y);
+	}
+	gv->lastMousePos = glm::vec2(x, y);
 }
 
 void PassiveMotionEvents(int x, int y)
 {
 	ImGui_ImplGlut_MouseMotionCallback(x, y);
+
+	auto gv = Global_Variables::Instance();
+	gv->lastMousePos = glm::vec2(x, y);
 }
 
 void Reshape(int w,int h)
