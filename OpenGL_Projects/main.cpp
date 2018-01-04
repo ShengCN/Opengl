@@ -73,14 +73,17 @@ void ImGui_Update()
 
 	// Calculate current dimension
 	gv->current_dimension.x += gv->lastMMovement.y * 0.1;
-	gv->current_dimension.y -= gv->lastMMovement.x* 0.1;
+	gv->current_dimension.y += gv->lastMMovement.x* 0.1;
+	gv->current_dimension.x = max(gv->current_dimension.x, 0.0f);
+	gv->current_dimension.x = min(gv->current_dimension.x, 90.0f);
+	gv->current_dimension.y = max(gv->current_dimension.y, 0.0f);
+	gv->current_dimension.y = min(gv->current_dimension.y, 360.0f);
+
 	gv->current_layer = static_cast<int>(floor(gv->current_dimension.x/gv->delta_layer));
 	gv->current_layer = min(gv->current_layer, static_cast<int>(gv->layer_anglesize_map.size()-1)); // corner case
-	gv->current_layer = max(gv->current_layer, 0); // corner case
 
 	gv->current_angle = static_cast<int>(floor(gv->current_dimension.y/gv->delta_angle[gv->current_layer]));
 	gv->current_angle = min(gv->current_angle, gv->layer_anglesize_map[gv->current_layer]-1); // corner case
-	gv->current_angle = max(gv->current_angle,0); // corner case
 }
 
 void InitOpenGL()
