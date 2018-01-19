@@ -78,6 +78,9 @@
     <ClCompile Include="CV_Lib.cpp">
       <Filter>Header Files\CVLib</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsBase.h">
@@ -136,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="CV_Lib.h">
       <Filter>Header Files\CVLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

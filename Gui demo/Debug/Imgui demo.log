@@ -1,0 +1,21 @@
+﻿  LoadTexture.cpp
+  LoadMesh.cpp
+  Imgui demo.cpp
+  GLM: perspective function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  GLM: rotate function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+  InitShader.cpp
+  imgui_impl_glut.cpp
+c:\users\tim mcgraw\documents\dev\p4 workspace\dev\visual studio projects\cgt521\imgui demo\include\imgui\imgui_impl_glut.cpp(186): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\tim mcgraw\documents\dev\p4 workspace\dev\visual studio projects\cgt521\imgui demo\include\imgui\imgui_impl_glut.cpp(188): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\tim mcgraw\documents\dev\p4 workspace\dev\visual studio projects\cgt521\imgui demo\include\imgui\imgui_impl_glut.cpp(197): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\tim mcgraw\documents\dev\p4 workspace\dev\visual studio projects\cgt521\imgui demo\include\imgui\imgui_impl_glut.cpp(199): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\tim mcgraw\documents\dev\p4 workspace\dev\visual studio projects\cgt521\imgui demo\include\imgui\imgui_impl_glut.cpp(212): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\tim mcgraw\documents\dev\p4 workspace\dev\visual studio projects\cgt521\imgui demo\include\imgui\imgui_impl_glut.cpp(214): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\tim mcgraw\documents\dev\p4 workspace\dev\visual studio projects\cgt521\imgui demo\include\imgui\imgui_impl_glut.cpp(224): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+c:\users\tim mcgraw\documents\dev\p4 workspace\dev\visual studio projects\cgt521\imgui demo\include\imgui\imgui_impl_glut.cpp(226): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+  imgui_draw.cpp
+  imgui_demo.cpp
+  imgui.cpp
+  Generating Code...
+  Imgui demo.vcxproj -> C:\Users\Tim McGraw\Documents\dev\p4 workspace\dev\Visual Studio Projects\CGT521\Debug\Imgui demo.exe
+  Imgui demo.vcxproj -> C:\Users\Tim McGraw\Documents\dev\p4 workspace\dev\Visual Studio Projects\CGT521\Debug\Imgui demo.pdb (Full PDB)

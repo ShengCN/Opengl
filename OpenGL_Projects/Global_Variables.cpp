@@ -18,6 +18,8 @@ Global_Variables::Global_Variables()
 	lastMMovement = glm::vec2(0.0f, 0.0f);
 	lastMousePos = glm::vec2(0);
 
+	current_camera = new Camera();
+
 	test_vs = ".\\vs.glsl";
 	test_fs = ".\\fs.glsl";
 	billboard_vs = ".\\billboard_vs.glsl";
@@ -31,18 +33,4 @@ Global_Variables::Global_Variables()
 	dataset_dirs.push_back(".\\Materials\\CV_Test\\4\\");
 	dataset_dirs.push_back(".\\Materials\\CV_Test\\5\\");
 	cv_des_dir = ".\\Materials\\CV_Result\\";
-	current_dimension = glm::vec2(0.0f, 0.0f);
-
-	for(size_t i = 0; i < dataset_dirs.size(); ++i)
-	{
-		data_files[i] = Get_All_Files(dataset_dirs[i]);
-		layer_anglesize_map[i] = data_files[i].size();
-		delta_angle[i] = 360.0 / static_cast<float>(data_files[i].size());
-	}
-
-	delta_layer = 90.0 / static_cast<float>(dataset_dirs.size());
-
-	current_layer = 0;
-	current_angle = 0;
-	layer_max = layer_anglesize_map.size();
 }

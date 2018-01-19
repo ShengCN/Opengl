@@ -114,6 +114,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CV_Lib.cpp" />
     <ClCompile Include="Global_Variables.cpp" />
     <ClCompile Include="GraphicsBase.cpp" />
@@ -132,6 +133,7 @@
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="CV_Lib.h" />
     <ClInclude Include="Global_Variables.h" />

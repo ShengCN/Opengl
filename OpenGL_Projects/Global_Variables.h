@@ -6,11 +6,15 @@
 #include "GraphicsBillboard.h"
 #include "CV_Lib.h"
 #include <map>
+#include "Camera.h"
 
 class Global_Variables
 {
 public:
 	static Global_Variables* Instance();
+
+	// Camera properties
+	Camera* current_camera;
 
 	// Control Varibles
 	bool isLBtnressed;  // is left mouse button pressed
@@ -56,7 +60,5 @@ private:
 	Global_Variables& operator=(Global_Variables const&) const { return *m_instance; };
 
 	static Global_Variables* m_instance;
-
-	
 };
 

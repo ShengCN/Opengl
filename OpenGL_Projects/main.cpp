@@ -71,19 +71,6 @@ void ImGui_Update()
 	ImGui::End();
 	ImGui::Render();
 
-	// Calculate current dimension
-	gv->current_dimension.x += gv->lastMMovement.y * 0.1;
-	gv->current_dimension.y += gv->lastMMovement.x* 0.1;
-	gv->current_dimension.x = max(gv->current_dimension.x, 0.0f);
-	gv->current_dimension.x = min(gv->current_dimension.x, 90.0f);
-	gv->current_dimension.y = max(gv->current_dimension.y, 0.0f);
-	gv->current_dimension.y = min(gv->current_dimension.y, 360.0f);
-
-	gv->current_layer = static_cast<int>(floor(gv->current_dimension.x/gv->delta_layer));
-	gv->current_layer = min(gv->current_layer, static_cast<int>(gv->layer_anglesize_map.size()-1)); // corner case
-
-	gv->current_angle = static_cast<int>(floor(gv->current_dimension.y/gv->delta_angle[gv->current_layer]));
-	gv->current_angle = min(gv->current_angle, gv->layer_anglesize_map[gv->current_layer]-1); // corner case
 }
 
 void InitOpenGL()
@@ -117,36 +104,6 @@ void Init_Global()
 	point_light->vec3_uniforms["light_position"] = glm::vec3(0.0f, 100.0f, 0.0f);
 	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
 	gv->graphics.push_back(point_light);
-
-	// Process photos
-	// Can be more efficient
-	// TODO
-//	std::string current_target = "Target.jpg";
-//	auto tmp = gv->data_files[0];
-//	Save_Feature_Img(gv->cv_des_dir + tmp.insert(gv->data_files[0].find(".jpg"), std::string("post")), gv->dataset_dirs + current_target, gv->dataset_dirs + gv->data_files[0]);
-//	current_target = tmp;
-//	for(int i = 1; i < gv->data_files.size();++i)
-//	{
-//		tmp = gv->data_files[i];
-//		std::string newFile = tmp.insert(gv->data_files[i].find(".jpg"), std::string("post"));
-//		Save_Feature_Img(gv->cv_des_dir + newFile, gv->cv_des_dir + current_target, gv->dataset_dirs + gv->data_files[i]);
-//		current_target = newFile;
-//	}
-
-	// Graphics	
-	for (size_t i = 0; i < gv->data_files.size(); ++i)
-	{
-		for(int j = 0; j <gv->layer_anglesize_map[i]; ++j)
-		{
-			GraphicsBillboard* billboard = new GraphicsBillboard();
-			billboard->Init_Shaders(gv->billboard_vs, gv->billboard_gs, gv->billboard_fs);
-			billboard->Init_Buffers();
-			billboard->Load_Texture(gv->dataset_dirs[i] + gv->data_files[i][j]);
-			billboard->coordinate = glm::vec2(i,j);
-
-			gv->billboards.push_back(billboard);
-		}
-	}
 }
 
 void Display()
