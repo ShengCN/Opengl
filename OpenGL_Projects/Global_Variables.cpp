@@ -33,4 +33,6 @@ Global_Variables::Global_Variables()
 	dataset_dirs.push_back(".\\Materials\\CV_Test\\4\\");
 	dataset_dirs.push_back(".\\Materials\\CV_Test\\5\\");
 	cv_des_dir = ".\\Materials\\CV_Result\\";
+
+	isF_MouseMovement = true;
 }

@@ -54,6 +54,13 @@ public:
 	int current_layer;
 	int current_angle;
 
+	// Time 
+	int last_frame_time;
+	int delta_time;
+
+	// Is first Operations
+	bool isF_MouseMovement;
+
 private:
 	Global_Variables();
 	Global_Variables(Global_Variables const&) {};

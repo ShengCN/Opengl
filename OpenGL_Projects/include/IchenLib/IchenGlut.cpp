@@ -104,6 +104,17 @@ void MotionEvents(int x, int y)
 	}
 	else if(gv->isRBtnPressed) // Mouse right button
 	{
+		if (!gv->isF_MouseMovement)
+		{
+			const auto x_offset = x - gv->lastMousePos.x;
+			const auto y_offset = y - gv->lastMousePos.y;
+			gv->current_camera->ProcessMouseMovement(-x_offset, y_offset);
+		}
+		else
+		{
+			gv->isF_MouseMovement = false;
+		}
+
 		gv->lastMMovement = glm::vec2(x - gv->lastMousePos.x, y - gv->lastMousePos.y);
 	}
 	gv->lastMousePos = glm::vec2(x, y);

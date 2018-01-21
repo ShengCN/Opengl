@@ -93,7 +93,7 @@ void Init_Global()
 	gv->vec3_uniforms["cameraFront"] = glm::vec3(0.0f, 0.0f, -1.0f);
 	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
 	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
-	gv->float_uniforms["cameraSpeed"] = 0.05f;
+	gv->float_uniforms["cameraSpeed"] = 0.5f;
 	//gv->vec4_uniforms["Backgound_Color"] = glm::vec4(140.0f / 255.0f, 200.0f / 255.0f, 1.0f, 1.0f);
 	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(1.0f,1.0f, 1.0f, 1.0f);
 
@@ -104,11 +104,16 @@ void Init_Global()
 	point_light->vec3_uniforms["light_position"] = glm::vec3(0.0f, 100.0f, 0.0f);
 	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
 	gv->graphics.push_back(point_light);
+
+	// Object
 }
 
 void Display()
 {
 	auto gv = Global_Variables::Instance();
+	gv->delta_time = glutGet(GLUT_ELAPSED_TIME) - gv->last_frame_time;
+	gv->last_frame_time = glutGet(GLUT_ELAPSED_TIME);
+
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
 	             gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -145,8 +150,8 @@ void MouseWheel(int butotm, int dir, int x, int y)
 	auto gv = Global_Variables::Instance();
 
 	dir > 0
-		? gv->vec3_uniforms["cameraPos"].z += 2 * gv->float_uniforms["cameraSpeed"]
-		: gv->vec3_uniforms["cameraPos"].z -= 2 * gv->float_uniforms["cameraSpeed"];
+		? gv->current_camera->ProcessMouseScroll(gv->current_camera->MovementSpeed)
+		: gv->current_camera->ProcessMouseScroll(-gv->current_camera->MovementSpeed);
 }
 
 void ReloadShaders()
@@ -174,34 +179,26 @@ void Keyboard(unsigned char key, int x, int y)
 
 	case 'w':
 	case 'W':
-		gv->vec3_uniforms["cameraPos"].y += gv->float_uniforms["cameraSpeed"];
-		std::cout << "cameraPos : " << gv->vec3_uniforms["cameraPos"].x << "," << gv->vec3_uniforms["cameraPos"].z << "," <<
-			gv->vec3_uniforms["cameraPos"].z << std::endl;
+		gv->current_camera->ProcessKeyboard(Camera_Movement::FORWARD,gv->delta_time);
+		gv->current_camera->Debug_Current_Pos();
 		break;
 
 	case 's':
 	case 'S':
-		gv->vec3_uniforms["cameraPos"].y -= gv->float_uniforms["cameraSpeed"];
-		std::cout << "cameraPos : " << gv->vec3_uniforms["cameraPos"].x << "," << gv->vec3_uniforms["cameraPos"].z << "," <<
-			gv->vec3_uniforms["cameraPos"].z << std::endl;
+		gv->current_camera->ProcessKeyboard(Camera_Movement::BACKWARD, gv->delta_time);
+		gv->current_camera->Debug_Current_Pos();
 		break;
 
 	case 'a':
 	case 'A':
-		gv->vec3_uniforms["cameraPos"] -= glm::normalize(glm::cross(gv->vec3_uniforms["cameraFront"],
-		                                                            gv->vec3_uniforms["cameraUp"])) *
-			gv->float_uniforms["cameraSpeed"];
-		std::cout << "cameraPos : " << gv->vec3_uniforms["cameraPos"].x << "," << gv->vec3_uniforms["cameraPos"].y << "," <<
-			gv->vec3_uniforms["cameraPos"].z << std::endl;
+		gv->current_camera->ProcessKeyboard(Camera_Movement::LEFT, gv->delta_time);
+		gv->current_camera->Debug_Current_Pos();
 		break;
 
 	case 'd':
 	case 'D':
-		gv->vec3_uniforms["cameraPos"] += glm::normalize(glm::cross(gv->vec3_uniforms["cameraFront"],
-		                                                            gv->vec3_uniforms["cameraUp"])) *
-			gv->float_uniforms["cameraSpeed"];
-		std::cout << "cameraPos : " << gv->vec3_uniforms["cameraPos"].x << "," << gv->vec3_uniforms["cameraPos"].y << "," <<
-			gv->vec3_uniforms["cameraPos"].z << std::endl;
+		gv->current_camera->ProcessKeyboard(Camera_Movement::RIGHT, gv->delta_time);
+		gv->current_camera->Debug_Current_Pos();
 		break;
 
 	case 'z':

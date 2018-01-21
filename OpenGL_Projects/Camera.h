@@ -3,6 +3,7 @@
 #include "GL/glew.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 enum class Camera_Movement
 {
@@ -45,6 +46,10 @@ public:
 	// Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
 	void ProcessMouseScroll(float yoffset);
 
+	void Debug_Current_Pos() {
+		std::cout << Position.x << "\t" << Position.y << "\t"
+			<< Position.z << std::endl;
+	}
 
 private:
 	// Calculates the front vector from the Camera's (updated) Eular Angles
