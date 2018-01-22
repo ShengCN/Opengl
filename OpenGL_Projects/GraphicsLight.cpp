@@ -28,7 +28,7 @@ void GraphicsLight::Draw()
 
 	// PVM
 	glm::mat4 T = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
-	glm::mat4 M = T * glm::scale(glm::vec3(m_mesh_data.mScaleFactor*0.1f));
+	glm::mat4 M = T * glm::scale(glm::vec3(m_mesh.mScaleFactor*0.1f));
 	M = glm::rotate(float_uniforms["angle"], glm::vec3(0.0f, 1.0f, 0.0f)) * M;
 	glm::mat4 V = gv->current_camera->GetV();
 	glm::mat4 P = gv->current_camera->GetP();
@@ -44,8 +44,7 @@ void GraphicsLight::Draw()
 	glBindTexture(GL_TEXTURE_2D, m_textureId);
 	glUniform1i(glGetUniformLocation(shader_program, "texture"), 0);
 
-	glBindVertexArray(m_mesh_data.mVao);
-	glDrawElements(GL_TRIANGLES, m_mesh_data.mNumIndices, GL_UNSIGNED_INT, nullptr);
+	m_mesh.Draw();
 	
 	glBindVertexArray(0);
 }
@@ -58,10 +57,12 @@ void GraphicsLight::Reload()
 	}
 
 	Init_Shaders(m_vs_file, m_fs_file);
-	if(m_mesh_data.mVao != -1)
-	{
-		Load_Model(m_mesh_file);
-	}
+
+	// todo
+//	if(m_mesh.mVao != -1)
+//	{
+//		Load_Model(m_mesh_file);
+//	}
 }
 
 void GraphicsLight::Draw_Shader_Uniforms()

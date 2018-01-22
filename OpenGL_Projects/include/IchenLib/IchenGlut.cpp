@@ -80,13 +80,13 @@ void MouseEvents(int button, int state, int x, int y)
 		if(button == GLUT_LEFT_BUTTON)
 		{
 			gv->isLBtnressed = true;
-			DEBUG("Current:" + to_string(x) + ",", y);
+			DEBUG("Current:" + std::to_string(x) + ",", y);
 			return;
 		}
 		else if(button == GLUT_RIGHT_BUTTON)
 		{
 			gv->isRBtnPressed = true;
-			DEBUG("Current:" + to_string(x) + ",", y);
+			DEBUG("Current:" + std::to_string(x) + ",", y);
 			return;
 		}
 	}

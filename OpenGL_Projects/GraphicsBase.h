@@ -44,7 +44,7 @@ protected:
 	std::string m_vs_file;
 	std::string m_gs_file;
 	std::string m_fs_file;
-	MeshData m_mesh_data;
+	Model m_mesh;
 	std::string m_mesh_file;
 	GLuint m_textureId;
 	std::string m_texture_file;

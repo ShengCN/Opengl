@@ -20,11 +20,9 @@
 #include "GraphicsLight.h"
 #include "GraphicsBillboard.h"
 #include "Utilities.h"
-#include "CV_Lib.h"
 #include "Graphics3DO.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
-#define GET_VARIABLE_NAME(Variable) (#Variable)
 
 void Init_Global();
 void ImGui_Update();
@@ -62,8 +60,7 @@ void ImGui_Update()
 	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);
 	ImGui::SliderFloat3("Billboard Position", &gv->vec3_uniforms["Billboard_Pos"][0], -5.0, 5.0f);
-	ImGui::SliderFloat("Camera Angle in Y axis", &gv->current_dimension.y, 0.0f, 360.0f);
-	ImGui::VSliderFloat("Camera Angle in X axis", ImVec2(25, 160),&gv->current_dimension.x, 0.0f, 90.0f);
+	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);
 	int i = 0;
 	for (auto g : gv->graphics)
 	{
@@ -111,7 +108,6 @@ void Init_Global()
 	fish->Init_Shaders(gv->fish_vs, gv->fish_fs);
 	fish->Load_Model(gv->fish_model_dir + gv->fish_model);
 	fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
-	fish->float_uniforms["angle"] = 0.0;
 	gv->graphics.push_back(fish);
 }
 

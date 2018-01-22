@@ -29,7 +29,6 @@ void GetBoundingBox(const aiMesh* mesh, aiVector3D* min, aiVector3D* max)
 	}
 }
 
-
 void GetBoundingBoxForNode(const aiScene* scene, const aiNode* nd, aiVector3D* min, aiVector3D* max)
 {
 	unsigned int n = 0, t;
@@ -65,48 +64,9 @@ void GetBoundingBox(const aiScene* scene, aiVector3D* min, aiVector3D* max)
 	GetBoundingBoxForNode(scene, scene->mRootNode, min, max);
 }
 
-MeshData LoadMesh(const std::string& pFile)
+MeshData BufferIndexedVerts(aiMesh* mesh)
 {
-	MeshData mesh;
-
-	//check if file exists
-	std::ifstream fin(pFile.c_str());
-	if (!fin.fail())
-	{
-		fin.close();
-	}
-	else
-	{
-		printf("Couldn't open file: %s\n", pFile.c_str());
-		printf("%s\n", importer.GetErrorString());
-		return mesh;
-	}
-
-	mesh.mScene = importer.ReadFile(pFile, aiProcessPreset_TargetRealtime_Quality);//|aiProcess_FlipWindingOrder);
-
-	// If the import failed, report it
-	if (!mesh.mScene)
-	{
-		printf("%s\n", importer.GetErrorString());
-		return mesh;
-	}
-
-	// Now we can access the file's contents.
-	printf("Import of scene %s succeeded.\n", pFile.c_str());
-
-	GetBoundingBox(mesh.mScene, &mesh.mBbMin, &mesh.mBbMax);
-	aiVector3D diff = mesh.mBbMax - mesh.mBbMin;
-	float w = std::max(diff.x, std::max(diff.y, diff.z));
-
-	mesh.mScaleFactor = 1.0f / w;
-
-	BufferIndexedVerts(mesh);
-	mesh.mNumIndices = mesh.mScene->mMeshes[0]->mNumFaces * 3;
-	return mesh;
-}
-
-void BufferIndexedVerts(MeshData& meshdata)
-{
+	MeshData meshdata;
 	if (meshdata.mVao != -1)
 	{
 		glDeleteVertexArrays(1, &meshdata.mVao);
@@ -146,7 +106,6 @@ void BufferIndexedVerts(MeshData& meshdata)
 
 	glGenVertexArrays(1, &meshdata.mVao);
 	glBindVertexArray(meshdata.mVao);
-	const aiMesh* mesh = meshdata.mScene->mMeshes[0];
 	unsigned int numFaces = mesh->mNumFaces;
 
 	unsigned int* faceArray;
@@ -156,10 +115,10 @@ void BufferIndexedVerts(MeshData& meshdata)
 	for (unsigned int t = 0; t < numFaces; ++t)
 	{
 		const aiFace* face = &mesh->mFaces[t];
-
 		memcpy(&faceArray[faceIndex], face->mIndices, 3 * sizeof(unsigned int));
 		faceIndex += 3;
 	}
+	meshdata.mNumIndices = numFaces * 3;
 
 	//Buffer indices
 	glGenBuffers(1, &meshdata.mIndexBuffer);
@@ -214,4 +173,82 @@ void BufferIndexedVerts(MeshData& meshdata)
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	return meshdata;
+}
+
+void Model::Draw()
+{
+	for(auto m:meshes)
+	{
+		glBindVertexArray(m.mVao);
+		glDrawElements(GL_TRIANGLES, m.mNumIndices, GL_UNSIGNED_INT, nullptr);
+ 		glBindVertexArray(0);
+	}
+}
+
+void Model::Reload(const std::string& path)
+{
+	loadModel(path);
+}
+
+void Model::loadModel(const std::string& path)
+{
+	//check if file exists
+	std::ifstream fin(path.c_str());
+	if (!fin.fail())
+	{
+		fin.close();
+	}
+	else
+	{
+		printf("Couldn't open file: %s\n", path.c_str());
+		printf("%s\n", importer.GetErrorString());
+	}
+
+	auto scene = importer.ReadFile(path, aiProcessPreset_TargetRealtime_Quality| aiProcess_PreTransformVertices);
+
+	// If the import failed, report it
+	if (!scene)
+	{
+		printf("%s\n", importer.GetErrorString());
+	}
+
+	// Now we can access the file's contents.
+	printf("Import of scene %s succeeded.\n", path.c_str());
+
+	// Bounding box
+	GetBoundingBox(scene, &mBbMin, &mBbMax);
+	aiVector3D diff = mBbMax - mBbMin;
+	float w = std::max(diff.x, std::max(diff.y, diff.z));
+	mScaleFactor = 1.0f / w;
+
+	// Recursively handle meshes
+	processNode(scene->mRootNode, scene);
+	int vertices_num = 0;
+}
+
+void Model::processNode(aiNode* node, const aiScene* scene)
+{
+	// Current node
+	for(unsigned int i = 0; i < node->mNumMeshes; ++i)
+	{
+		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+		meshes.push_back(processMesh(mesh));
+	}
+
+	// Chilren nodes. Recursively traverse the tree
+	for(unsigned int i = 0; i < node->mNumChildren; ++i)
+	{
+		processNode(node->mChildren[i], scene);
+	}
+}
+
+MeshData Model::processMesh(aiMesh* mesh)
+{
+	// Prepare buffers for meshes
+	auto meshdata = BufferIndexedVerts(mesh);
+	// Materials
+
+	return meshdata;
 }
