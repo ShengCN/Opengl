@@ -81,6 +81,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics3DO.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsBase.h">
@@ -142,6 +145,9 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics3DO.h">
+      <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

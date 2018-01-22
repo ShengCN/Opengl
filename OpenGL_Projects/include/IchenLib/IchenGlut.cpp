@@ -108,7 +108,7 @@ void MotionEvents(int x, int y)
 		{
 			const auto x_offset = x - gv->lastMousePos.x;
 			const auto y_offset = y - gv->lastMousePos.y;
-			gv->current_camera->ProcessMouseMovement(-x_offset, y_offset);
+			gv->current_camera->ProcessMouseMovement(-x_offset, y_offset,false);
 		}
 		else
 		{
@@ -133,7 +133,7 @@ void Reshape(int w,int h)
 	windowWidth = w;
 	windowHeight = h;
 	auto gv = Global_Variables::Instance();
-	gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
+	gv->current_camera->aspect = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
 	glViewport(0, 0, windowWidth, windowHeight);
 }

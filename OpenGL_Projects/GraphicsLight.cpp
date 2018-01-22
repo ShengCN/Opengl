@@ -30,8 +30,8 @@ void GraphicsLight::Draw()
 	glm::mat4 T = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
 	glm::mat4 M = T * glm::scale(glm::vec3(m_mesh_data.mScaleFactor*0.1f));
 	M = glm::rotate(float_uniforms["angle"], glm::vec3(0.0f, 1.0f, 0.0f)) * M;
-	glm::mat4 V = glm::lookAt(gv->current_camera->Position, gv->current_camera->Position + gv->current_camera->Front, gv->current_camera->Up);
-	glm::mat4 P = glm::perspective(gv->current_camera->Zoom, gv->float_uniforms["aspect"], 0.1f, 100.0f);
+	glm::mat4 V = gv->current_camera->GetV();
+	glm::mat4 P = gv->current_camera->GetP();
 
 //	glm::mat4 V = glm::lookAt(gv->vec3_uniforms["cameraPos"], gv->vec3_uniforms["cameraPos"] + glm::vec3(0.0f, 0.0f, -0.1f),
 		//glm::vec3(0.0f, 1.0f, 0.0f));

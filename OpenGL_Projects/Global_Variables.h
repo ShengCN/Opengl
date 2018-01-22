@@ -38,12 +38,18 @@ public:
 	std::string billboard_vs;
 	std::string billboard_gs;
 	std::string billboard_fs ;
-	std::string fish_model ;
 	std::string billBoard_texture ;
 	std::vector<std::string> dataset_dirs;
 	std::string cv_des_dir;
 	std::map<int, std::vector<std::string>> data_files;
-
+	
+	std::string light_model;
+	std::string fish_model_dir;
+	std::string fish_model;
+	std::string fish_texture;
+	std::string fish_vs;
+	std::string fish_fs;
+	
 	// BillBoard manipulation
 	std::map<int, int> layer_anglesize_map;
 	int layer_max;

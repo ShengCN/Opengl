@@ -21,6 +21,7 @@
 #include "GraphicsBillboard.h"
 #include "Utilities.h"
 #include "CV_Lib.h"
+#include "Graphics3DO.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 #define GET_VARIABLE_NAME(Variable) (#Variable)
@@ -94,18 +95,24 @@ void Init_Global()
 	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
 	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
 	gv->float_uniforms["cameraSpeed"] = 0.5f;
-	//gv->vec4_uniforms["Backgound_Color"] = glm::vec4(140.0f / 255.0f, 200.0f / 255.0f, 1.0f, 1.0f);
 	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(1.0f,1.0f, 1.0f, 1.0f);
+	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
 	// Point Light
 	GraphicsBase* point_light = new GraphicsLight();
 	point_light->Init_Shaders(gv->test_vs, gv->test_fs);
-	point_light->Load_Model(gv->fish_model);
+	point_light->Load_Model(gv->light_model);
 	point_light->vec3_uniforms["light_position"] = glm::vec3(0.0f, 100.0f, 0.0f);
 	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
 	gv->graphics.push_back(point_light);
 
 	// Object
+	GraphicsBase* fish = new Graphics3DO();
+	fish->Init_Shaders(gv->fish_vs, gv->fish_fs);
+	fish->Load_Model(gv->fish_model_dir + gv->fish_model);
+	fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
+	fish->float_uniforms["angle"] = 0.0;
+	gv->graphics.push_back(fish);
 }
 
 void Display()

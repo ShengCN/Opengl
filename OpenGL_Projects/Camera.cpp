@@ -14,7 +14,7 @@ Camera::Camera()
 	updateCameraVectors();
 }
 
-void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
+void Camera::ProcessKeyboard(Camera_Movement direction, int deltaTime)
 {
 	float velocity = MovementSpeed * deltaTime * 0.001;
 	if (direction == Camera_Movement::FORWARD)

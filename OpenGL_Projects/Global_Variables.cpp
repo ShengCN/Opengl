@@ -25,7 +25,7 @@ Global_Variables::Global_Variables()
 	billboard_vs = ".\\billboard_vs.glsl";
 	billboard_gs = ".\\billboard_gs.glsl";
 	billboard_fs = ".\\billboard_fs.glsl";
-	fish_model = ".\\Materials\\Sphere.obj";
+	light_model = ".\\Materials\\Sphere.obj";
 	billBoard_texture = ".\\Materials\\House.jpg";
 	dataset_dirs.push_back(".\\Materials\\CV_Test\\1\\");
 	dataset_dirs.push_back(".\\Materials\\CV_Test\\2\\");
@@ -33,6 +33,12 @@ Global_Variables::Global_Variables()
 	dataset_dirs.push_back(".\\Materials\\CV_Test\\4\\");
 	dataset_dirs.push_back(".\\Materials\\CV_Test\\5\\");
 	cv_des_dir = ".\\Materials\\CV_Result\\";
+	
+	fish_model_dir = ".\\Materials\\All\\";
+	fish_model = "Bocaccio0.3ds";
+	fish_texture = "BocaccT.bmp";
+	fish_vs = ".\\fish_vs.glsl";
+	fish_fs = ".\\fish_fs.glsl";
 
 	isF_MouseMovement = true;
 }

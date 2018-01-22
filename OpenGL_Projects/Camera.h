@@ -29,16 +29,24 @@ public:
 	float MouseSensitivity;
 	float Zoom;
 
+	// Aspect
+	float aspect;
+
 	Camera();
 
 	// Returns the view matrix calculated using Eular Angles and the LookAt Matrix
-	glm::mat4 GetViewMatrix()
+	glm::mat4 GetV()
 	{
 		return glm::lookAt(Position, Position + Front, Up);
 	}
 
+	glm::mat4 GetP()
+	{
+		return glm::perspective(Zoom, aspect, 0.1f, 100.0f);
+	}
+
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-	void ProcessKeyboard(Camera_Movement direction, float deltaTime);
+	void ProcessKeyboard(Camera_Movement direction, int deltaTime);
 
 	// Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
 	void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
