@@ -109,6 +109,7 @@ void Init_Global()
 	fish->Load_Model(gv->fish_model_dir + gv->fish_model);
 	fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
 	gv->graphics.push_back(fish);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void Display()

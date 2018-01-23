@@ -44,8 +44,8 @@ void GraphicsBase::Load_Model(const std::string model)
 {
 	glUseProgram(shader_program);
 	m_mesh_file = model;
-	//m_mesh = LoadMesh(model);
-	m_mesh = Model(model);
+	m_mesh = LoadMesh(model);
+	//m_mesh = Model(model);
 }
 
 void GraphicsBase::Load_Texture(const std::string t)

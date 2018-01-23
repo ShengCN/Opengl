@@ -34,7 +34,9 @@ void Graphics3DO::Draw()
 	glBindTexture(GL_TEXTURE_2D, m_textureId);
 	glUniform1i(glGetUniformLocation(shader_program, "texture"), 0);
 
-	m_mesh.Draw();
+	//m_mesh.Draw();
+	glBindVertexArray(m_mesh.mVao);
+	glDrawElements(GL_TRIANGLES, m_mesh.mNumIndices, GL_UNSIGNED_INT, 0);
 
 	glBindVertexArray(0);
 }
@@ -48,7 +50,7 @@ void Graphics3DO::Reload()
 
 	Init_Shaders(m_vs_file, m_fs_file);
 
-	m_mesh.Reload(m_mesh_file);
+	//m_mesh.Reload(m_mesh_file);
 }
 
 void Graphics3DO::Draw_Shader_Uniforms()

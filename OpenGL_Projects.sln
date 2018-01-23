@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGL_Projects", "OpenGL_Projects\OpenGL_Projects.vcxproj", "{3B1621A8-F6D0-48F2-9C80-5E3C8CEC930A}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Feature_Detect", "Feature_Detect\Feature_Detect.vcxproj", "{DFFC2BF7-2383-410E-B969-FA9B1D0CE5ED}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Utility_Workbench", "Utility_Workbench\Utility_Workbench.vcxproj", "{46E80868-7706-4C68-977A-9E2CCAD8DC0C}"
 EndProject
@@ -27,14 +25,6 @@ Global
 		{3B1621A8-F6D0-48F2-9C80-5E3C8CEC930A}.Release|x64.Build.0 = Release|x64
 		{3B1621A8-F6D0-48F2-9C80-5E3C8CEC930A}.Release|x86.ActiveCfg = Release|Win32
 		{3B1621A8-F6D0-48F2-9C80-5E3C8CEC930A}.Release|x86.Build.0 = Release|Win32
-		{DFFC2BF7-2383-410E-B969-FA9B1D0CE5ED}.Debug|x64.ActiveCfg = Debug|x64
-		{DFFC2BF7-2383-410E-B969-FA9B1D0CE5ED}.Debug|x64.Build.0 = Debug|x64
-		{DFFC2BF7-2383-410E-B969-FA9B1D0CE5ED}.Debug|x86.ActiveCfg = Debug|Win32
-		{DFFC2BF7-2383-410E-B969-FA9B1D0CE5ED}.Debug|x86.Build.0 = Debug|Win32
-		{DFFC2BF7-2383-410E-B969-FA9B1D0CE5ED}.Release|x64.ActiveCfg = Release|x64
-		{DFFC2BF7-2383-410E-B969-FA9B1D0CE5ED}.Release|x64.Build.0 = Release|x64
-		{DFFC2BF7-2383-410E-B969-FA9B1D0CE5ED}.Release|x86.ActiveCfg = Release|Win32
-		{DFFC2BF7-2383-410E-B969-FA9B1D0CE5ED}.Release|x86.Build.0 = Release|Win32
 		{46E80868-7706-4C68-977A-9E2CCAD8DC0C}.Debug|x64.ActiveCfg = Debug|x64
 		{46E80868-7706-4C68-977A-9E2CCAD8DC0C}.Debug|x64.Build.0 = Debug|x64
 		{46E80868-7706-4C68-977A-9E2CCAD8DC0C}.Debug|x86.ActiveCfg = Debug|Win32
