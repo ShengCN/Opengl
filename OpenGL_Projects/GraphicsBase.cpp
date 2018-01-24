@@ -79,6 +79,10 @@ void GraphicsBase::Generate_ImGui(const std::string shader_name)
 			ImGui::Checkbox(uniformName.c_str(), &bool_uniforms[uniformName]);
 			break;
 
+		case 35664: // vec2
+			ImGui::SliderFloat2(uniformName.c_str(), glm::value_ptr(vec2_uniforms[uniformName]), -10.0f, 10.0f);
+			break;
+
 		case 35665: // vec3
 			ImGui::SliderFloat3(uniformName.c_str(), glm::value_ptr(vec3_uniforms[uniformName]), -10.0f, 10.0f);
 			break;
@@ -123,6 +127,21 @@ void GraphicsBase::Update_Uniforms()
 
 		case 35670: // bool 
 			glUniform1i(glGetUniformLocation(shader_program, uniformName), bool_uniforms[keyname]);
+			break;
+
+		case 35664: // vec2
+			if (Check_Name(keyname, "resolution"))
+			{
+				vec2_uniforms[keyname] = glm::vec2(Global_Variables::Instance()->width, Global_Variables::Instance()->height);
+			}
+
+			if(Check_Name(keyname,"mouse"))
+			{
+				vec2_uniforms[keyname] = glm::vec2(Global_Variables::Instance()->mouseX, Global_Variables::Instance()->mouseY);
+			}
+
+			loc = glGetUniformLocation(shader_program, uniformName);
+			glUniform2fv(glGetUniformLocation(shader_program, uniformName), 1, glm::value_ptr(vec2_uniforms[keyname]));
 			break;
 
 		case 35665: // vec3

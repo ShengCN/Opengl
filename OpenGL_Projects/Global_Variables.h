@@ -12,6 +12,12 @@ class Global_Variables
 public:
 	static Global_Variables* Instance();
 
+	// Resolution
+	int width;
+	int height;
+	int mouseX;
+	int mouseY;
+
 	// Camera properties
 	Camera* current_camera;
 
@@ -29,6 +35,7 @@ public:
 	std::unordered_map<std::string, float> float_uniforms;
 	std::unordered_map<std::string, bool> bool_uniforms;
 	std::unordered_map<std::string, int> int_uniforms;
+	std::unordered_map<std::string, glm::vec2> vec2_uniforms;
 	std::unordered_map<std::string, glm::vec3> vec3_uniforms;
 	std::unordered_map<std::string, glm::vec4> vec4_uniforms;
 
@@ -49,6 +56,10 @@ public:
 	std::string fish_vs;
 	std::string fish_fs;
 	
+	// Particles
+	std::string particle_vs;
+	std::string particle_fs;
+
 	// BillBoard manipulation
 	std::map<int, int> layer_anglesize_map;
 	int layer_max;

@@ -21,6 +21,7 @@
 #include "GraphicsBillboard.h"
 #include "Utilities.h"
 #include "Graphics3DO.h"
+#include "GraphicsPoints.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 
@@ -78,6 +79,7 @@ void InitOpenGL()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_POINT_SPRITE); // allows textured points
 	glEnable(GL_PROGRAM_POINT_SIZE); //allows us to set point size in vertex shader
+	glPointSize(10);
 
 	ImGui_ImplGlut_Init();
 	Init_Global();
@@ -104,12 +106,18 @@ void Init_Global()
 	gv->graphics.push_back(point_light);
 
 	// Object
-	GraphicsBase* fish = new Graphics3DO();
-	fish->Init_Shaders(gv->fish_vs, gv->fish_fs);
-	fish->Load_Model(gv->fish_model_dir + gv->fish_model);
-	fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
-	gv->graphics.push_back(fish);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//	GraphicsBase* fish = new Graphics3DO();
+//	fish->Init_Shaders(gv->fish_vs, gv->fish_fs);
+//	fish->Load_Model(gv->fish_model_dir + gv->fish_model);
+//	fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
+//	gv->graphics.push_back(fish);
+//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	// Particles
+	GraphicsBase* particles = new GraphicsPoints();
+	particles->Init_Shaders(gv->particle_vs, gv->particle_fs);
+	particles->Init_Buffers();
+	gv->graphics.push_back(particles);
 }
 
 void Display()
@@ -123,12 +131,6 @@ void Display()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	for (auto g : gv->graphics)
-	{
-		g->Update_Uniforms();
-		g->Draw();
-	}
-
-	for (auto g : gv->billboards)
 	{
 		g->Update_Uniforms();
 		g->Draw();

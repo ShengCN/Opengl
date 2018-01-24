@@ -40,5 +40,8 @@ Global_Variables::Global_Variables()
 	fish_vs = ".\\fish_vs.glsl";
 	fish_fs = ".\\fish_fs.glsl";
 
+	particle_vs = ".\\particle_vs.glsl";
+	particle_fs = ".\\particle_fs.glsl";
+
 	isF_MouseMovement = true;
 }

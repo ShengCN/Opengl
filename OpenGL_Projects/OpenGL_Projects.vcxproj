@@ -125,6 +125,7 @@
     <ClCompile Include="GraphicsBase.cpp" />
     <ClCompile Include="GraphicsBillboard.cpp" />
     <ClCompile Include="GraphicsLight.cpp" />
+    <ClCompile Include="GraphicsPoints.cpp" />
     <ClCompile Include="include\IchenLib\IchenGlut.cpp" />
     <ClCompile Include="include\IchenLib\LoadMesh.cpp" />
     <ClCompile Include="include\IchenLib\LoadTexture.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="GraphicsBase.h" />
     <ClInclude Include="GraphicsBillboard.h" />
     <ClInclude Include="GraphicsLight.h" />
+    <ClInclude Include="GraphicsPoints.h" />
     <ClInclude Include="include\IchenLib\IchenGlut.h" />
     <ClInclude Include="include\IchenLib\LoadMesh.h" />
     <ClInclude Include="include\IchenLib\LoadTexture.h" />

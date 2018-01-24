@@ -126,6 +126,8 @@ void PassiveMotionEvents(int x, int y)
 
 	auto gv = Global_Variables::Instance();
 	gv->lastMousePos = glm::vec2(x, y);
+	gv->mouseX = x;
+	gv->mouseY = y;
 }
 
 void Reshape(int w,int h)
@@ -134,6 +136,8 @@ void Reshape(int w,int h)
 	windowHeight = h;
 	auto gv = Global_Variables::Instance();
 	gv->current_camera->aspect = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
+	gv->width = w;
+	gv->height = h;
 
 	glViewport(0, 0, windowWidth, windowHeight);
 }

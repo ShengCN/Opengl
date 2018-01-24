@@ -36,6 +36,7 @@ public:
 	std::unordered_map<std::string, float> float_uniforms;
 	std::unordered_map<std::string, bool> bool_uniforms;
 	std::unordered_map<std::string, int> int_uniforms;
+	std::unordered_map<std::string, glm::vec2> vec2_uniforms;
 	std::unordered_map<std::string, glm::vec3> vec3_uniforms;
 	std::unordered_map<std::string, glm::vec4> vec4_uniforms;
 
@@ -64,6 +65,7 @@ private:
 		return (std::regex_search(name, rx) || regex_search(name, rx_upper));
 	}
 
+	// Check if filename has target name
 	bool Check_Name(const std::string fileName, const std::string target)
 	{
 		const std::regex regex(target);

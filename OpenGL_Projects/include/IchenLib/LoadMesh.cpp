@@ -99,7 +99,14 @@ MeshData LoadMesh(const std::string& pFile)
 		return mesh;
 	}
 
-	mesh.mScene = importer.ReadFile(pFile, aiProcessPreset_TargetRealtime_Quality);
+	mesh.mScene = importer.ReadFile(pFile, aiProcess_CalcTangentSpace | \
+		aiProcess_GenSmoothNormals | \
+		aiProcess_Triangulate | \
+		aiProcess_GenUVCoords | \
+		aiProcess_SortByPType | \
+		aiProcess_FindDegenerates | \
+		aiProcess_FindInvalidData | \
+		0);
 	//|aiProcess_FlipWindingOrder);
 	//| aiProcess_PreTransformVertices);
 
@@ -260,14 +267,14 @@ void ProcessMesh(aiMesh* current_mesh, aiNode* currentNode)
 				fm = *m * fm;
 			}
 
-			//aiVector3D translate(fm.a4, fm.b4, fm.c4);
-			//auto newV = v - translate;
-			auto newV = v;
+			aiVector3D translate(fm.a4, fm.b4, fm.c4);
+			auto newV = v + translate;
+			//auto newV = v;
 			verticeArray[verticesIndex++] = newV.x;
 			verticeArray[verticesIndex++] = newV.y;
 			verticeArray[verticesIndex++] = newV.z;
-			std::cout << "Current node: " << currentNode->mName.C_Str() << "\t" << newV.x << " " << newV.y << " " << newV.z <<
-				std::endl;
+//			std::cout << "Current node: " << currentNode->mName.C_Str() << "\t" << newV.x << " " << newV.y << " " << newV.z <<
+//				std::endl;
 		});
 		//verticesIndex += 3 * v_num;
 	}
