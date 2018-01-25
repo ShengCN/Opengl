@@ -60,6 +60,10 @@ public:
 	std::string particle_vs;
 	std::string particle_fs;
 
+	// Grids
+	std::string grid_vs;
+	std::string grid_fs;
+
 	// BillBoard manipulation
 	std::map<int, int> layer_anglesize_map;
 	int layer_max;

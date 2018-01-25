@@ -9,7 +9,6 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 #include <vector>
-#include <stdio.h>
 #include <iostream>
 
 #include "imgui/imgui_impl_glut.h"
@@ -18,10 +17,10 @@
 #include "IchenLib/OpenGLHelpers.h"
 #include "Global_Variables.h"
 #include "GraphicsLight.h"
-#include "GraphicsBillboard.h"
-#include "Utilities.h"
+#include "IchenLib/Utilities.h"
 #include "Graphics3DO.h"
 #include "GraphicsPoints.h"
+#include "GraphicsGrids.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 
@@ -118,6 +117,14 @@ void Init_Global()
 	particles->Init_Shaders(gv->particle_vs, gv->particle_fs);
 	particles->Init_Buffers();
 	gv->graphics.push_back(particles);
+
+	// Grids
+	GraphicsBase* grids = new GraphicsGrids();
+	grids->Init_Shaders(gv->grid_vs, gv->grid_fs);
+	grids->Init_Buffers();
+	gv->graphics.push_back(grids);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void Display()

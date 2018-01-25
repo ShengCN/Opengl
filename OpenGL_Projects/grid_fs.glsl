@@ -57,8 +57,8 @@ void Default()
 void main(void)
 {   
     //Draw_Plot();
-    Draw_Bubble();
-    //Default();
+    //Draw_Bubble();
+    Default();
 }
 
 

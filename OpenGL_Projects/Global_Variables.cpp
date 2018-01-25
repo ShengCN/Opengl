@@ -1,5 +1,5 @@
 #include "Global_Variables.h"
-#include "Utilities.h"
+#include "IchenLib/Utilities.h"
 
 Global_Variables *Global_Variables::m_instance = nullptr;
 
@@ -22,6 +22,8 @@ Global_Variables::Global_Variables()
 
 	test_vs = ".\\vs.glsl";
 	test_fs = ".\\fs.glsl";
+	grid_vs = ".\\grid_vs.glsl";
+	grid_fs = ".\\grid_fs.glsl";
 	billboard_vs = ".\\billboard_vs.glsl";
 	billboard_gs = ".\\billboard_gs.glsl";
 	billboard_fs = ".\\billboard_fs.glsl";

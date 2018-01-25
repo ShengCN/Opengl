@@ -20,23 +20,11 @@ void main(void)
     dis.z = 0.2*sin(pos_attrib.x*10+time);
 
     gl_Position = PVM*vec4(pos_attrib+dis, 1.0);
-
-    float r = 5.0*sin(10.0*id);
-    gl_Position = PVM*vec4(r*cos(id+new_time), 4.0*fract(0.1*id+new_time)-2.0, r*sin(id+new_time), 1.0);  
-   
+    //float r = 5.0*sin(10.0*id);
+    //gl_Position = PVM*vec4(r*cos(id+new_time), 4.0*fract(0.1*id+new_time)-2.0, r*sin(id+new_time), 1.0);  
     
     tex_coord = tex_coord_attrib;
     
-    gl_PointSize = 10+40*pow(abs(sin(gl_Position.x*10 + time)),2);
-
-    // // Mouse
-    // vec2 mouseUV = mouse.xy / resolution.xy;
-    // mouseUV.y = 1.0 - mouseUV.y;
-    // float r = length(gl_Position - vec4(mouseUV.x,mouseUV.y,0.0,1.0));
-    
-    // if(r <0.9)
-    // {
-    //     gl_PointSize = 80;  
-    // }
+    //gl_PointSize = 10+40*pow(abs(sin(gl_Position.x*10 + time)),2);
 
 }

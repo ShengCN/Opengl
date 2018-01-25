@@ -124,6 +124,7 @@
     <ClCompile Include="Graphics3DO.cpp" />
     <ClCompile Include="GraphicsBase.cpp" />
     <ClCompile Include="GraphicsBillboard.cpp" />
+    <ClCompile Include="GraphicsGrids.cpp" />
     <ClCompile Include="GraphicsLight.cpp" />
     <ClCompile Include="GraphicsPoints.cpp" />
     <ClCompile Include="include\IchenLib\IchenGlut.cpp" />
@@ -131,13 +132,13 @@
     <ClCompile Include="include\IchenLib\LoadTexture.cpp" />
     <ClCompile Include="include\IchenLib\OpenGLHelpers.cpp" />
     <ClCompile Include="include\IchenLib\ShaderProcessor.cpp" />
+    <ClCompile Include="include\IchenLib\Utilities.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
     <ClCompile Include="include\imgui\imgui_draw.cpp" />
     <ClCompile Include="include\imgui\imgui_impl_glut.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -146,6 +147,7 @@
     <ClInclude Include="Graphics3DO.h" />
     <ClInclude Include="GraphicsBase.h" />
     <ClInclude Include="GraphicsBillboard.h" />
+    <ClInclude Include="GraphicsGrids.h" />
     <ClInclude Include="GraphicsLight.h" />
     <ClInclude Include="GraphicsPoints.h" />
     <ClInclude Include="include\IchenLib\IchenGlut.h" />
@@ -153,6 +155,7 @@
     <ClInclude Include="include\IchenLib\LoadTexture.h" />
     <ClInclude Include="include\IchenLib\OpenGLHelpers.h" />
     <ClInclude Include="include\IchenLib\ShaderProcessor.h" />
+    <ClInclude Include="include\IchenLib\Utilities.h" />
     <ClInclude Include="include\imgui\imconfig.h" />
     <ClInclude Include="include\imgui\imgui.h" />
     <ClInclude Include="include\imgui\imgui_impl_glut.h" />
@@ -161,7 +164,6 @@
     <ClInclude Include="include\imgui\stb_textedit.h" />
     <ClInclude Include="include\imgui\stb_truetype.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fs.glsl" />
