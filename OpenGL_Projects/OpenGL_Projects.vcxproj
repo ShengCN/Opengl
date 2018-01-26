@@ -124,6 +124,7 @@
     <ClCompile Include="Graphics3DO.cpp" />
     <ClCompile Include="GraphicsBase.cpp" />
     <ClCompile Include="GraphicsBillboard.cpp" />
+    <ClCompile Include="GraphicsFish.cpp" />
     <ClCompile Include="GraphicsGrids.cpp" />
     <ClCompile Include="GraphicsLight.cpp" />
     <ClCompile Include="GraphicsPoints.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="Graphics3DO.h" />
     <ClInclude Include="GraphicsBase.h" />
     <ClInclude Include="GraphicsBillboard.h" />
+    <ClInclude Include="GraphicsFish.h" />
     <ClInclude Include="GraphicsGrids.h" />
     <ClInclude Include="GraphicsLight.h" />
     <ClInclude Include="GraphicsPoints.h" />

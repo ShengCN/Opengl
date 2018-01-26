@@ -21,6 +21,7 @@
 #include "Graphics3DO.h"
 #include "GraphicsPoints.h"
 #include "GraphicsGrids.h"
+#include "GraphicsFish.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 
@@ -93,7 +94,7 @@ void Init_Global()
 	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
 	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
 	gv->float_uniforms["cameraSpeed"] = 0.5f;
-	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(1.0f,1.0f, 1.0f, 1.0f);
+	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
 	// Point Light
@@ -105,26 +106,11 @@ void Init_Global()
 	gv->graphics.push_back(point_light);
 
 	// Object
-//	GraphicsBase* fish = new Graphics3DO();
-//	fish->Init_Shaders(gv->fish_vs, gv->fish_fs);
-//	fish->Load_Model(gv->fish_model_dir + gv->fish_model);
-//	fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
-//	gv->graphics.push_back(fish);
-//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	// Particles
-	GraphicsBase* particles = new GraphicsPoints();
-	particles->Init_Shaders(gv->particle_vs, gv->particle_fs);
-	particles->Init_Buffers();
-	gv->graphics.push_back(particles);
-
-	// Grids
-	GraphicsBase* grids = new GraphicsGrids();
-	grids->Init_Shaders(gv->grid_vs, gv->grid_fs);
-	grids->Init_Buffers();
-	gv->graphics.push_back(grids);
-
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	GraphicsBase* fish = new GraphicsFish();
+	fish->Init_Shaders(gv->fish_vs, gv->fish_fs);
+	fish->Load_Model(gv->fish_model_dir + gv->fish_model);
+	fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
+	gv->graphics.push_back(fish);
 }
 
 void Display()

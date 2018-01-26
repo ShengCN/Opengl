@@ -3,7 +3,6 @@ layout(location = 1) uniform float time;
 layout(location = 2) uniform vec2 resolution;
 layout(location = 3) uniform vec2 mouse;
 layout(location = 4)uniform vec4 fcolor;
-layout(location = 5)uniform sampler2D texture;
         
 in vec2 tex_coord;
 in vec4 gl_FragCoord;

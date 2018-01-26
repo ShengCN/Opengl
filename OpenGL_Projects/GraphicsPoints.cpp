@@ -28,9 +28,7 @@ void GraphicsPoints::Draw()
 	glm::mat4 P = gv->current_camera->GetP();
 
 	// variables
-	glUniformMatrix4fv(glGetUniformLocation(shader_program, "PVM"), 1, false, glm::value_ptr(P*V*M));
-	glUniformMatrix4fv(glGetUniformLocation(shader_program, "V"), 1, false, glm::value_ptr(V));
-	glUniformMatrix4fv(glGetUniformLocation(shader_program, "P"), 1, false, glm::value_ptr(P));
+	glUniformMatrix4fv(0, 1, false, glm::value_ptr(P*V*M));
 
 	glBindVertexArray(vao);
 	glDrawArrays(GL_POINTS, 0, 100);
@@ -80,7 +78,7 @@ void GraphicsPoints::Init_Buffers()
 	glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec3), &positions[0], GL_STATIC_DRAW);
 
 	auto pos_loc = glGetAttribLocation(shader_program, "pos_attrib");
-	glEnableVertexAttribArray(pos_loc);
-	glVertexAttribPointer(pos_loc, 3, GL_FLOAT, false, 0, 0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, false, 0, 0);
 	glBindVertexArray(0);
 }

@@ -36,9 +36,9 @@ Global_Variables::Global_Variables()
 	dataset_dirs.push_back(".\\Materials\\CV_Test\\5\\");
 	cv_des_dir = ".\\Materials\\CV_Result\\";
 	
-	fish_model_dir = ".\\Materials\\All\\";
-	fish_model = "Bocaccio0.3ds";
-	fish_texture = "BocaccT.bmp";
+	fish_model_dir = ".\\Materials\\";
+	fish_model = "Amago0.obj";
+	fish_texture = "AmagoT.bmp";
 	fish_vs = ".\\fish_vs.glsl";
 	fish_fs = ".\\fish_fs.glsl";
 

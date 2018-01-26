@@ -29,13 +29,12 @@ void GraphicsGrids::Draw()
 	glm::mat4 P = gv->current_camera->GetP();
 
 	// variables
-	glUniformMatrix4fv(glGetUniformLocation(shader_program, "PVM"), 1, false, glm::value_ptr(P*V*M));
-	glUniformMatrix4fv(glGetUniformLocation(shader_program, "V"), 1, false, glm::value_ptr(V));
-	glUniformMatrix4fv(glGetUniformLocation(shader_program, "P"), 1, false, glm::value_ptr(P));
-
+	glUniformMatrix4fv(0, 1, false, glm::value_ptr(P*V*M));
 	glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, 16*3*2, GL_UNSIGNED_INT,0);
 
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glDrawElements(GL_TRIANGLES, 16*3*2, GL_UNSIGNED_INT,0);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glBindVertexArray(0);
 }
 
@@ -106,9 +105,9 @@ void GraphicsGrids::Init_Buffers()
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, gridPoistions.size()* sizeof(glm::vec3), &gridPoistions[0], GL_STATIC_DRAW);
-	auto pos_loc = glGetAttribLocation(shader_program, "pos_attrib");
-	glEnableVertexAttribArray(pos_loc);
-	glVertexAttribPointer(pos_loc, 3, GL_FLOAT, false, 0, 0);
+	//auto pos_loc = glGetAttribLocation(shader_program, "pos_attrib");
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 
 	// EBO
 	glGenBuffers(1, &ebo);
