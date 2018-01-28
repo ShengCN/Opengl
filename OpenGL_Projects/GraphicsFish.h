@@ -17,5 +17,6 @@ public:
 
 private:
 	GLuint vbo;
+	std::vector<glm::vec3> displacement;
 };
 

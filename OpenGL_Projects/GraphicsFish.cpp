@@ -38,7 +38,7 @@ void GraphicsFish::Draw()
 	//m_mesh.Draw();
 	glBindVertexArray(m_mesh.mVao);
 	// glDrawElements(GL_TRIANGLES, m_mesh.mNumIndices, GL_UNSIGNED_INT, 0);
-	glDrawElementsInstanced(GL_TRIANGLES, m_mesh.mNumIndices, GL_UNSIGNED_INT, 0,2);
+	glDrawElementsInstanced(GL_TRIANGLES, m_mesh.mNumIndices, GL_UNSIGNED_INT, 0,1);
 
 	glBindVertexArray(0);
 }
@@ -85,14 +85,15 @@ void GraphicsFish::Init_Buffers()
 		}
 	}
 	//Init displacement
-	std::vector<glm::vec3> displacement= { glm::vec3(0.0,0.0,0.0),glm::vec3(0.0,1.0,0.0) };
+	displacement= { glm::vec3(0.0,0.0,0.0),glm::vec3(0.0,1.0,0.0) };
 
 	glBindVertexArray(m_mesh.mVao);
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(vbo, sizeof(glm::vec3)*displacement.size(), &displacement[0], GL_STATIC_DRAW);
-	glEnableVertexAttribArray(4);
 	glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0);
+	glEnableVertexAttribArray(4);
 	glVertexAttribDivisor(4, 1);
-	glBindVertexArray(0);
+	
+	//glBindVertexArray(0);
 }
