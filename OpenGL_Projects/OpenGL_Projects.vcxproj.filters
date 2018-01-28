@@ -90,7 +90,11 @@
     <ClCompile Include="GraphicsFish.cpp">
       <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="GraphicsShaderToy.cpp">
+=======
+    <ClCompile Include="GraphicsInstance.cpp">
+>>>>>>> Instance
       <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,10 +171,14 @@
     <ClInclude Include="GraphicsFish.h">
       <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="GLCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsShaderToy.h">
+=======
+    <ClInclude Include="GraphicsInstance.h">
+>>>>>>> Instance
       <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
   </ItemGroup>

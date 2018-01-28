@@ -45,8 +45,13 @@ Global_Variables::Global_Variables()
 	particle_vs = ".\\particle_vs.glsl";
 	particle_fs = ".\\particle_fs.glsl";
 
+<<<<<<< HEAD
 	shadertoy_vs = ".\\shadertoy_vs.glsl";
 	shadertoy_fs = ".\\shadertoy_fs.glsl";
+=======
+	instance_vs = ".\\instance_vs.glsl";
+	instance_fs = ".\\instance_fs.glsl";
+>>>>>>> Instance
 
 	isF_MouseMovement = true;
 	isImguiOpen = true;

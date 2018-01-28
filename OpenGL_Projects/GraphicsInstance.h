@@ -1,11 +1,12 @@
 #pragma once
 #include "GraphicsBase.h"
-class GraphicsFish :
+
+class GraphicsInstance :
 	public GraphicsBase
 {
 public:
-	GraphicsFish();
-	~GraphicsFish();
+	GraphicsInstance();
+	~GraphicsInstance();
 
 	void Draw() override;
 	void Reload() override;
@@ -14,14 +15,7 @@ public:
 	void BufferManage() override;
 	void ReleaseBuffers() override;
 	void Init_Buffers() override;
-
 private:
-<<<<<<< HEAD
-	GLuint vbo;
-	std::vector<glm::vec3> displacement;
+	GLuint vao,vbo,offset_vbo;
 };
 
-=======
-	GLuint vao,color_vbo, position_vbo;
-};
->>>>>>> Instance

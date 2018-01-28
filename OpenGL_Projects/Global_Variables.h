@@ -67,9 +67,15 @@ public:
 	std::string grid_vs;
 	std::string grid_fs;
 
+<<<<<<< HEAD
 	// Shader toy
 	std::string shadertoy_vs;
 	std::string shadertoy_fs;
+=======
+	// Instanced
+	std::string instance_vs;
+	std::string instance_fs;
+>>>>>>> Instance
 
 	// BillBoard manipulation
 	std::map<int, int> layer_anglesize_map;
