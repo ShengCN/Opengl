@@ -1,11 +1,12 @@
 #pragma once
 #include "GraphicsBase.h"
-class GraphicsFish :
+
+class GraphicsInstance :
 	public GraphicsBase
 {
 public:
-	GraphicsFish();
-	~GraphicsFish();
+	GraphicsInstance();
+	~GraphicsInstance();
 
 	void Draw() override;
 	void Reload() override;
@@ -14,7 +15,7 @@ public:
 	void BufferManage() override;
 	void ReleaseBuffers() override;
 	void Init_Buffers() override;
-
 private:
-	GLuint vao,color_vbo, position_vbo;
+	GLuint vao,vbo,offset_vbo;
 };
+

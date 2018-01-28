@@ -126,6 +126,7 @@
     <ClCompile Include="GraphicsBillboard.cpp" />
     <ClCompile Include="GraphicsFish.cpp" />
     <ClCompile Include="GraphicsGrids.cpp" />
+    <ClCompile Include="GraphicsInstance.cpp" />
     <ClCompile Include="GraphicsLight.cpp" />
     <ClCompile Include="GraphicsPoints.cpp" />
     <ClCompile Include="include\IchenLib\IchenGlut.cpp" />
@@ -150,6 +151,7 @@
     <ClInclude Include="GraphicsBillboard.h" />
     <ClInclude Include="GraphicsFish.h" />
     <ClInclude Include="GraphicsGrids.h" />
+    <ClInclude Include="GraphicsInstance.h" />
     <ClInclude Include="GraphicsLight.h" />
     <ClInclude Include="GraphicsPoints.h" />
     <ClInclude Include="include\IchenLib\IchenGlut.h" />

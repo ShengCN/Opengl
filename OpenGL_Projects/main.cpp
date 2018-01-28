@@ -22,6 +22,7 @@
 #include "GraphicsPoints.h"
 #include "GraphicsGrids.h"
 #include "GraphicsFish.h"
+#include "GraphicsInstance.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 
@@ -109,8 +110,14 @@ void Init_Global()
 	GraphicsBase* fish = new GraphicsFish();
 	fish->Init_Shaders(gv->fish_vs, gv->fish_fs);
 	fish->Load_Model(gv->fish_model_dir + gv->fish_model);
+	fish->Init_Buffers();
 	fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
 	gv->graphics.push_back(fish);
+
+//	GraphicsBase* instance = new GraphicsInstance();
+//	instance->Init_Shaders(gv->instance_vs, gv->instance_fs);
+//	instance->Init_Buffers();
+//	gv->graphics.push_back(instance);
 }
 
 void Display()

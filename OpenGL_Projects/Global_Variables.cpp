@@ -45,5 +45,8 @@ Global_Variables::Global_Variables()
 	particle_vs = ".\\particle_vs.glsl";
 	particle_fs = ".\\particle_fs.glsl";
 
+	instance_vs = ".\\instance_vs.glsl";
+	instance_fs = ".\\instance_fs.glsl";
+
 	isF_MouseMovement = true;
 }
