@@ -90,6 +90,9 @@
     <ClCompile Include="GraphicsFish.cpp">
       <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsShaderToy.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsBase.h">
@@ -162,6 +165,12 @@
       <Filter>Header Files\IchenLib</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsFish.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GLCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsShaderToy.h">
       <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
   </ItemGroup>

@@ -31,7 +31,7 @@ void GraphicsPoints::Draw()
 	glUniformMatrix4fv(0, 1, false, glm::value_ptr(P*V*M));
 
 	glBindVertexArray(vao);
-	glDrawArrays(GL_POINTS, 0, 100);
+	glDrawArrays(GL_POINTS, 0, 10000000);
 
 	glBindVertexArray(0);
 }
@@ -61,14 +61,16 @@ void GraphicsPoints::ReleaseBuffers()
 void GraphicsPoints::Init_Buffers()
 {
 	// set up particles initial positions
-	std::vector<glm::vec3> positions(100);
+	std::vector<glm::vec3> tri = { glm::vec3(1.0,0.0,0.0),glm::vec3(0.0,1.0,0.0),glm::vec3(-1.0,0.0,0.0) };
+	const int ps = 10000000;
+	std::vector<glm::vec3> positions(ps);
+	glm::vec3 seed(0.2, 0.1, 0.0);
 	unsigned int index = 0;
-	for(auto i = 0; i < 10; ++i)
+	for(int i= 0; i < ps;++i)
 	{
-		for(auto j = 0; j < 10; ++j)
-		{
-			positions[index++] = glm::vec3(static_cast<float>(i)/10.0, static_cast<float>(j)/10.0, 0.0);
-		}
+		positions[i] = seed;
+		auto t = rand() % 3;
+		seed = 0.5f * (tri[t] + seed);
 	}
 
 	glGenVertexArrays(1, &vao);

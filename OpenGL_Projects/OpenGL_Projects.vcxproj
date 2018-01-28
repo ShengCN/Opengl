@@ -79,7 +79,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLM_FORCE_RADIANS;NDEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
@@ -128,6 +128,7 @@
     <ClCompile Include="GraphicsGrids.cpp" />
     <ClCompile Include="GraphicsLight.cpp" />
     <ClCompile Include="GraphicsPoints.cpp" />
+    <ClCompile Include="GraphicsShaderToy.cpp" />
     <ClCompile Include="include\IchenLib\IchenGlut.cpp" />
     <ClCompile Include="include\IchenLib\LoadMesh.cpp" />
     <ClCompile Include="include\IchenLib\LoadTexture.cpp" />
@@ -144,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="GLCommon.h" />
     <ClInclude Include="Global_Variables.h" />
     <ClInclude Include="Graphics3DO.h" />
     <ClInclude Include="GraphicsBase.h" />
@@ -152,6 +154,7 @@
     <ClInclude Include="GraphicsGrids.h" />
     <ClInclude Include="GraphicsLight.h" />
     <ClInclude Include="GraphicsPoints.h" />
+    <ClInclude Include="GraphicsShaderToy.h" />
     <ClInclude Include="include\IchenLib\IchenGlut.h" />
     <ClInclude Include="include\IchenLib\LoadMesh.h" />
     <ClInclude Include="include\IchenLib\LoadTexture.h" />

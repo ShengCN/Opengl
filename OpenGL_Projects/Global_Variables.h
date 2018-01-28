@@ -12,6 +12,9 @@ class Global_Variables
 public:
 	static Global_Variables* Instance();
 
+	// Imgui 
+	bool isImguiOpen;
+
 	// Resolution
 	int width;
 	int height;
@@ -63,6 +66,10 @@ public:
 	// Grids
 	std::string grid_vs;
 	std::string grid_fs;
+
+	// Shader toy
+	std::string shadertoy_vs;
+	std::string shadertoy_fs;
 
 	// BillBoard manipulation
 	std::map<int, int> layer_anglesize_map;

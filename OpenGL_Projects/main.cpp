@@ -22,6 +22,7 @@
 #include "GraphicsPoints.h"
 #include "GraphicsGrids.h"
 #include "GraphicsFish.h"
+#include "GraphicsShaderToy.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 
@@ -89,6 +90,7 @@ void InitOpenGL()
 void Init_Global()
 {
 	auto gv = Global_Variables::Instance();
+	gv->isImguiOpen = true;
 	gv->vec3_uniforms["cameraPos"] = glm::vec3(0.0f, -0.2f, 3.0f);
 	gv->vec3_uniforms["cameraFront"] = glm::vec3(0.0f, 0.0f, -1.0f);
 	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -97,6 +99,8 @@ void Init_Global()
 	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
+	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
+		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 	// Point Light
 	GraphicsBase* point_light = new GraphicsLight();
 	point_light->Init_Shaders(gv->test_vs, gv->test_fs);
@@ -106,11 +110,22 @@ void Init_Global()
 	gv->graphics.push_back(point_light);
 
 	// Object
-	GraphicsBase* fish = new GraphicsFish();
-	fish->Init_Shaders(gv->fish_vs, gv->fish_fs);
-	fish->Load_Model(gv->fish_model_dir + gv->fish_model);
-	fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
-	gv->graphics.push_back(fish);
+		GraphicsBase* fish = new GraphicsFish();
+		fish->Init_Shaders(gv->fish_vs, gv->fish_fs);
+		fish->Load_Model(gv->fish_model_dir + gv->fish_model);
+		fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
+		gv->graphics.push_back(fish);
+
+//	GraphicsBase* points = new GraphicsPoints();
+//	points->Init_Shaders(gv->particle_vs, gv->particle_fs);
+//	points->Init_Buffers();
+//	gv->graphics.push_back(points);
+	
+	// Shader toy 
+//	GraphicsBase* shadertoy = new GraphicsShaderToy();
+//	shadertoy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
+//	shadertoy->Init_Buffers();
+//	gv->graphics.push_back(shadertoy);
 }
 
 void Display()
@@ -119,8 +134,6 @@ void Display()
 	gv->delta_time = glutGet(GLUT_ELAPSED_TIME) - gv->last_frame_time;
 	gv->last_frame_time = glutGet(GLUT_ELAPSED_TIME);
 
-	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
-	             gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	for (auto g : gv->graphics)
@@ -129,7 +142,8 @@ void Display()
 		g->Draw();
 	}
 
-	ImGui_Update();
+	if(gv->isImguiOpen)
+		ImGui_Update();
 	glutSwapBuffers();
 }
 
@@ -160,6 +174,10 @@ void ReloadShaders()
 	for (auto g : gv->graphics)
 	{
 		g->Reload();
+		g->Get_Shader()==-1?
+			glClearColor(1.0f, 0.0f, 1.0f, 0.0f):
+			glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
+				gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 	}
 }
 

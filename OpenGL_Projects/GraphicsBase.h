@@ -12,8 +12,8 @@ public:
 	GraphicsBase();
 	virtual ~GraphicsBase();
 
-	bool Init_Shaders(const std::string vs, const std::string fs);
-	bool Init_Shaders(const std::string vs, const std::string gs,const std::string fs);
+	GLuint Init_Shaders(const std::string vs, const std::string fs);
+	GLuint Init_Shaders(const std::string vs, const std::string gs, const std::string fs);
 	void Load_Model(const std::string model);
 	void Load_Texture(const std::string t);
 
@@ -22,7 +22,7 @@ public:
 	void Update_Uniforms();
 
 	// Get && Set
-	GLuint Get_Shader() const { return shader_program; }
+	GLint Get_Shader() const { return shader_program; }
 
 	virtual void Draw() = 0;
 	virtual void Draw_Shader_Uniforms() = 0;
@@ -41,7 +41,7 @@ public:
 	std::unordered_map<std::string, glm::vec4> vec4_uniforms;
 
 protected:
-	GLuint shader_program;
+	GLint shader_program;
 	std::string m_vs_file;
 	std::string m_gs_file;
 	std::string m_fs_file;

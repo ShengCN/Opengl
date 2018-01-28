@@ -45,5 +45,9 @@ Global_Variables::Global_Variables()
 	particle_vs = ".\\particle_vs.glsl";
 	particle_fs = ".\\particle_fs.glsl";
 
+	shadertoy_vs = ".\\shadertoy_vs.glsl";
+	shadertoy_fs = ".\\shadertoy_fs.glsl";
+
 	isF_MouseMovement = true;
+	isImguiOpen = true;
 }
