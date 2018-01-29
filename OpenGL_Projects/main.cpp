@@ -110,11 +110,12 @@ void Init_Global()
 	gv->graphics.push_back(point_light);
 
 	// Object
-		GraphicsBase* fish = new GraphicsFish();
-		fish->Init_Shaders(gv->fish_vs, gv->fish_fs);
-		fish->Load_Model(gv->fish_model_dir + gv->fish_model);
-		fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
-		gv->graphics.push_back(fish);
+	GraphicsBase* fish = new GraphicsFish();
+	fish->Init_Shaders(gv->fish_vs, gv->fish_fs);
+	fish->Load_Model(gv->fish_model_dir + gv->fish_model);
+	fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
+	fish->Init_Buffers();
+	gv->graphics.push_back(fish);
 
 //	GraphicsBase* points = new GraphicsPoints();
 //	points->Init_Shaders(gv->particle_vs, gv->particle_fs);

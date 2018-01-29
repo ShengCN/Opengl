@@ -16,6 +16,6 @@ public:
 	void Init_Buffers() override;
 
 private:
-	GLuint vbo;
+	GLuint transform_buffer,color_buffer;
 };
 

@@ -8,8 +8,8 @@ in vec4 fish_color;
 
 void main()
 {
-    //fragcolor = mix(texture(diffuse_color,tex_coord),fish_color,0.5);
+    fragcolor = mix(texture(diffuse_color,tex_coord),fish_color,0.5);
     //fragcolor = vec4(0.0,1.0,1.0,1.0);
 
-    fragcolor = texture(diffuse_color,tex_coord);
+    //fragcolor = texture(diffuse_color,tex_coord);
 }
