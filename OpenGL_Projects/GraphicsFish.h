@@ -16,7 +16,7 @@ public:
 	void Init_Buffers() override;
 
 private:
-	GLuint vbo;
-	std::vector<glm::vec3> displacement;
+
+	GLuint transform_buffer,color_buffer;
 };
 

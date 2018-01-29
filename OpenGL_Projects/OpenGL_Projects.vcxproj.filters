@@ -93,6 +93,9 @@
     <ClCompile Include="GraphicsShaderToy.cpp">
       <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsInstances.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsBase.h">
@@ -171,6 +174,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsShaderToy.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsInstances.h">
       <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
   </ItemGroup>
