@@ -58,7 +58,9 @@ public:
 	std::string fish_texture;
 	std::string fish_vs;
 	std::string fish_fs;
-	
+	std::string naiveinstance_vs;
+	std::string naiveinstance_fs;
+
 	// Particles
 	std::string particle_vs;
 	std::string particle_fs;
@@ -70,6 +72,7 @@ public:
 	// Shader toy
 	std::string shadertoy_vs;
 	std::string shadertoy_fs;
+	std::string raymarching_fs;
 
 	// BillBoard manipulation
 	std::map<int, int> layer_anglesize_map;
@@ -87,7 +90,7 @@ public:
 
 	// Is first Operations
 	bool isF_MouseMovement;
-
+	bool isInstance;
 private:
 	Global_Variables();
 	Global_Variables(Global_Variables const&) {};

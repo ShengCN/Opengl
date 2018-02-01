@@ -38,16 +38,21 @@ Global_Variables::Global_Variables()
 	
 	fish_model_dir = ".\\Materials\\";
 	fish_model = "Amago0.obj";
+	// fish_model = "cow.ply";
 	fish_texture = "AmagoT.bmp";
 	fish_vs = ".\\fish_vs.glsl";
 	fish_fs = ".\\fish_fs.glsl";
+	naiveinstance_vs = ".\\fish_noninstance_vs.glsl";
+	naiveinstance_fs = ".\\fish_noninstance_fs.glsl";
 
 	particle_vs = ".\\particle_vs.glsl";
 	particle_fs = ".\\particle_fs.glsl";
 
 	shadertoy_vs = ".\\shadertoy_vs.glsl";
 	shadertoy_fs = ".\\shadertoy_fs.glsl";
+	raymarching_fs = ".\\raymarching_fs.glsl";
 
 	isF_MouseMovement = true;
 	isImguiOpen = true;
+	isInstance = true;
 }

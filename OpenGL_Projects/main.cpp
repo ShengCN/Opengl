@@ -23,6 +23,7 @@
 #include "GraphicsGrids.h"
 #include "GraphicsFish.h"
 #include "GraphicsShaderToy.h"
+#include "GraphicsNaiveInstance.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 
@@ -61,8 +62,8 @@ void ImGui_Update()
 	static bool isShown = true;
 	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);
-	ImGui::SliderFloat3("Billboard Position", &gv->vec3_uniforms["Billboard_Pos"][0], -5.0, 5.0f);
 	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);
+	ImGui::Checkbox("Is Instanced rendering?", &gv->isInstance);
 	int i = 0;
 	for (auto g : gv->graphics)
 	{
@@ -96,26 +97,33 @@ void Init_Global()
 	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
 	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
 	gv->float_uniforms["cameraSpeed"] = 0.5f;
-	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
 	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
 		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 	// Point Light
-	GraphicsBase* point_light = new GraphicsLight();
-	point_light->Init_Shaders(gv->test_vs, gv->test_fs);
-	point_light->Load_Model(gv->light_model);
-	point_light->vec3_uniforms["light_position"] = glm::vec3(0.0f, 100.0f, 0.0f);
-	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
-	gv->graphics.push_back(point_light);
-
+//	GraphicsBase* point_light = new GraphicsLight();
+//	point_light->Init_Shaders(gv->test_vs, gv->test_fs);
+//	point_light->Load_Model(gv->light_model);
+//	point_light->vec3_uniforms["light_position"] = glm::vec3(0.0f, 100.0f, 0.0f);
+//	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
+//	gv->graphics.push_back(point_light);
+//
 	// Object
-	GraphicsBase* fish = new GraphicsFish();
-	fish->Init_Shaders(gv->fish_vs, gv->fish_fs);
-	fish->Load_Model(gv->fish_model_dir + gv->fish_model);
-	fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
-	fish->Init_Buffers();
-	gv->graphics.push_back(fish);
+	GraphicsBase* naiveInstance = new GraphicsNaiveInstance();
+	naiveInstance->Init_Shaders(gv->naiveinstance_vs, gv->naiveinstance_fs);
+	naiveInstance->Load_Model(gv->fish_model_dir + gv->fish_model);
+	//fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
+	naiveInstance->Init_Buffers();
+	gv->graphics.push_back(naiveInstance);
+
+	GraphicsBase* fish_instance = new GraphicsFish();
+	fish_instance->Init_Shaders(gv->fish_vs, gv->fish_fs);
+	fish_instance->Load_Model(gv->fish_model_dir + gv->fish_model);
+	//fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
+	fish_instance->Init_Buffers();
+	gv->graphics.push_back(fish_instance);
 }
 
 void Display()
@@ -124,6 +132,8 @@ void Display()
 	gv->delta_time = glutGet(GLUT_ELAPSED_TIME) - gv->last_frame_time;
 	gv->last_frame_time = glutGet(GLUT_ELAPSED_TIME);
 
+	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
+		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	for (auto g : gv->graphics)
@@ -135,6 +145,8 @@ void Display()
 	if(gv->isImguiOpen)
 		ImGui_Update();
 	glutSwapBuffers();
+
+
 }
 
 void Idle()
@@ -177,6 +189,11 @@ void Keyboard(unsigned char key, int x, int y)
 	DEBUG("Pressed ", key);
 	ImGui_ImplGlut_KeyCallback(key);
 
+	auto print_time = [&]()
+	{
+
+	};
+
 	switch (key)
 	{
 	case 'r':
@@ -210,6 +227,7 @@ void Keyboard(unsigned char key, int x, int y)
 
 	case 'z':
 	case 'Z':
+		print_time();
 		break;
 
 	default:

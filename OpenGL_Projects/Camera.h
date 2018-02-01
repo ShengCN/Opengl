@@ -42,7 +42,7 @@ public:
 
 	glm::mat4 GetP()
 	{
-		return glm::perspective(Zoom, aspect, 0.1f, 100.0f);
+		return glm::perspective(Zoom, aspect, 0.1f, 10000.0f);
 	}
 
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)

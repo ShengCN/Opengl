@@ -128,6 +128,7 @@
     <ClCompile Include="GraphicsGrids.cpp" />
     <ClCompile Include="GraphicsInstances.cpp" />
     <ClCompile Include="GraphicsLight.cpp" />
+    <ClCompile Include="GraphicsNaiveInstance.cpp" />
     <ClCompile Include="GraphicsPoints.cpp" />
     <ClCompile Include="GraphicsShaderToy.cpp" />
     <ClCompile Include="include\IchenLib\IchenGlut.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="GraphicsGrids.h" />
     <ClInclude Include="GraphicsInstances.h" />
     <ClInclude Include="GraphicsLight.h" />
+    <ClInclude Include="GraphicsNaiveInstance.h" />
     <ClInclude Include="GraphicsPoints.h" />
     <ClInclude Include="GraphicsShaderToy.h" />
     <ClInclude Include="include\IchenLib\IchenGlut.h" />
