@@ -110,20 +110,12 @@ void Init_Global()
 //	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
 //	gv->graphics.push_back(point_light);
 //
-	// Object
-	GraphicsBase* naiveInstance = new GraphicsNaiveInstance();
-	naiveInstance->Init_Shaders(gv->naiveinstance_vs, gv->naiveinstance_fs);
-	naiveInstance->Load_Model(gv->fish_model_dir + gv->fish_model);
-	//fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
-	naiveInstance->Init_Buffers();
-	gv->graphics.push_back(naiveInstance);
 
-	GraphicsBase* fish_instance = new GraphicsFish();
-	fish_instance->Init_Shaders(gv->fish_vs, gv->fish_fs);
-	fish_instance->Load_Model(gv->fish_model_dir + gv->fish_model);
-	//fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
-	fish_instance->Init_Buffers();
-	gv->graphics.push_back(fish_instance);
+	// shader toy
+	GraphicsBase* shadertoy = new GraphicsShaderToy();
+	shadertoy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
+	shadertoy->Init_Buffers();
+	gv->graphics.push_back(shadertoy);
 }
 
 void Display()
