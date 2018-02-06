@@ -20,6 +20,9 @@ Global_Variables::Global_Variables()
 
 	current_camera = new Camera();
 
+	template_vs = ".\\template_vs.glsl";
+	template_fs = ".\\template_fs.glsl";
+
 	test_vs = ".\\vs.glsl";
 	test_fs = ".\\fs.glsl";
 	grid_vs = ".\\grid_vs.glsl";

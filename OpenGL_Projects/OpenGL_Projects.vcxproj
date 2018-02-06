@@ -131,6 +131,7 @@
     <ClCompile Include="GraphicsNaiveInstance.cpp" />
     <ClCompile Include="GraphicsPoints.cpp" />
     <ClCompile Include="GraphicsShaderToy.cpp" />
+    <ClCompile Include="GraphicsSurface.cpp" />
     <ClCompile Include="include\IchenLib\IchenGlut.cpp" />
     <ClCompile Include="include\IchenLib\LoadMesh.cpp" />
     <ClCompile Include="include\IchenLib\LoadTexture.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="GraphicsNaiveInstance.h" />
     <ClInclude Include="GraphicsPoints.h" />
     <ClInclude Include="GraphicsShaderToy.h" />
+    <ClInclude Include="GraphicsSurface.h" />
     <ClInclude Include="include\IchenLib\IchenGlut.h" />
     <ClInclude Include="include\IchenLib\LoadMesh.h" />
     <ClInclude Include="include\IchenLib\LoadTexture.h" />

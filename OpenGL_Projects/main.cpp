@@ -23,7 +23,7 @@
 #include "GraphicsGrids.h"
 #include "GraphicsFish.h"
 #include "GraphicsShaderToy.h"
-#include "GraphicsNaiveInstance.h"
+#include "GraphicsSurface.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 
@@ -111,19 +111,10 @@ void Init_Global()
 //	gv->graphics.push_back(point_light);
 //
 	// Object
-	GraphicsBase* naiveInstance = new GraphicsNaiveInstance();
-	naiveInstance->Init_Shaders(gv->naiveinstance_vs, gv->naiveinstance_fs);
-	naiveInstance->Load_Model(gv->fish_model_dir + gv->fish_model);
-	//fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
-	naiveInstance->Init_Buffers();
-	gv->graphics.push_back(naiveInstance);
-
-	GraphicsBase* fish_instance = new GraphicsFish();
-	fish_instance->Init_Shaders(gv->fish_vs, gv->fish_fs);
-	fish_instance->Load_Model(gv->fish_model_dir + gv->fish_model);
-	//fish->Load_Texture(gv->fish_model_dir + gv->fish_texture);
-	fish_instance->Init_Buffers();
-	gv->graphics.push_back(fish_instance);
+	GraphicsBase* surface = new GraphicsSurface();
+	surface->Init_Shaders(gv->template_vs, gv->template_fs);
+	surface->Init_Buffers();
+	gv->graphics.push_back(surface);
 }
 
 void Display()

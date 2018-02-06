@@ -61,6 +61,10 @@ public:
 	std::string naiveinstance_vs;
 	std::string naiveinstance_fs;
 
+	// Template
+	std::string template_vs;
+	std::string template_fs;
+
 	// Particles
 	std::string particle_vs;
 	std::string particle_fs;

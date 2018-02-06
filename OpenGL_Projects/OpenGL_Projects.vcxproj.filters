@@ -99,6 +99,9 @@
     <ClCompile Include="GraphicsNaiveInstance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsSurface.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsBase.h">
@@ -184,6 +187,9 @@
     </ClInclude>
     <ClInclude Include="GraphicsNaiveInstance.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsSurface.h">
+      <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
