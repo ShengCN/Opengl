@@ -110,11 +110,12 @@ void Init_Global()
 //	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
 //	gv->graphics.push_back(point_light);
 //
-	// Object
-	GraphicsBase* surface = new GraphicsSurface();
-	surface->Init_Shaders(gv->template_vs, gv->template_fs);
-	surface->Init_Buffers();
-	gv->graphics.push_back(surface);
+
+	// shader toy
+	GraphicsBase* shadertoy = new GraphicsShaderToy();
+	shadertoy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
+	shadertoy->Init_Buffers();
+	gv->graphics.push_back(shadertoy);
 }
 
 void Display()
