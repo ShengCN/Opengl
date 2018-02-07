@@ -606,3 +606,6 @@ Feature_Detect/opencv_bioinspired340d.dll
 Feature_Detect/opencv_bgsegm340d.dll
 Feature_Detect/opencv_aruco340d.dll
 Feature_Detect/elephant.zip
+OpenGL_Projects/Release/*
+./Realse/*
+OpenGL_Projects/Debug/*

@@ -24,6 +24,7 @@
 #include "GraphicsFish.h"
 #include "GraphicsShaderToy.h"
 #include "GraphicsSurface.h"
+#include "DebugCallback.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 
@@ -77,6 +78,7 @@ void ImGui_Update()
 void InitOpenGL()
 {
 	glewInit();
+	RegisterCallback();
 	glEnable(GL_DOUBLEBUFFER);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_POINT_SPRITE); // allows textured points

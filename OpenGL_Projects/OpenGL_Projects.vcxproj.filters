@@ -102,6 +102,9 @@
     <ClCompile Include="GraphicsSurface.cpp">
       <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
+    <ClCompile Include="DebugCallback.cpp">
+      <Filter>Header Files\IchenLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsBase.h">
@@ -190,6 +193,9 @@
     </ClInclude>
     <ClInclude Include="GraphicsSurface.h">
       <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugCallback.h">
+      <Filter>Header Files\IchenLib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
