@@ -22,7 +22,7 @@ struct MeshData
 };
 
 
-void BufferIndexedVerts(aiMesh& meshdata);
+void BufferIndexedVerts(MeshData& meshdata);
 MeshData LoadMesh( const std::string& pFile);
 void GetBoundingBox (const aiScene* scene, aiVector3D* min, aiVector3D* max);
 void GetBoundingBox (const aiMesh* mesh, aiVector3D* min, aiVector3D* max);

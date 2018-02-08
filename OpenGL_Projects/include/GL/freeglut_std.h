@@ -78,11 +78,7 @@
 
             /* Link with Win32 shared freeglut lib */
 #           if FREEGLUT_LIB_PRAGMAS
-#               ifdef NDEBUG
-#                   pragma comment (lib, "freeglut.lib")
-#               else
-#                   pragma comment (lib, "freeglutd.lib")
-#               endif
+#             pragma comment (lib, "freeglut.lib")
 #           endif
 
 #       endif
@@ -640,4 +636,3 @@ static int FGAPIENTRY FGUNUSED glutCreateMenu_ATEXIT_HACK(void (* func)(int)) { 
 /*** END OF FILE ***/
 
 #endif /* __FREEGLUT_STD_H__ */
-

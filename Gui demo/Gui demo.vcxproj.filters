@@ -17,6 +17,7 @@
     <ClCompile Include="include\imgui\imgui_impl_glut.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
+    <ClCompile Include="..\OpenGL_Projects\include\IchenLib\DebugCallback.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\imgui\imconfig.h" />
@@ -41,6 +42,7 @@
     <ClInclude Include="include\imgui\stb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\OpenGL_Projects\include\IchenLib\DebugCallback.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="gui_demo_fs.glsl" />

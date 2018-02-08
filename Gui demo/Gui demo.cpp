@@ -20,6 +20,7 @@
 #include "LoadMesh.h"
 #include "LoadTexture.h"
 #include "imgui_impl_glut.h"
+#include "../OpenGL_Projects/include/IchenLib/DebugCallback.h"
 
 static const std::string vertex_shader("gui_demo_vs.glsl");
 static const std::string fragment_shader("gui_demo_fs.glsl");
@@ -266,7 +267,7 @@ void printGlInfo()
 void initOpenGl()
 {
    glewInit();
-
+   RegisterCallback();
    glEnable(GL_DEPTH_TEST);
 
    reload_shader();
@@ -325,11 +326,17 @@ void mouse(int button, int state, int x, int y)
 int main (int argc, char **argv)
 {
    //Configure initial window state
+
    glutInit(&argc, argv); 
    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
    glutInitWindowPosition (5, 5);
    glutInitWindowSize (640, 640);
    int win = glutCreateWindow ("GUI demo");
+
+#if _DEBUG
+   glutInitContextFlags(GLUT_DEBUG);
+#endif
+   glutInitContextVersion(4, 3);
 
    printGlInfo();
 

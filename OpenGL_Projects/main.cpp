@@ -24,7 +24,7 @@
 #include "GraphicsFish.h"
 #include "GraphicsShaderToy.h"
 #include "GraphicsSurface.h"
-#include "DebugCallback.h"
+#include "IchenLib/DebugCallback.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 
@@ -105,19 +105,14 @@ void Init_Global()
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
 		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 	// Point Light
-//	GraphicsBase* point_light = new GraphicsLight();
-//	point_light->Init_Shaders(gv->test_vs, gv->test_fs);
-//	point_light->Load_Model(gv->light_model);
-//	point_light->vec3_uniforms["light_position"] = glm::vec3(0.0f, 100.0f, 0.0f);
-//	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
-//	gv->graphics.push_back(point_light);
-//
-
-	// shader toy
-	GraphicsBase* shadertoy = new GraphicsShaderToy();
-	shadertoy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
-	shadertoy->Init_Buffers();
-	gv->graphics.push_back(shadertoy);
+	GraphicsBase* point_light = new GraphicsLight();
+	point_light->Init_Shaders(gv->test_vs, gv->test_fs);
+	point_light->Load_Model(gv->light_model);
+	point_light->vec3_uniforms["light_position"] = glm::vec3(0.0f, 100.0f, 0.0f);
+	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
+	GLuint test;
+	glGenVertexArrays(1, &test);
+	gv->graphics.push_back(point_light);
 }
 
 void Display()

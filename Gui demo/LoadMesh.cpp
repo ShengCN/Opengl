@@ -110,7 +110,7 @@ MeshData LoadMesh( const std::string& pFile)
 	return mesh;
 }
 
-void BufferIndexedVerts(aiMesh& meshdata)
+void BufferIndexedVerts(MeshData& meshdata)
 {
 
    if(meshdata.mVao != -1)
