@@ -78,7 +78,7 @@ void ImGui_Update()
 void InitOpenGL()
 {
 	glewInit();
-	RegisterCallback();
+	// RegisterCallback();
 	glEnable(GL_DOUBLEBUFFER);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_POINT_SPRITE); // allows textured points
@@ -110,9 +110,12 @@ void Init_Global()
 	point_light->Load_Model(gv->light_model);
 	point_light->vec3_uniforms["light_position"] = glm::vec3(0.0f, 100.0f, 0.0f);
 	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
-	GLuint test;
-	glGenVertexArrays(1, &test);
 	gv->graphics.push_back(point_light);
+
+	GraphicsBase* shadertoy = new GraphicsShaderToy();
+	shadertoy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
+	shadertoy->Init_Buffers();
+	gv->graphics.push_back(shadertoy);
 }
 
 void Display()

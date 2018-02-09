@@ -114,7 +114,7 @@ void GraphicsBase::Update_Uniforms()
 		switch (uniformTypes[i])
 		{
 		case 5126: // float
-			if(Check_Name(keyname,"time"))
+			if(Check_Name(keyname,"time")|| Check_Name(keyname, "Time"))
 			{
 				float_uniforms[keyname] = Global_Variables::Instance()->float_uniforms["time"];
 			}

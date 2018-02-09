@@ -105,6 +105,9 @@
     <ClCompile Include="include\IchenLib\DebugCallback.cpp">
       <Filter>Header Files\IchenLib</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsFBO.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsBase.h">
@@ -196,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="include\IchenLib\DebugCallback.h">
       <Filter>Header Files\IchenLib</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsFBO.h">
+      <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
