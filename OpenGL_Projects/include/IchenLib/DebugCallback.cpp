@@ -1,7 +1,7 @@
 #include "DebugCallback.h"
 #include <iostream>
 
-void RegisterCallback()
+void RegisterOpenGLDebug()
 {
 #if _DEBUG
    if (glDebugMessageCallback)
@@ -35,6 +35,9 @@ void APIENTRY openglCallbackFunction(GLenum source,
 
    using namespace std;
 
+	if(severity != GL_DEBUG_SEVERITY_LOW &&severity != GL_DEBUG_SEVERITY_MEDIUM &&severity != GL_DEBUG_SEVERITY_HIGH)
+		return;
+
    cout << "---------------------opengl-callback-start------------" << endl;
    cout << "message: " << message << endl;
    cout << "type: ";
@@ -57,6 +60,8 @@ void APIENTRY openglCallbackFunction(GLenum source,
    case GL_DEBUG_TYPE_OTHER:
       cout << "OTHER";
       break;
+   default:
+	   break;
    }
    cout << endl;
 
@@ -72,6 +77,8 @@ void APIENTRY openglCallbackFunction(GLenum source,
    case GL_DEBUG_SEVERITY_HIGH:
       cout << "HIGH";
       break;
+   default:
+	   break;
    }
    cout << endl;
    cout << "---------------------opengl-callback-end--------------" << endl;

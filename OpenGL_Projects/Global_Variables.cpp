@@ -55,6 +55,9 @@ Global_Variables::Global_Variables()
 	shadertoy_fs = ".\\shadertoy_fs.glsl";
 	raymarching_fs = ".\\raymarching_fs.glsl";
 
+	framebuffer_vs = ".\\framebuffer_vs.glsl";
+	framebuffer_fs = ".\\framebuffer_fs.glsl";
+
 	isF_MouseMovement = true;
 	isImguiOpen = true;
 	isInstance = true;

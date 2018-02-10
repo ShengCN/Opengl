@@ -26,9 +26,9 @@ glutInitContextVersion(4, 3);
 */
 
 /* 2. Register the debug callback function when you are running a debug build.
-You can do this by calling RegisterCallback(); after glewInit(). Be sure to include this header file.
+You can do this by calling RegisterOpenGLDebug(); after glewInit(). Be sure to include this header file.
 
 */
-void RegisterCallback();
+void RegisterOpenGLDebug();
 
 void APIENTRY openglCallbackFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);

@@ -25,9 +25,6 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{5b91812a-bd56-4d96-8ca8-104a36897e64}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\CommonBuffer">
-      <UniqueIdentifier>{5a617300-f605-4442-9678-57dd76acb882}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -63,62 +60,59 @@
     <ClCompile Include="include\imgui\imgui_impl_glut.cpp">
       <Filter>Header Files\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsBase.cpp">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsBillboard.cpp">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsLight.cpp">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics3DO.cpp">
-      <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsPoints.cpp">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsGrids.cpp">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClCompile>
     <ClCompile Include="include\IchenLib\Utilities.cpp">
       <Filter>Header Files\IchenLib</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsFish.cpp">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsShaderToy.cpp">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsInstances.cpp">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsNaiveInstance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphicsSurface.cpp">
-      <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
     <ClCompile Include="include\IchenLib\DebugCallback.cpp">
       <Filter>Header Files\IchenLib</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsFBO.cpp">
+    <ClCompile Include="include\DrawObjects\Graphics3DO.cpp">
       <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
-    <ClCompile Include="IBufferManager.cpp">
-      <Filter>Header Files\CommonBuffer</Filter>
+    <ClCompile Include="include\DrawObjects\GraphicsBase.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="include\DrawObjects\GraphicsBillboard.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="include\DrawObjects\GraphicsFBO.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="include\DrawObjects\GraphicsFish.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="include\DrawObjects\GraphicsGrids.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="include\DrawObjects\GraphicsInstances.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="include\DrawObjects\GraphicsLight.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="include\DrawObjects\GraphicsNaiveInstance.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="include\DrawObjects\GraphicsPoints.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="include\DrawObjects\GraphicsShaderToy.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="include\DrawObjects\VBO_Surf.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="include\DrawObjects\IBufferManager.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GraphicsBase.h">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClInclude>
     <ClInclude Include="include\IchenLib\IchenGlut.h">
       <Filter>Header Files\IchenLib</Filter>
     </ClInclude>
@@ -161,56 +155,59 @@
     <ClInclude Include="include\imgui\stb_truetype.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsBillboard.h">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsLight.h">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics3DO.h">
-      <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsPoints.h">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsGrids.h">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClInclude>
     <ClInclude Include="include\IchenLib\Utilities.h">
       <Filter>Header Files\IchenLib</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsFish.h">
-      <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
     <ClInclude Include="GLCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsShaderToy.h">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsInstances.h">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsNaiveInstance.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsSurface.h">
-      <Filter>Header Files\DrawObjects</Filter>
-    </ClInclude>
     <ClInclude Include="include\IchenLib\DebugCallback.h">
       <Filter>Header Files\IchenLib</Filter>
     </ClInclude>
-    <ClInclude Include="GraphicsFBO.h">
+    <ClInclude Include="include\DrawObjects\Graphics3DO.h">
       <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
-    <ClInclude Include="IBufferManager.h">
-      <Filter>Header Files\CommonBuffer</Filter>
+    <ClInclude Include="include\DrawObjects\GraphicsBase.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DrawObjects\GraphicsBillboard.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DrawObjects\GraphicsFBO.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DrawObjects\GraphicsFish.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DrawObjects\GraphicsGrids.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DrawObjects\GraphicsInstances.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DrawObjects\GraphicsLight.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DrawObjects\GraphicsNaiveInstance.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DrawObjects\GraphicsPoints.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DrawObjects\GraphicsShaderToy.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DrawObjects\IBufferManager.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DrawObjects\VBO_Surf.h">
+      <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

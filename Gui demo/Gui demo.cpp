@@ -267,7 +267,7 @@ void printGlInfo()
 void initOpenGl()
 {
    glewInit();
-   RegisterCallback();
+   RegisterOpenGLDebug();
    glEnable(GL_DEPTH_TEST);
 
    reload_shader();

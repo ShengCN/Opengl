@@ -16,17 +16,18 @@
 #include "imgui/imgui.h"
 #include "IchenLib/OpenGLHelpers.h"
 #include "Global_Variables.h"
-#include "GraphicsLight.h"
+#include "DrawObjects/GraphicsLight.h"
 #include "IchenLib/Utilities.h"
-#include "Graphics3DO.h"
-#include "GraphicsPoints.h"
-#include "GraphicsGrids.h"
-#include "GraphicsFish.h"
-#include "GraphicsShaderToy.h"
-#include "GraphicsSurface.h"
+#include "DrawObjects/Graphics3DO.h"
+#include "DrawObjects/GraphicsPoints.h"
+#include "DrawObjects/GraphicsGrids.h"
+#include "DrawObjects/GraphicsFish.h"
+#include "DrawObjects/GraphicsShaderToy.h"
 #include "IchenLib/DebugCallback.h"
+#include "DrawObjects/GraphicsFBO.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
+#define DEBUG_REGISTER
 
 void Init_Global();
 void ImGui_Update();
@@ -78,10 +79,11 @@ void ImGui_Update()
 void InitOpenGL()
 {
 	glewInit();
-	// RegisterCallback();
-	glEnable(GL_DOUBLEBUFFER);
+#ifdef DEBUG_REGISTER
+	RegisterOpenGLDebug();
+#endif
+
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_POINT_SPRITE); // allows textured points
 	glEnable(GL_PROGRAM_POINT_SIZE); //allows us to set point size in vertex shader
 	glPointSize(10);
 
@@ -111,6 +113,12 @@ void Init_Global()
 	point_light->vec3_uniforms["light_position"] = glm::vec3(0.0f, 100.0f, 0.0f);
 	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
 	gv->graphics.push_back(point_light);
+
+	// Frame buffer demos
+	GraphicsBase* frame_demo = new GraphicsFBO();
+	frame_demo->Init_Shaders(gv->framebuffer_vs, gv->framebuffer_fs);
+	frame_demo->Init_Buffers();
+	gv->graphics.push_back(frame_demo);
 }
 
 void Display()

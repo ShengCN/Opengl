@@ -14,7 +14,9 @@ GraphicsFBO::~GraphicsFBO()
 void GraphicsFBO::Draw()
 {
 	glUseProgram(shader_program);
-	glBindVertexArray(0);
+	// Pass 1
+
+	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
@@ -30,7 +32,7 @@ void GraphicsFBO::Reload()
 void GraphicsFBO::Init_Buffers()
 {
 	auto gv = Global_Variables::Instance();
-
+	glUseProgram(shader_program);
 	// Init quad
 	InitQuad(vao, vbo, ebo);
 

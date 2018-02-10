@@ -2,8 +2,8 @@
 #include <glm/gtx/transform.hpp>
 #include <string>
 #include <unordered_map>
-#include "GraphicsBase.h"
-#include "GraphicsBillboard.h"
+#include "DrawObjects/GraphicsBase.h"
+#include "DrawObjects/GraphicsBillboard.h"
 #include <map>
 #include "Camera.h"
 
@@ -77,6 +77,10 @@ public:
 	std::string shadertoy_vs;
 	std::string shadertoy_fs;
 	std::string raymarching_fs;
+
+	// Framebuffer object
+	std::string framebuffer_vs;
+	std::string framebuffer_fs;
 
 	// BillBoard manipulation
 	std::map<int, int> layer_anglesize_map;
