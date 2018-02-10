@@ -111,11 +111,6 @@ void Init_Global()
 	point_light->vec3_uniforms["light_position"] = glm::vec3(0.0f, 100.0f, 0.0f);
 	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
 	gv->graphics.push_back(point_light);
-
-	GraphicsBase* shadertoy = new GraphicsShaderToy();
-	shadertoy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
-	shadertoy->Init_Buffers();
-	gv->graphics.push_back(shadertoy);
 }
 
 void Display()

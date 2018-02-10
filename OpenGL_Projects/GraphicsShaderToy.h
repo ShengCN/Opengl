@@ -1,7 +1,8 @@
 #pragma once
 #include "GraphicsBase.h"
+#include "IBufferManager.h"
 
-class GraphicsShaderToy: public GraphicsBase
+class GraphicsShaderToy: public GraphicsBase, public IBufferManager
 {
 public:
 	GraphicsShaderToy();

@@ -1,7 +1,9 @@
 #pragma once
 #include "GraphicsBase.h"
+#include "IBufferManager.h"
+
 class GraphicsFBO :
-	public GraphicsBase
+	public GraphicsBase, public IBufferManager
 {
 public:
 	GraphicsFBO();
@@ -15,6 +17,7 @@ public:
 	void ReleaseBuffers() override;
 	
 private:
+	GLuint vao,vbo,ebo;
 	GLuint fbo, texture_buffer,render_buffer;
 };
 

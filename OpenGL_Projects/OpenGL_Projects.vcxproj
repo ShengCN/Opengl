@@ -135,6 +135,7 @@
     <ClCompile Include="GraphicsPoints.cpp" />
     <ClCompile Include="GraphicsShaderToy.cpp" />
     <ClCompile Include="GraphicsSurface.cpp" />
+    <ClCompile Include="IBufferManager.cpp" />
     <ClCompile Include="include\IchenLib\DebugCallback.cpp" />
     <ClCompile Include="include\IchenLib\IchenGlut.cpp" />
     <ClCompile Include="include\IchenLib\LoadMesh.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="GraphicsPoints.h" />
     <ClInclude Include="GraphicsShaderToy.h" />
     <ClInclude Include="GraphicsSurface.h" />
+    <ClInclude Include="IBufferManager.h" />
     <ClInclude Include="include\IchenLib\DebugCallback.h" />
     <ClInclude Include="include\IchenLib\IchenGlut.h" />
     <ClInclude Include="include\IchenLib\LoadMesh.h" />

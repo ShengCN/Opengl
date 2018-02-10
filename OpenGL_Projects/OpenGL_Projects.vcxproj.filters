@@ -25,6 +25,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{5b91812a-bd56-4d96-8ca8-104a36897e64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\CommonBuffer">
+      <UniqueIdentifier>{5a617300-f605-4442-9678-57dd76acb882}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -107,6 +110,9 @@
     </ClCompile>
     <ClCompile Include="GraphicsFBO.cpp">
       <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="IBufferManager.cpp">
+      <Filter>Header Files\CommonBuffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -202,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="GraphicsFBO.h">
       <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="IBufferManager.h">
+      <Filter>Header Files\CommonBuffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
