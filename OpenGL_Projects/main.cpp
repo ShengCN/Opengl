@@ -1,7 +1,6 @@
 #include <iostream>
 #include <GL/glew.h>
 #include <windows.h>
-#include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -14,7 +13,6 @@
 #include "imgui/imgui_impl_glut.h"
 #include "IchenLib/IchenGlut.h"
 #include "imgui/imgui.h"
-#include "IchenLib/OpenGLHelpers.h"
 #include "Global_Variables.h"
 #include "DrawObjects/GraphicsLight.h"
 #include "IchenLib/Utilities.h"
@@ -65,7 +63,7 @@ void ImGui_Update()
 	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);
 	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);
-	ImGui::Checkbox("Is Instanced rendering?", &gv->isInstance);
+
 	int i = 0;
 	for (auto g : gv->graphics)
 	{
@@ -85,7 +83,6 @@ void InitOpenGL()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_PROGRAM_POINT_SIZE); //allows us to set point size in vertex shader
-	glPointSize(10);
 
 	ImGui_ImplGlut_Init();
 	Init_Global();
@@ -101,11 +98,12 @@ void Init_Global()
 	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
 	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
 	gv->float_uniforms["cameraSpeed"] = 0.5f;
-	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
+	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
 		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
+
 	// Point Light
 	GraphicsBase* point_light = new GraphicsLight();
 	point_light->Init_Shaders(gv->test_vs, gv->test_fs);
@@ -140,8 +138,6 @@ void Display()
 	if(gv->isImguiOpen)
 		ImGui_Update();
 	glutSwapBuffers();
-
-
 }
 
 void Idle()

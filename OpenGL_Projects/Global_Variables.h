@@ -18,6 +18,7 @@ public:
 	// Resolution
 	int width;
 	int height;
+	glm::vec2 windowPos;
 	int mouseX;
 	int mouseY;
 
@@ -99,6 +100,20 @@ public:
 	// Is first Operations
 	bool isF_MouseMovement;
 	bool isInstance;
+
+	// Attrib locations:
+	GLint pos_attrib_loc;
+	GLint texture_loc;
+	GLint normal_loc;
+
+	// Uniform locations:
+	GLint PVM_loc;
+	GLint time_loc;
+	GLint resolution_loc;
+	GLint mouse_loc;
+
+	// math
+	float PI ;
 private:
 	Global_Variables();
 	Global_Variables(Global_Variables const&) {};

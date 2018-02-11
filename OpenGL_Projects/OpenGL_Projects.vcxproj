@@ -140,7 +140,6 @@
     <ClCompile Include="include\IchenLib\IchenGlut.cpp" />
     <ClCompile Include="include\IchenLib\LoadMesh.cpp" />
     <ClCompile Include="include\IchenLib\LoadTexture.cpp" />
-    <ClCompile Include="include\IchenLib\OpenGLHelpers.cpp" />
     <ClCompile Include="include\IchenLib\ShaderProcessor.cpp" />
     <ClCompile Include="include\IchenLib\Utilities.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
@@ -172,7 +171,6 @@
     <ClInclude Include="include\IchenLib\IchenGlut.h" />
     <ClInclude Include="include\IchenLib\LoadMesh.h" />
     <ClInclude Include="include\IchenLib\LoadTexture.h" />
-    <ClInclude Include="include\IchenLib\OpenGLHelpers.h" />
     <ClInclude Include="include\IchenLib\ShaderProcessor.h" />
     <ClInclude Include="include\IchenLib\Utilities.h" />
     <ClInclude Include="include\imgui\imconfig.h" />

@@ -1,6 +1,6 @@
 #version 430
 
-layout(location = 1) in vec3 pos_attrib;
+layout(location = 0) in vec3 pos_attrib;
 
 void main()
 {

@@ -9,15 +9,17 @@ int windowHeight;
 
 void InitDefaultGlutEnvironment(int argc, char** argv)
 {
+	auto gv = Global_Variables::Instance();
+
 #if _DEBUG
 	glutInitContextFlags(GLUT_DEBUG);
 #endif
-	glutInitContextVersion(4, 3);
+	glutInitContextVersion(4, 6);
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitWindowPosition(5, 5);
-	glutInitWindowSize(1280, 720);
+	glutInitWindowPosition(gv->windowPos.x, gv->windowPos.y);
+	glutInitWindowSize(gv->width, gv->height);
 	windowID = glutCreateWindow("Ichen");
 	PrintGlInfo();
 }

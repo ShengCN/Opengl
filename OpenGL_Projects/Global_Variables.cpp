@@ -13,6 +13,11 @@ Global_Variables* Global_Variables::Instance()
 
 Global_Variables::Global_Variables()
 {
+	width = 1280;
+	height = 720;
+	windowPos = glm::vec2(20,20);
+
+
 	isLBtnressed = false;
 	isRBtnPressed = false;
 	lastMMovement = glm::vec2(0.0f, 0.0f);
@@ -61,4 +66,15 @@ Global_Variables::Global_Variables()
 	isF_MouseMovement = true;
 	isImguiOpen = true;
 	isInstance = true;
+
+	pos_attrib_loc = 0;
+	texture_loc = 1;
+	normal_loc = 2;
+
+	PVM_loc = 0;
+	time_loc = 1;
+	resolution_loc = 2;
+	mouse_loc = 3;
+
+	PI = 3.14159265f;
 }

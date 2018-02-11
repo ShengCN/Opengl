@@ -1,5 +1,4 @@
 #include "GraphicsBillboard.h"
-#include "IchenLib/OpenGLHelpers.h"
 #include "Global_Variables.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>

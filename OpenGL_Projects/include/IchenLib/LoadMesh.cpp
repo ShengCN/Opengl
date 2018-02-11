@@ -96,7 +96,7 @@ MeshData LoadMesh( const std::string& pFile)
 	}
 
 	// Now we can access the file's contents.
-	printf("Import of scene %s succeeded.", pFile.c_str());
+	printf("Import of scene %s succeeded.\n", pFile.c_str());
 
 	GetBoundingBox(mesh.mScene, &mesh.mBbMin, &mesh.mBbMax);
    aiVector3D diff = mesh.mBbMax-mesh.mBbMin;
