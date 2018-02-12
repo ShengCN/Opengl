@@ -14,7 +14,7 @@ public:
 	void BufferManage() override;
 	void ReleaseBuffers() override;
 
-	GLuint GetTexture() const { return texture_buffer; }
+	GLuint GetTexture() const { return picker_buffer; }
 private:
 	GLuint frame_buffer,texture_buffer, render_buffer,picker_buffer;
 	float currentID;

@@ -34,7 +34,8 @@ void main()
         // clicked
         if(abs(currentID - instance_id) < 0.5)
         {
-            color = vec4(1.0,0.0,0.0,1.0);
+           color = vec4(1.0,0.0,0.0,1.0);
+           // color = texture(diffuse_color,tex_coord);
         }
         else
         {

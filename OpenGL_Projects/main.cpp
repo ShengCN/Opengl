@@ -64,6 +64,8 @@ void ImGui_Update()
 	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);
 	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);
+	
+	auto t = static_cast<GraphicsPicker*>(gv->graphics[0])->GetTexture();
 	ImGui::Image((void*) static_cast<GraphicsPicker*>(gv->graphics[0])->GetTexture(), ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
 	int i = 0;

@@ -64,20 +64,26 @@ mat3 rotateY(float radian)
 void main()
 {
     int id = gl_InstanceID;
+    float time = 0.0;
 
+    if(abs(currentID - id) < 0.5)
+    {
+      //  time =iTime;
+    }
+
+    
     // simple swim
     vec3 dis = vec3(0.0);
-    dis.z = 0.5 * hash(id + 1.0) * sin(pos_attrib.x * 10.0 - iTime * 3.0 + fbm(vec3(id*756.97)) * 10.0); 
-
+    dis.z = 0.5 * hash(id + 1.0) * sin(pos_attrib.x * 10.0 - time * 3.0 + fbm(vec3(id*756.97)) * 10.0); 
 
     // random swimming
-    vec3 disV = vec3( sin(iTime + 10.0 * id) ,0.0, cos(iTime + 10.0 * id));
+    vec3 disV = vec3( sin(time + 10.0 * id) ,0.0, cos(time + 10.0 * id));
     vec3 center = vec3(fbm(vec3(id)),fbm(vec3(3.0+id)),fbm(vec3(90.0 + id))) * 4.0 - 2.0;
     dis += center + disV;
     vec3 forward = normalize(cross(disV,vec3(0.0,1.0,0.0)));
     float degree = acos(dot(forward,vec3(1.0,0.0,0.0)));
 
-   vec3 pos = rotateY(-degree) * pos_attrib;
+    vec3 pos = rotateY(-degree) * pos_attrib;
     
     // DEBUG
     // vec3 dis = vec3(id * 0.1);
