@@ -1,7 +1,7 @@
 #version 430
 layout(location = 1) uniform float iTime;
-layout(location = 2) uniform vec2 resolution;
-layout(location = 3) uniform vec2 mouse;
+layout(location = 2) uniform vec2 iResolution;
+layout(location = 3) uniform vec2 iMouse;
 layout(location = 4)uniform vec4 fcolor;
 
 out vec4 fragColor;
@@ -9,139 +9,171 @@ out vec4 fragColor;
 const float PI = 3.14159265;
 const float TWO_PI = 6.2831853;
 float epison = 0.00001;
-float pn(vec3 p) {
-      vec3 i = floor(p); vec4 a = dot(i, vec3(1., 57., 21.)) + vec4(0., 57., 21., 78.);
-      vec3 f = cos((p-i)*3.141592653589793)*(-.5) + .5;   a = mix(sin(cos(a)*a), sin(cos(1.+a)*(1.+a)), f.x);
-      a.xy = mix(a.xz, a.yw, f.y);   return mix(a.x, a.y, f.z);
-      }
-vec3 co=vec3(1.); vec2 q; float radius=0.18,dp=6.9,pw=1.; float vr1=1.,vr2=1.,vr3=1.,vr4=1.,vr5=1.,vr6=1.,vr7=1.,vr8=1.,vr9=1.,vr10=1.;
-float r (vec2 c,vec2 d){vec2 k=abs(q-c)-0.5*d;return max(k.x,k.y);}
-float rr(vec2 c,vec2 d){d-=vec2(2.0*radius); return abs(length(max(abs(q-c)-0.5*d,0.0))-radius);}
-float cpu(vec2 p){
-      q=p;q.x*=3.;float i=floor(q.x);q.x=fract(q.x);q-=0.5; float d=1.;
-      if(i==0.)d=max(rr(vec2(0.),vec2(.7)),-r(vec2(0.35,0.),vec2(1.,0.3)));
-      else if(i==1.)d=min(max(rr( vec2(-0.2,0.175),vec2(1.1,.35)),-r( vec2(-1.35,0.),vec2(2.))),max(abs(r(vec2(0.),vec2(.7))),-r(vec2(0.15,0.),vec2(1.,2.))));
-      else if(i==2.)d=max(rr(vec2(0.,0.2),vec2(.7,1.1)),-r(vec2(0.,1.35),vec2(2.)));
-      return pow(clamp(d*dp,0.,1.),pw);
-      }
-vec3 flx(vec2 p,float ct){
-     float t; vec3 q=vec3(p,p.x-p.y+iTime*0.3);
-     t=abs(pn(q)); t+=.5*abs(pn(q*2.)); t+=.25*abs(pn(q*4.));t*=0.5;
-     vec3 c=clamp(3.*abs(fract(fract(ct)+vec3(0.,2./3.0,1./3.0))*2.-1.)-1.,0.,1.);
-     return pow(vec3(1.-t),c+1.5);
-     }
-float sk(float g){g=abs(g*40.);return cos(g)*pow(1.-clamp(g/11.,0.,1.),2.);}
-float scv(float t){t=clamp(t,0.,1.);return t*t*(3.0-2.0*t);}
 
-void main_(void){
-     float sc,de,st,t=mod(iTime,55.);
-     sc=5.;if(t<=sc){
-        de=2.;st=scv(t/(sc-de));
-        vr8=mix(.024,1. ,st);
-        vr10=mix(2.37,1.,st);
-        vr2=mix(.02,2.,pow(st,3.));
-        co=mix(vec3(1),vec3(4,1,0.1),st);
-        vr3=0.;
-        vr7=0.;
-        return;}t-=sc;
-     sc=5.;if(t<=sc){
-        de=0.;st=scv(t/(sc-de));
-        vr8=mix(1.,0.7,st);
-        vr10=mix(1.,0.,st);
-        vr2=2.;
-        co=mix(vec3(4.,1.,0.1),vec3(1.,18.,18.),st);
-        st=clamp((t-4.),0.,1.);
-        vr7=mix(0.,0.5,st);
-        vr3=0.;
-        vr5=0.5;
-        vr6=3.;
-        return;}t-=sc;
-     sc=5.;if(t<=sc){
-        de=0.;st=scv(t/(sc-de));
-        vr3=0.;
-        vr8=.7;
-        vr10=0.;
-        vr2=2.;
-        co=mix(vec3(1,18,18),vec3(8,20,20),st);
-        vr7=mix(0.5,1.,st);
-        vr5=mix(0.5,1.,st);
-        vr6=mix(3.,1.,st);
-        return;}t-=sc;
-     sc=5.;if(t<=sc){
-        de=0.;st=st=scv(t/(sc-de));
-        vr3=0.;
-        vr8=mix(0.7,1.,st);
-        vr10=mix(0.,1.,st);
-        vr2=mix(2.,1.,st);
-        co=mix(vec3(8,20,20),vec3(8,2,.4),st);
-        return;}t-=sc;
-     sc=5.;if(t<=sc){
-        de=0.;st=st=scv(t/(sc-de));
-        vr3=mix(0.,1.,st);
-        co=mix(vec3(8.,2.,.4),vec3(1.),st);
-        return;}t-=sc;
-     sc=5.;if(t<=sc){
-        de=2.;st=scv(t/(sc-de));
-        vr8=1.;
-        vr9=mix(1.,1.7,st);
-        vr10=mix(1.,1.53,st);
-        return;}t-=sc;
-     sc=5.;if(t<=sc){
-        de=2.;st=scv(t/(sc-de));
-        vr8=mix(1.,3.,st);
-        vr9=mix(1.7,1.,st);
-        vr10=mix(1.53,1.89,st);
-        return;}t-=sc;
-     sc=5.;if(t<=sc){
-        de=2.;st=scv(t/(sc-de));
-        vr8=mix(3.,2.3,st);
-        vr10=mix(1.89,2.4,st);
-        return;}t-=sc;
-     sc=5.;if(t<=sc){
-        de=2.;st=scv(t/(sc-de));
-        vr8=mix(2.3,3.,st);
-        vr10=mix(2.4,1.89,st);
-        vr1=mix(1.,0.,st);
-        vr4=mix(1.,0.,st);
-        return;}t-=sc;
-     sc=5.;if(t<=sc){
-        de=2.;st=scv(t/(sc-de));
-        vr8=mix(3.,.5,st);
-        vr10=1.89;
-        vr1=0.;
-        vr4=0.;
-        return;}t-=sc;
-     sc=5.;if(t<=sc){
-        de=2.;st=scv(t/(sc-de));
-        vr3=mix(1.,0.,st);
-        vr1=mix(0.,1.,st);
-        vr7=mix(1.,0.,st);
-        vr8=mix(.5,.024 ,st);
-        vr10=mix(1.89,2.37,st);
-        vr2=mix(1.,.02,pow(st,0.1));
-        return;}t-=sc;
-        }
+float hash(float n)
+{
+      return fract(sin(n)*43758.5453);
+}
+
+float noise( in vec3 x )
+{
+    vec3 p = floor(x);
+    vec3 f = fract(x);
+
+    f = f*f*(3.0-2.0*f);
+
+    float n = p.x + p.y*57.0 + 113.0*p.z;
+
+    float res = mix(mix(mix( hash(n+  0.0), hash(n+  1.0),f.x),
+                        mix( hash(n+ 57.0), hash(n+ 58.0),f.x),f.y),
+                    mix(mix( hash(n+113.0), hash(n+114.0),f.x),
+                        mix( hash(n+170.0), hash(n+171.0),f.x),f.y),f.z);
+    return res;
+}
+
+float fbm(vec3 p)
+{
+      float f = 0.0;
+      f += 0.5000 * noise(p); p*= 2.02;
+      f += 0.2500 * noise(p); p*= 2.03;
+      f += 0.1250 * noise(p); p*= 2.01;
+      f += 0.0625 * noise(p);
+      return f/0.9375;
+}
+
+vec3 fruitMaterial(vec3 pos, vec3 nor)
+{
+      float a = atan(pos.x,pos.z);
+      float r = length(pos.xz);
+
+      // red 
+      vec3 col = vec3(1.0,0.0,0.0);
+
+      // mix to green
+      float f = smoothstep(0.2,1.0,fbm(pos));
+      col = mix(col,vec3(0.8,1.0,0.2),f);
+
+      // make it dirty
+      f = smoothstep(0.1,1.0,fbm(pos*4.0));
+      col *= 0.8 + 0.2 * f; 
+
+      // frekles
+      f = smoothstep(0.7,0.9, fbm(pos * 48.0));
+      col = mix(col,vec3(0.9,0.9,0.6),f);
+
+      return col;
+}
+
+vec3 floorMaterial(vec3 pos, vec3 nor)
+{
+      vec3 f = vec3(0.8,0.7,0.1);
+      return f;
+}
+
+float sdSphere(in vec3 p)
+{
+      // vec3 so = 1.0*vec3(cos(iTime),0.0,sin(iTime));
+      vec3 so = vec3(0.0);
+      return length(p-so) - 1.0;
+}
+
+float sdFloor(in vec3 p)
+{
+      return p.y + 1.0;
+}
+
+// return vec2(distance, id)
+vec2 map(in vec3 p)
+{
+      vec2 d1 = vec2(sdSphere(p),1.0);
+      vec2 d2 = vec2(sdFloor(p),2.0);
+      if(d2.x<d1.x) d1 = d2;
+
+      return d1;
+}
+
+vec3 calcNormal(in vec3 p)
+{
+      vec3 e = vec3(0.001,0.0,0.0);
+      vec3 n;
+      n.x = map(p+e.xyy).x - map(p-e.xyy).x;
+      n.y = map(p+e.yxy).x - map(p-e.yxy).x;
+      n.z = map(p+e.yyx).x - map(p-e.yyx).x;
+      return normalize(n);
+}
+
+float softShadow(in vec3 ro, in vec3 rd)
+{
+      float res = 1.0;
+      for (float t = 0.1; t < 8.0;)
+      {
+            float h = map(ro + t*rd).x;
+            if(h<0.001) return 0.0;
+            res = min(res,6.0 * h/t);
+            t += h;
+      }
+      return res;
+}
+
+// return object (t,id)
+vec2 intersect(vec3 ro,vec3 rd)
+{
+      for(float t = 0.0; t < 100.0;)
+      {
+            vec2 h = map(ro+t*rd);
+            if(h.x<0.0001) return vec2(t,h.y);
+            t += h.x;
+      }
+
+      return vec2(0.0);
+}
+
 void main()
 {
-    float a=iTime*94.24777960;
-     vec2 pa=.15*vec2(sin(a),cos(a));
-     float asp=resolution.x/resolution.y;
-     vec2 p=(pa+gl_FragCoord.xy)/resolution.xy-0.5; main_();
-     p*=1./(1.-(vr9-1.)*length(p));
-     p*=1.-length(p)*2.*(vr10-1.); p*=vr8; vec2 pp=p*2.; p.y*=3./asp; p*=1.2; float t=iTime*0.4;
-     p.x+=0.02*(sk(p.y+cos(t)*3.)-sk(p.y-cos(t*1.1)*2.));
-     p+=0.5; float ll=cpu(p); dp=9.3; pw=vr2*6.; float lc=cpu(p);
-     vec2 f=vec2(0.001,0); vec3 dl; dl.z=0.06; dl.x=cpu(p-f.xy)-cpu(p+f.xy); dl.y=cpu(p-f.yx)-cpu(p+f.yx);
-     vec3 light=normalize(vec3(0.5,-0.5,1.0)); vec3 nd=normalize(dl);
-     float s=0.5+0.5*dot(nd,light);  float e=smoothstep(1.,0.4,lc);
-     p.x*=3.; p=(0.5*p)+nd.xy*0.6*e; t=iTime*0.04;
-     vec3 fx=flx(p,t)*flx(2.1*p+10.,0.333+t*1.1); fx*=vr1*2.;
-     fx=pow(fx,vec3(vr3)); 
-     
-     // fragColor.rgb=pow(s*fx*(0.5+0.5*e),co);
-     float lf=ll*vr4-(vr6-1.2);
-     vec3 dir=normalize(vec3(pp*vec2(asp*1.6,-1),-1.5)),q,r=vec3(0.,0.,4.);
-     float d,ii=1.;e=0.02;
-     for(float i=0.;i<64.;i++){d=length(r*vec3(0.1,.5,1.))-1.;q=r; q.y-=2.; d+=(pn(q+vec3(.0,iTime*2.,.0))+pn(q*3.)*.5)*.25*(q.y); d=min(100.-length(q),abs(lf+d))+e; r+=d*dir; if(d<e){ii=i/64.;break;}}
-     fragColor.rgb+=vr7*mix(vec3(0.),mix(vec3(1.,.5,.1),vec3(0.1,.5,1),r.y*.02+.4),pow(ii*2.,4.*vr5));
+      vec2 uv = gl_FragCoord.xy / iResolution.xy;
+      float ratio = iResolution.x/iResolution.y;
+      vec2 p = (uv*2.0 - 1.0)*vec2(ratio,1.0);
+
+      // camera
+      vec3 ro = 8.0 * vec3(cos(iTime),0.5,sin(iTime));
+      // vec3 ro = vec3(0.0,0.0,-4.0);
+      vec3 ww = normalize(vec3(0.0)-ro);
+      vec3 uu = normalize(cross(vec3(0.0,1.0,0.0),ww));
+      vec3 vv = normalize(cross(ww,uu));
+      vec3 rd = normalize(p.x * uu+p.y*vv+1.5*ww);
+
+      vec3 color = vec3(0.0);
+      vec2 t = intersect(ro,rd);
+
+      if(t.y>0.5)
+      {
+            vec3 pos = ro + t.x * rd;
+            vec3 nor = calcNormal(pos);
+            vec3 light = vec3(1.0,0.8,0.6);
+            vec3 ref = reflect(rd,nor);
+
+            float amb = 0.6 + 0.5 * nor.y;
+            float dif = max(0.0,dot(light,nor));            
+            float spe = pow(clamp(dot(light,ref),0.0,1.0),64.0);
+
+            float sha = softShadow(pos,light);
+
+            color = amb * vec3(0.3);
+            color += dif*vec3(1.0)*sha;
+            
+            color  = sqrt(color);
+            color *= 0.6;
+
+            if(t.y > 1.5)
+            {
+                  color *= floorMaterial(pos,nor);
+            }
+            else
+            {
+                  color *= fruitMaterial(pos,nor);
+            }
+            color += 0.08 * pow(spe,1.0);
+      }
+
+	fragColor = vec4(color, 0.);
 }

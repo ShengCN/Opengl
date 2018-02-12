@@ -25,7 +25,7 @@
 #include "DrawObjects/GraphicsFBO.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
-#define DEBUG_REGISTER
+// #define DEBUG_REGISTER
 
 void Init_Global();
 void ImGui_Update();
@@ -112,11 +112,16 @@ void Init_Global()
 	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
 	gv->graphics.push_back(point_light);
 
+	GraphicsBase* toy = new GraphicsShaderToy();
+	toy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
+	toy->Init_Buffers();
+	gv->graphics.push_back(toy);
+
 	// Frame buffer demos
-	GraphicsBase* frame_demo = new GraphicsFBO();
-	frame_demo->Init_Shaders(gv->framebuffer_vs, gv->framebuffer_fs);
-	frame_demo->Init_Buffers();
-	gv->graphics.push_back(frame_demo);
+//	GraphicsBase* frame_demo = new GraphicsFBO();
+//	frame_demo->Init_Shaders(gv->framebuffer_vs, gv->framebuffer_fs);
+//	frame_demo->Init_Buffers();
+//	gv->graphics.push_back(frame_demo);
 }
 
 void Display()

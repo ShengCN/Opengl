@@ -130,12 +130,12 @@ void GraphicsBase::Update_Uniforms()
 			break;
 
 		case 35664: // vec2
-			if (Check_Name(keyname, "resolution"))
+			if (Check_Name(keyname, "resolution")|| Check_Name(keyname, "Resolution"))
 			{
 				vec2_uniforms[keyname] = glm::vec2(Global_Variables::Instance()->width, Global_Variables::Instance()->height);
 			}
 
-			if(Check_Name(keyname,"mouse"))
+			if(Check_Name(keyname,"mouse") || Check_Name(keyname,"Mouse"))
 			{
 				vec2_uniforms[keyname] = glm::vec2(Global_Variables::Instance()->mouseX, Global_Variables::Instance()->mouseY);
 			}
