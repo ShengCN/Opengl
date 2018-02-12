@@ -83,6 +83,10 @@ public:
 	std::string framebuffer_vs;
 	std::string framebuffer_fs;
 
+	// Picker 
+	std::string picker_vs;
+	std::string picker_fs;
+
 	// BillBoard manipulation
 	std::map<int, int> layer_anglesize_map;
 	int layer_max;

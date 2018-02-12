@@ -22,11 +22,11 @@ template<typename T> void Print_Container(T c)
 
 inline float Degree2Radian(float d)
 {
-	return static_cast<float>((d / 360.0f) * 3.1415926);
+	return static_cast<float>((d / 180.0f) * 3.1415926);
 }
 
 inline float Radian2Degree(float r)
 {
-	return static_cast<float>((r / 3.14159265) * 360.0f);
+	return static_cast<float>((r / 3.14159265) * 180.0f);
 }
 

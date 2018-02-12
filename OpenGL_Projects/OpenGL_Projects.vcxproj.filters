@@ -108,6 +108,9 @@
     <ClCompile Include="include\IchenLib\Utilities.cpp">
       <Filter>Header Files\IchenLib</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsPicker.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\IchenLib\IchenGlut.h">
@@ -202,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="include\IchenLib\Utilities.h">
       <Filter>Header Files\IchenLib</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsPicker.h">
+      <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

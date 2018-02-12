@@ -19,6 +19,8 @@ public:
 private:
 	GLuint qua_vao,	qua_vbo, qua_ebo; // quadra 
 	GLuint sur_vao, sur_vbo, sur_ebo; // surface
-	GLuint fbo, texture_buffer,render_buffer;
+	GLuint fbo, texture_buffer,render_buffer; // rendering buffers
+	GLuint picker_buffer; // pick an object
+
 };
 

@@ -63,6 +63,9 @@ Global_Variables::Global_Variables()
 	framebuffer_vs = ".\\framebuffer_vs.glsl";
 	framebuffer_fs = ".\\framebuffer_fs.glsl";
 
+	picker_vs = ".\\picker_vs.glsl";
+	picker_fs = ".\\picker_fs.glsl";
+
 	isF_MouseMovement = true;
 	isImguiOpen = true;
 	isInstance = true;

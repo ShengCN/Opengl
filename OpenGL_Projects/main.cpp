@@ -23,6 +23,7 @@
 #include "DrawObjects/GraphicsShaderToy.h"
 #include "IchenLib/DebugCallback.h"
 #include "DrawObjects/GraphicsFBO.h"
+#include "GraphicsPicker.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 // #define DEBUG_REGISTER
@@ -98,7 +99,7 @@ void Init_Global()
 	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
 	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
 	gv->float_uniforms["cameraSpeed"] = 0.5f;
-	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.7f, 0.7f, 0.0f, 1.0f);
 	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
@@ -112,16 +113,18 @@ void Init_Global()
 	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
 	gv->graphics.push_back(point_light);
 
-	GraphicsBase* toy = new GraphicsShaderToy();
-	toy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
-	toy->Init_Buffers();
-	gv->graphics.push_back(toy);
+//	GraphicsBase* toy = new GraphicsShaderToy();
+//	toy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
+//	toy->Init_Buffers();
+//	gv->graphics.push_back(toy);
 
 	// Frame buffer demos
-//	GraphicsBase* frame_demo = new GraphicsFBO();
-//	frame_demo->Init_Shaders(gv->framebuffer_vs, gv->framebuffer_fs);
-//	frame_demo->Init_Buffers();
-//	gv->graphics.push_back(frame_demo);
+	GraphicsBase* picker = new GraphicsPicker();
+	picker->Init_Shaders(gv->picker_vs, gv->picker_fs);
+	picker->Load_Model(gv->fish_model_dir + gv->fish_model);
+	picker->Load_Texture(gv->fish_model_dir + gv->fish_texture);
+	picker->Init_Buffers();
+	gv->graphics.push_back(picker);
 }
 
 void Display()

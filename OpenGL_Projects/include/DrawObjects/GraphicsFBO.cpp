@@ -84,7 +84,6 @@ void GraphicsFBO::Init_Buffers()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_buffer, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-
 	
 	glGenRenderbuffers(1, &render_buffer);
 	glBindRenderbuffer(GL_RENDERBUFFER,render_buffer);
