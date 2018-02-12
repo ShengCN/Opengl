@@ -9,7 +9,9 @@ layout(location = 2) in vec3 normal_attrib;
 
 out vec2 tex_coord; 
 out vec3 normal; 
-uniform float slider;
+flat out int instance_id;
+
+uniform float currentID;
 
 const float PI = 3.1415926;
 
@@ -65,7 +67,7 @@ void main()
 
     // simple swim
     vec3 dis = vec3(0.0);
-    dis.z = 0.5 * hash(id + 1.0) * sin(pos_attrib.x * 10.0 - iTime * 3.0 + fbm(vec3(id*756.97)) * 10.0);
+    dis.z = 0.5 * hash(id + 1.0) * sin(pos_attrib.x * 10.0 - iTime * 3.0 + fbm(vec3(id*756.97)) * 10.0); 
 
 
     // random swimming
@@ -75,9 +77,13 @@ void main()
     vec3 forward = normalize(cross(disV,vec3(0.0,1.0,0.0)));
     float degree = acos(dot(forward,vec3(1.0,0.0,0.0)));
 
-    vec3 pos = rotateY(-degree) * pos_attrib;
+   vec3 pos = rotateY(-degree) * pos_attrib;
+    
+    // DEBUG
+    // vec3 dis = vec3(id * 0.1);
 
     gl_Position = PVM * vec4(pos+dis,1.0);
     tex_coord = tex_coord_attrib;
     normal = normal_attrib;
+    instance_id = id;
 }

@@ -1,6 +1,7 @@
 #include "GraphicsPicker.h"
 #include "GLCommon.h"
 #include "IchenLib/Utilities.h"
+#include "Common.h"
 
 
 GraphicsPicker::GraphicsPicker()
@@ -25,8 +26,45 @@ void GraphicsPicker::Draw()
 	glBindTexture(GL_TEXTURE_2D, m_textureId);
 	glUniform1i(glGetUniformLocation(shader_program, "diffuse_color"), 0);
 
+	// Pass 1
+	auto pass_loc = glGetUniformLocation(shader_program, "pass");
+	glUniform1i(pass_loc, 1);
+	glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer);
+	glDrawBuffer(GL_COLOR_ATTACHMENT1);       // Attachment 1
+	glViewport(0, 0, gv->width, gv->height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(m_mesh.mVao);
-	// glDrawElements(GL_TRIANGLES, m_mesh.mNumIndices, GL_UNSIGNED_INT, 0);
+	glDrawElementsInstanced(GL_TRIANGLES, m_mesh.mNumIndices, GL_UNSIGNED_INT, 0, 9);
+	glBindVertexArray(0);
+
+	// Read back the pixel to decide which object clicked
+	// todo
+	GLubyte buffer[4];
+	glReadBuffer(GL_COLOR_ATTACHMENT1);
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	glReadPixels(gv->mouseX, gv->height - gv->mouseY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	currentID = buffer[0]/255.0f * 100.0;
+	// DEBUG("Current ID:", currentID);
+
+	// Pass 2
+	glUniform1i(pass_loc, 2);
+	glDrawBuffer(GL_COLOR_ATTACHMENT0);       // Attachment 2
+	glViewport(0, 0, gv->width, gv->height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glBindVertexArray(m_mesh.mVao);
+	// draw the specific object
+	// todo
+	// glDrawElementsInstanced(GL_TRIANGLES, m_mesh.mNumIndices, GL_UNSIGNED_INT, 0, 9);
+	glBindVertexArray(0);
+
+	// Pass 3
+	glUniform1i(pass_loc, 3);
+	glUniform1f(glGetUniformLocation(shader_program, "currentID"), currentID);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDrawBuffer(GL_BACK);
+	glViewport(0, 0, gv->width, gv->height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glBindVertexArray(m_mesh.mVao);
 	glDrawElementsInstanced(GL_TRIANGLES, m_mesh.mNumIndices, GL_UNSIGNED_INT, 0, 9);
 	glBindVertexArray(0);
 }
@@ -49,6 +87,47 @@ void GraphicsPicker::Reload()
 
 void GraphicsPicker::Init_Buffers()
 {
+	auto gv = Global_Variables::Instance();
+	glUseProgram(shader_program);
+
+	glGenFramebuffers(1, &frame_buffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, frame_buffer);
+
+	glGenTextures(1, &texture_buffer);
+	glBindTexture(GL_TEXTURE_2D, texture_buffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gv->width, gv->height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_CLAMP);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_buffer, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glGenTextures(1, &picker_buffer);
+	glBindTexture(GL_TEXTURE_2D, picker_buffer);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gv->width, gv->height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_CLAMP);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, picker_buffer, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	glGenRenderbuffers(1, &render_buffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, render_buffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, gv->width, gv->height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, render_buffer);
+
+	if( glCheckFramebufferStatus(GL_FRAMEBUFFER)!= GL_FRAMEBUFFER_COMPLETE)
+	{
+		DEBUG("ERROR!", "Frame buffer not complete! ");
+	}
+	else
+	{
+		DEBUG("Frame buffer complete! ","");
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void GraphicsPicker::BufferManage()

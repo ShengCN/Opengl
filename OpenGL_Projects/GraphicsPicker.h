@@ -13,7 +13,10 @@ public:
 	void Init_Buffers() override;
 	void BufferManage() override;
 	void ReleaseBuffers() override;
+
+	GLuint GetTexture() const { return texture_buffer; }
 private:
-	GLuint picker_buffer;
+	GLuint frame_buffer,texture_buffer, render_buffer,picker_buffer;
+	float currentID;
 };
 
