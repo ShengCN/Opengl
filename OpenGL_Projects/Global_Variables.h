@@ -25,6 +25,12 @@ public:
 	// Camera properties
 	Camera* current_camera;
 
+	// Bezier
+	std::string bezier_vs;
+	std::string bezier_fs;
+	bool pointsFlag, curveFlag;
+
+
 	// Control Varibles
 	bool isLBtnressed;  // is left mouse button pressed
 	bool isRBtnPressed; // is right mouse button pressed
@@ -86,10 +92,6 @@ public:
 	// Picker 
 	std::string picker_vs;
 	std::string picker_fs;
-
-	// Bezier
-	std::string bezier_vs;
-	std::string bezier_fs;
 
 	// BillBoard manipulation
 	std::map<int, int> layer_anglesize_map;

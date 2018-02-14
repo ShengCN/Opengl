@@ -1,6 +1,7 @@
 #include "GraphicsBezier.h"
 #include "GLCommon.h"
 #include "IchenLib/Utilities.h"
+#include "Common.h"
 
 GraphicsBezier::GraphicsBezier(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3)
 	: controlPoints(std::vector<glm::vec3>{p0, p1, p2, p3}),m(CasteljauTerminal::IsFlat)
@@ -25,11 +26,31 @@ void GraphicsBezier::Draw()
 	// variables
 	glUniformMatrix4fv(0, 1, false, glm::value_ptr(m_PVM));
 
-
+	// dynamically change control points
 	InitBeizer(controlPoints);
-	glBindVertexArray(vao);
-	glDrawArrays(GL_LINE_STRIP, 0, drawPoints.size());
+
+	// Draw beizer
+	glUniform1i(glGetUniformLocation(shader_program, "pass"), 1);
+	glBindVertexArray(vao[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, drawPoints.size() * sizeof(glm::vec3), &drawPoints[0], GL_DYNAMIC_DRAW);
+	glDrawArrays(GL_LINES, 0, drawPoints.size());
 	glBindVertexArray(0);
+
+	// Draw control points
+	if (gv->pointsFlag)
+	{
+		glUniform1i(glGetUniformLocation(shader_program, "pass"), 2);
+		glBindVertexArray(vao[1]);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+		glBufferData(GL_ARRAY_BUFFER, controlPoints.size() * sizeof(glm::vec3), &controlPoints[0], GL_DYNAMIC_DRAW);
+		glDrawArrays(GL_POINTS, 0, controlPoints.size());
+
+		// Draw control points polygon 
+		glUniform1i(glGetUniformLocation(shader_program, "pass"), 3);
+		glDrawArrays(GL_LINE_STRIP, 0, controlPoints.size());
+		glBindVertexArray(0);
+	}
 }
 
 void GraphicsBezier::Reload()
@@ -50,18 +71,27 @@ void GraphicsBezier::Reload()
 void GraphicsBezier::Init_Buffers()
 {
 	glUseProgram(shader_program);
-	// Init points
+	
+	// dynamically change control points
 	InitBeizer(controlPoints);
 
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	// Bezier curve
+	glGenVertexArrays(2, vao);
+	glBindVertexArray(vao[0]);
+	glGenBuffers(2, vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * drawPoints.size(), &drawPoints[0], GL_DYNAMIC_DRAW);
 	
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	
+
+	// Control points
+	glBindVertexArray(vao[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3)*controlPoints.size(), &controlPoints[0], GL_DYNAMIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
 	glBindVertexArray(0);
 }
 
@@ -73,6 +103,7 @@ void GraphicsBezier::ReleaseBuffers()
 {
 }
 
+
 void GraphicsBezier::InitBeizer(std::vector<glm::vec3> controlP, CasteljauTerminal m)
 {
 	if (controlP.size() < 4)
@@ -80,26 +111,37 @@ void GraphicsBezier::InitBeizer(std::vector<glm::vec3> controlP, CasteljauTermin
 
 	drawPoints.clear();
 	Casteljau(controlP);
-	std::sort(drawPoints.begin(), drawPoints.end(), [&](glm::vec3 a, glm::vec3 b) {return a.x < b.x; });
+
+	// if control points are larger than 4, draw new curve for the new points
+	if(controlP.size()>4)
+	{
+		for(unsigned int i = 0; i < (controlP.size()-4)/3;++i)
+		{
+			auto beginIndex = (i + 1) * 3;
+			Casteljau(std::vector<glm::vec3>(controlP.begin() + beginIndex, controlP.begin() + beginIndex + 4));
+		}
+	}
+
+	// std::sort(drawPoints.begin(), drawPoints.end(), [&](glm::vec3 a, glm::vec3 b) {return a.x < b.x; });
 }
 
-void GraphicsBezier::Casteljau(std::vector<glm::vec3> controlPoints)
+void GraphicsBezier::Casteljau(std::vector<glm::vec3> p)
 {
 	// recursive end 
 	bool result = false;
 	switch(m)
 	{
 		case CasteljauTerminal::IsFlat:
-			result = IsFlat(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3]);
+			result = IsFlat(p[0], p[1], p[2], p[3]);
 			break;
 		case CasteljauTerminal::IsInOnePixel:
-			result = IsInOnePixel(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3]);
+			result = IsInOnePixel(p[0], p[1], p[2], p[3]);
 			break;
 		case CasteljauTerminal::IsPolygonSmall:
-			result = IsPolygonSmall(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3]);
+			result = IsPolygonSmall(p[0], p[1], p[2], p[3]);
 			break;
 		case CasteljauTerminal::IsPolygonInOnePixel:
-			result = IsPolygonInOnePixel(controlPoints[0], controlPoints[1], controlPoints[2], controlPoints[3]);
+			result = IsPolygonInOnePixel(p[0], p[1], p[2], p[3]);
 			break;
 		default:
 			break;
@@ -107,20 +149,21 @@ void GraphicsBezier::Casteljau(std::vector<glm::vec3> controlPoints)
 
 	if (result)
 	{
-		drawPoints.push_back(controlPoints[0]);
-		drawPoints.push_back(controlPoints[3]);
+		drawPoints.push_back(p[0]);
+		drawPoints.push_back(p[3]);
+		DEBUG("Current points: ", drawPoints.size());
 		return;
 	}
 	else
 	{
 		std::vector<glm::vec3> left(4), right(4);
-		SplitCurve(controlPoints, left, right);
+		SplitCurve(p, left, right);
 		Casteljau(left);
 		Casteljau(right);
 	}
 }
 
-void GraphicsBezier::SplitCurve(std::vector<glm::vec3> p, std::vector<glm::vec3>& left, std::vector<glm::vec3>& right)
+void GraphicsBezier::SplitCurve(std::vector<glm::vec3> p, std::vector<glm::vec3> left, std::vector<glm::vec3> right)
 {
 	float coefficient = 0.5f;
 	glm::vec3 mp11 = coefficient * (p[0] + p[1]); // middle point
@@ -153,24 +196,62 @@ bool GraphicsBezier::IsFlat(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 
 	const auto diff12 = glm::dot(p01,p12)- 1.0f;
 	const auto diff23 = glm::dot(p12, p23) - 1.0f;
 
-	// 0.02
 	return MSE(std::vector<float>{diff12, diff23}) < 1e-6;
 }
 
 bool GraphicsBezier::IsInOnePixel(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3)
 {
+	auto gv = Global_Variables::Instance();
 	// coordinates before clipping
 	auto clip_p0 = m_PVM * glm::vec4(p0,1.0);
 	auto clip_p1 = m_PVM * glm::vec4(p1,1.0);
 	auto clip_p2 = m_PVM * glm::vec4(p2,1.0);
 	auto clip_p3 = m_PVM * glm::vec4(p3,1.0);
 
-	return false;
+	// division to NDC
+	clip_p0 /= clip_p0.w;
+	clip_p1 /= clip_p1.w;
+	clip_p2 /= clip_p2.w;
+	clip_p3 /= clip_p3.w;
+
+	// map to pixel space, only need to calculate x, y
+	auto map2pixel = [&](glm::vec4 p)->glm::vec2
+	{
+		glm::vec2 r = glm::vec2((0.5*p.x + 0.5) * gv->width *0.065, (0.5*p.y+0.5)*gv->height * 0.065);
+		return r;
+	};
+
+	glm::vec2 pixel_p0 = map2pixel(clip_p0);
+	glm::vec2 pixel_p1 = map2pixel(clip_p1);
+	glm::vec2 pixel_p2 = map2pixel(clip_p2);
+	glm::vec2 pixel_p3 = map2pixel(clip_p3);
+
+	auto checkPair = [&](glm::vec2 a,glm::vec2 b)->bool
+	{
+		float epison = 1e-4;
+		return glm::floor(a) == glm::floor(b) ||
+			glm::floor(a + epison) == glm::floor(b) ||
+			glm::floor(a) == glm::floor(b + epison);
+	};
+
+	// assume in an integer step is in one pixel
+	bool isOne =  checkPair(pixel_p0, pixel_p1) &&
+		checkPair(pixel_p1,pixel_p2)&&
+		checkPair(pixel_p2,pixel_p3);
+
+	return isOne;
 }
 
 bool GraphicsBezier::IsPolygonSmall(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3)
 {
-	return false;
+	// calculate area
+	glm::vec3 v1 = p1 - p0;
+	glm::vec3 v2 = p2 - p1;
+	glm::vec3 v3 = p2 - p0;
+	glm::vec3 v4 = p3 - p2;
+	auto area = 0.5*(glm::length(glm::dot(v1, v2)) + glm::length(glm::dot(v3, v4)));
+
+	return area < 1e-6;
 }
 
 bool GraphicsBezier::IsPolygonInOnePixel(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3)

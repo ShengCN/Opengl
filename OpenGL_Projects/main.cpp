@@ -85,6 +85,9 @@ void InitOpenGL()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_PROGRAM_POINT_SIZE); //allows us to set point size in vertex shader
+	glPointSize(5.0);
+	glEnable(GL_LINE_SMOOTH);
+	glLineWidth(1.0);
 
 	ImGui_ImplGlut_Init();
 	Init_Global();
@@ -94,7 +97,7 @@ void InitOpenGL()
 void Init_Global()
 {
 	auto gv = Global_Variables::Instance();
-	gv->current_camera->Position *= 5.0;
+	gv->current_camera->Position *= 3.0;
 	gv->isImguiOpen = true;
 	gv->vec3_uniforms["cameraPos"] = glm::vec3(0.0f, -0.2f, 3.0f);
 	gv->vec3_uniforms["cameraFront"] = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -121,18 +124,18 @@ void Init_Global()
 //	gv->graphics.push_back(toy);
 
 	// Frame buffer demos
-	GraphicsBase* picker = new GraphicsPicker();
-	picker->Init_Shaders(gv->picker_vs, gv->picker_fs);
-	picker->Load_Model(gv->fish_model_dir + gv->fish_model);
-	picker->Load_Texture(gv->fish_model_dir + gv->fish_texture);
-	picker->Init_Buffers();
-	gv->graphics.push_back(picker);
+//	GraphicsBase* picker = new GraphicsPicker();
+//	picker->Init_Shaders(gv->picker_vs, gv->picker_fs);
+//	picker->Load_Model(gv->fish_model_dir + gv->fish_model);
+//	picker->Load_Texture(gv->fish_model_dir + gv->fish_texture);
+//	picker->Init_Buffers();
+//	gv->graphics.push_back(picker);
 
 	// Bezier
-//	GraphicsBase* bezier = new GraphicsBezier(glm::vec3(0, 0, 0), glm::vec3(0, 3, 3), glm::vec3(3, 3, -3), glm::vec3(3, 0, 0));
-//	bezier->Init_Shaders(gv->bezier_vs, gv->bezier_fs);
-//	bezier->Init_Buffers();
-//	gv->graphics.push_back(bezier);
+	GraphicsBase* bezier = new GraphicsBezier(glm::vec3(0, 0, 0), glm::vec3(0, 3, 3), glm::vec3(3, 3, -3), glm::vec3(3, 0, 0));
+	bezier->Init_Shaders(gv->bezier_vs, gv->bezier_fs);
+	bezier->Init_Buffers();
+	gv->graphics.push_back(bezier);
 }
 
 void Display()
@@ -203,32 +206,25 @@ void Keyboard(unsigned char key, int x, int y)
 		ReloadShaders();
 		break;
 
-	case 'w':
-	case 'W':
-		gv->current_camera->ProcessKeyboard(Camera_Movement::FORWARD,gv->delta_time);
-		gv->current_camera->Debug_Current_Pos();
+	case 'c':
+		gv->curveFlag = !gv->curveFlag;
 		break;
 
-	case 's':
-	case 'S':
-		gv->current_camera->ProcessKeyboard(Camera_Movement::BACKWARD, gv->delta_time);
-		gv->current_camera->Debug_Current_Pos();
+	case 'p':
+		gv->pointsFlag = !gv->pointsFlag;
+		break;
+
+	case 'P':
+		dynamic_cast<GraphicsBezier*>(gv->graphics[0])->AddControlPointC1();
 		break;
 
 	case 'a':
-	case 'A':
-		gv->current_camera->ProcessKeyboard(Camera_Movement::LEFT, gv->delta_time);
-		gv->current_camera->Debug_Current_Pos();
-		break;
-
-	case 'd':
-	case 'D':
-		gv->current_camera->ProcessKeyboard(Camera_Movement::RIGHT, gv->delta_time);
-		gv->current_camera->Debug_Current_Pos();
+		dynamic_cast<GraphicsBezier*>(gv->graphics[0])->AddControlPointRandom();
 		break;
 
 	case 'z':
 	case 'Z':
+		dynamic_cast<GraphicsBezier*>(gv->graphics[0])->DeleteControlPoint();
 		break;
 
 	case '1':

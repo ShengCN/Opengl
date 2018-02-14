@@ -66,7 +66,32 @@ void KeyboardUpEvents(unsigned char key, int x, int y)
 
 void SpecialKeyboardEvents(int k, int x, int y)
 {
+	auto gv = Global_Variables::Instance();
 	ImGui_ImplGlut_PassiveMouseMotionCallback(x, y);
+	switch(k)
+	{
+	case GLUT_KEY_UP:
+		gv->current_camera->ProcessKeyboard(Camera_Movement::FORWARD, gv->delta_time);
+		gv->current_camera->Debug_Current_Pos();
+		break;
+
+	case GLUT_KEY_DOWN:
+		gv->current_camera->ProcessKeyboard(Camera_Movement::BACKWARD, gv->delta_time);
+		gv->current_camera->Debug_Current_Pos();
+		break;
+
+	case GLUT_KEY_LEFT:
+		gv->current_camera->ProcessKeyboard(Camera_Movement::LEFT, gv->delta_time);
+		gv->current_camera->Debug_Current_Pos();
+		break;
+
+	case GLUT_KEY_RIGHT:
+		gv->current_camera->ProcessKeyboard(Camera_Movement::RIGHT, gv->delta_time);
+		gv->current_camera->Debug_Current_Pos();
+		break;
+	default:
+		break;
+	}
 }
 
 void MouseEvents(int button, int state, int x, int y)

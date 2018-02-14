@@ -112,7 +112,7 @@
       <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsBezier.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,7 +213,7 @@
       <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsBezier.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

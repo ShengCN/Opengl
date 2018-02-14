@@ -13,9 +13,13 @@ Global_Variables* Global_Variables::Instance()
 
 Global_Variables::Global_Variables()
 {
-	width = 1280;
-	height = 720;
+	width = 1200;
+	height = 800;
 	windowPos = glm::vec2(20,20);
+	bezier_vs = ".\\bezier_vs.glsl";
+	bezier_fs = ".\\bezier_fs.glsl";
+	curveFlag = false;
+	pointsFlag = false;
 
 
 	isLBtnressed = false;
@@ -65,9 +69,6 @@ Global_Variables::Global_Variables()
 
 	picker_vs = ".\\picker_vs.glsl";
 	picker_fs = ".\\picker_fs.glsl";
-
-	bezier_vs = ".\\bezier_vs.glsl";
-	bezier_fs = ".\\bezier_fs.glsl";
 
 	isF_MouseMovement = true;
 	isImguiOpen = true;
