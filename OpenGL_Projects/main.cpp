@@ -24,6 +24,7 @@
 #include "IchenLib/DebugCallback.h"
 #include "DrawObjects/GraphicsFBO.h"
 #include "GraphicsPicker.h"
+#include "GraphicsBezier.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 // #define DEBUG_REGISTER
@@ -64,9 +65,6 @@ void ImGui_Update()
 	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);
 	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);
 	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);
-	
-	auto t = static_cast<GraphicsPicker*>(gv->graphics[0])->GetTexture();
-	ImGui::Image((void*) static_cast<GraphicsPicker*>(gv->graphics[0])->GetTexture(), ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
 	int i = 0;
 	for (auto g : gv->graphics)
@@ -96,6 +94,7 @@ void InitOpenGL()
 void Init_Global()
 {
 	auto gv = Global_Variables::Instance();
+	gv->current_camera->Position *= 5.0;
 	gv->isImguiOpen = true;
 	gv->vec3_uniforms["cameraPos"] = glm::vec3(0.0f, -0.2f, 3.0f);
 	gv->vec3_uniforms["cameraFront"] = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -128,6 +127,12 @@ void Init_Global()
 	picker->Load_Texture(gv->fish_model_dir + gv->fish_texture);
 	picker->Init_Buffers();
 	gv->graphics.push_back(picker);
+
+	// Bezier
+//	GraphicsBase* bezier = new GraphicsBezier(glm::vec3(0, 0, 0), glm::vec3(0, 3, 3), glm::vec3(3, 3, -3), glm::vec3(3, 0, 0));
+//	bezier->Init_Shaders(gv->bezier_vs, gv->bezier_fs);
+//	bezier->Init_Buffers();
+//	gv->graphics.push_back(bezier);
 }
 
 void Display()
@@ -191,11 +196,6 @@ void Keyboard(unsigned char key, int x, int y)
 	DEBUG("Pressed ", key);
 	ImGui_ImplGlut_KeyCallback(key);
 
-	auto print_time = [&]()
-	{
-
-	};
-
 	switch (key)
 	{
 	case 'r':
@@ -229,7 +229,23 @@ void Keyboard(unsigned char key, int x, int y)
 
 	case 'z':
 	case 'Z':
-		print_time();
+		break;
+
+	case '1':
+		static_cast<GraphicsBezier*>(gv->graphics[0])->TerminalMethod(CasteljauTerminal::IsFlat);
+		DEBUG("Current methods: ","Is flat? ");
+		break;
+	case '2':
+		static_cast<GraphicsBezier*>(gv->graphics[0])->TerminalMethod(CasteljauTerminal::IsInOnePixel);
+		DEBUG("Current methods: ", "Is in one pixel? ");
+		break;
+	case '3':
+		static_cast<GraphicsBezier*>(gv->graphics[0])->TerminalMethod(CasteljauTerminal::IsPolygonSmall);
+		DEBUG("Current methods: ", "Is polygon small enough? ");
+		break;
+	case '4':
+		static_cast<GraphicsBezier*>(gv->graphics[0])->TerminalMethod(CasteljauTerminal::IsPolygonInOnePixel);
+		DEBUG("Current methods: ", "Is polygon in one pixel? ");
 		break;
 
 	default:

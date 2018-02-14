@@ -66,6 +66,9 @@ Global_Variables::Global_Variables()
 	picker_vs = ".\\picker_vs.glsl";
 	picker_fs = ".\\picker_fs.glsl";
 
+	bezier_vs = ".\\bezier_vs.glsl";
+	bezier_fs = ".\\bezier_fs.glsl";
+
 	isF_MouseMovement = true;
 	isImguiOpen = true;
 	isInstance = true;

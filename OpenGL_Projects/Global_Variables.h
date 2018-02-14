@@ -87,6 +87,10 @@ public:
 	std::string picker_vs;
 	std::string picker_fs;
 
+	// Bezier
+	std::string bezier_vs;
+	std::string bezier_fs;
+
 	// BillBoard manipulation
 	std::map<int, int> layer_anglesize_map;
 	int layer_max;
