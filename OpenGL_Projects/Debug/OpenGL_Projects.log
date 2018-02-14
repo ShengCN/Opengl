@@ -1,16 +1,5 @@
-﻿  Mesh.cpp
+﻿  GraphicsBezier.cpp
+  Generating Code...
+  Skipping... (no relevant changes detected)
   main.cpp
-  imgui_impl_glut.cpp
-  imgui_draw.cpp
-  imgui_demo.cpp
-  imgui.cpp
-  Utilities.cpp
-  ShaderProcessor.cpp
-  LoadTexture.cpp
-  LoadMesh.cpp
-  IchenGlut.cpp
-  DebugCallback.cpp
-  VBO_Surf.cpp
-  IBufferManager.cpp
-  GraphicsShaderToy.cpp
-  GraphicsPoints.cpp
+  OpenGL_Projects.vcxproj -> E:\Eason\Codes\Git Rep\Opengl\Debug\OpenGL_Projects.exe

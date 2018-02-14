@@ -163,7 +163,7 @@ void GraphicsBezier::Casteljau(std::vector<glm::vec3> p)
 	}
 }
 
-void GraphicsBezier::SplitCurve(std::vector<glm::vec3> p, std::vector<glm::vec3> left, std::vector<glm::vec3> right)
+void GraphicsBezier::SplitCurve(std::vector<glm::vec3> p, std::vector<glm::vec3>& left, std::vector<glm::vec3>& right)
 {
 	float coefficient = 0.5f;
 	glm::vec3 mp11 = coefficient * (p[0] + p[1]); // middle point
@@ -196,7 +196,7 @@ bool GraphicsBezier::IsFlat(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 
 	const auto diff12 = glm::dot(p01,p12)- 1.0f;
 	const auto diff23 = glm::dot(p12, p23) - 1.0f;
 
-	return MSE(std::vector<float>{diff12, diff23}) < 1e-6;
+	return MSE(std::vector<float>{diff12, diff23}) < 1e-5;
 }
 
 bool GraphicsBezier::IsInOnePixel(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3)
@@ -228,7 +228,7 @@ bool GraphicsBezier::IsInOnePixel(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm:
 
 	auto checkPair = [&](glm::vec2 a,glm::vec2 b)->bool
 	{
-		float epison = 1e-4;
+		float epison = static_cast<float>(1e-4);
 		return glm::floor(a) == glm::floor(b) ||
 			glm::floor(a + epison) == glm::floor(b) ||
 			glm::floor(a) == glm::floor(b + epison);
@@ -249,7 +249,7 @@ bool GraphicsBezier::IsPolygonSmall(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, gl
 	glm::vec3 v2 = p2 - p1;
 	glm::vec3 v3 = p2 - p0;
 	glm::vec3 v4 = p3 - p2;
-	auto area = 0.5*(glm::length(glm::dot(v1, v2)) + glm::length(glm::dot(v3, v4)));
+	auto area = 0.5*(glm::length(glm::cross(v1, v2)) + glm::length(glm::cross(v3, v4)));
 
 	return area < 1e-6;
 }

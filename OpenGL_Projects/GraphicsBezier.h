@@ -37,7 +37,7 @@ private:
 
 	// Tool functions
 	void Casteljau(std::vector<glm::vec3> controlPoints); // only draw the first four points
-	void SplitCurve(std::vector<glm::vec3> p, std::vector<glm::vec3> left, std::vector<glm::vec3> right);
+	void SplitCurve(std::vector<glm::vec3> p, std::vector<glm::vec3>& left, std::vector<glm::vec3>& right);
 	bool IsFlat(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3);           
 	bool IsInOnePixel(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3);
 	bool IsPolygonSmall(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3);  // Is polygon area small enough
