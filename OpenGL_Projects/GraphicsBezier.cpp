@@ -4,7 +4,7 @@
 #include "Common.h"
 
 GraphicsBezier::GraphicsBezier(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3)
-	: controlPoints(std::vector<glm::vec3>{p0, p1, p2, p3}),m(CasteljauTerminal::IsFlat)
+	: controlPoints(std::vector<glm::vec3>{p0, p1, p2, p3}),m(CasteljauTerminal::IsFlat),isFirstP(true),lastControlPointID(-1), recursiveTimes(0)
 {
 }
 
@@ -27,30 +27,59 @@ void GraphicsBezier::Draw()
 	glUniformMatrix4fv(0, 1, false, glm::value_ptr(m_PVM));
 
 	// dynamically change control points
+	int pass = -1;
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glDrawBuffer(GL_COLOR_ATTACHMENT0);       // picker buffer
+	glViewport(0, 0, gv->width, gv->height);
+	glClear(GL_COLOR_BUFFER_BIT);
+	DrawControlPolygons(pass);  // pass == -1 or 2
+
+	GLubyte buffer[4];
+	glReadBuffer(GL_COLOR_ATTACHMENT0); // picker buffer
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	glReadPixels(gv->mouseX, gv->height - gv->mouseY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+	int currentID = static_cast<int>(floor(buffer[0]/25.0));
+	// DEBUG("Current ID:", currentID);
+
+	if(gv->isLBtnressed)
+	{
+		if (isFirstP)
+		{
+			isFirstP = !isFirstP;
+			lastMousePos = glm::vec2(gv->mouseX,gv->mouseY);
+			lastControlPointID = currentID;
+		}
+		else
+		{
+			offset = glm::vec2(gv->lastMousePos - lastMousePos);
+			offset.y = -offset.y;
+		}
+	}
+	else
+	{
+		// DEBUG(offset.x, offset.y);
+		if (lastControlPointID <= controlPoints.size() - 1 && lastControlPointID >= 0)
+			controlPoints[lastControlPointID] += glm::vec3(offset, 0.0) * (gv->current_camera->Right + gv->current_camera->Up) * 0.015f;
+
+		isFirstP = true;
+		lastControlPointID = -1;
+		offset = glm::vec2(0.0);
+	}
+
+	// Update Beizer
 	InitBeizer(controlPoints);
+	DEBUG("Control points : ", controlPoints.size());
+	DEBUG("Draw points : ", drawPoints.size());
 
 	// Draw beizer
-	glUniform1i(glGetUniformLocation(shader_program, "pass"), 1);
-	glBindVertexArray(vao[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, drawPoints.size() * sizeof(glm::vec3), &drawPoints[0], GL_DYNAMIC_DRAW);
-	glDrawArrays(GL_LINES, 0, drawPoints.size());
-	glBindVertexArray(0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDrawBuffer(GL_BACK);
+	glViewport(0, 0, gv->width, gv->height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	DrawBezier();
 
 	// Draw control points
-	if (gv->pointsFlag)
-	{
-		glUniform1i(glGetUniformLocation(shader_program, "pass"), 2);
-		glBindVertexArray(vao[1]);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-		glBufferData(GL_ARRAY_BUFFER, controlPoints.size() * sizeof(glm::vec3), &controlPoints[0], GL_DYNAMIC_DRAW);
-		glDrawArrays(GL_POINTS, 0, controlPoints.size());
-
-		// Draw control points polygon 
-		glUniform1i(glGetUniformLocation(shader_program, "pass"), 3);
-		glDrawArrays(GL_LINE_STRIP, 0, controlPoints.size());
-		glBindVertexArray(0);
-	}
+	DrawControlPolygons(2);
 }
 
 void GraphicsBezier::Reload()
@@ -71,14 +100,15 @@ void GraphicsBezier::Reload()
 void GraphicsBezier::Init_Buffers()
 {
 	glUseProgram(shader_program);
-	
+	auto gv = Global_Variables::Instance();
+
 	// dynamically change control points
 	InitBeizer(controlPoints);
 
 	// Bezier curve
 	glGenVertexArrays(2, vao);
 	glBindVertexArray(vao[0]);
-	glGenBuffers(2, vbo);
+	glGenBuffers(3, vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * drawPoints.size(), &drawPoints[0], GL_DYNAMIC_DRAW);
 	
@@ -92,7 +122,42 @@ void GraphicsBezier::Init_Buffers()
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
+	// Ids
+	float id = 0.0f;
+	std::vector<float> ids(controlPoints.size());
+	std::for_each(ids.begin(), ids.end(), [&](float& i) {i = id++; });
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)*ids.size(), &ids[0], GL_DYNAMIC_DRAW);
+	auto id_loc = glGetAttribLocation(shader_program, "id");
+	glEnableVertexAttribArray(id_loc);
+	glVertexAttribPointer(id_loc, 1, GL_FLOAT, GL_FALSE, 0, 0);
+
 	glBindVertexArray(0);
+
+	// frame buffer object
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	glGenTextures(1, &tbo);
+	glBindTexture(GL_TEXTURE_2D, tbo);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gv->width, gv->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_CLAMP);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tbo, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		DEBUG("ERROR!", "Frame buffer not complete! ");
+	}
+	else
+	{
+		DEBUG("Frame buffer complete! ", "");
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void GraphicsBezier::BufferManage()
@@ -151,7 +216,7 @@ void GraphicsBezier::Casteljau(std::vector<glm::vec3> p)
 	{
 		drawPoints.push_back(p[0]);
 		drawPoints.push_back(p[3]);
-		DEBUG("Current points: ", drawPoints.size());
+		// DEBUG("Current points: ", drawPoints.size());
 		return;
 	}
 	else
@@ -217,7 +282,7 @@ bool GraphicsBezier::IsInOnePixel(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm:
 	// map to pixel space, only need to calculate x, y
 	auto map2pixel = [&](glm::vec4 p)->glm::vec2
 	{
-		glm::vec2 r = glm::vec2((0.5*p.x + 0.5) * gv->width *0.065, (0.5*p.y+0.5)*gv->height * 0.065);
+		glm::vec2 r = glm::vec2((0.5*p.x + 0.5) * gv->width, (0.5*p.y+0.5)*gv->height);
 		return r;
 	};
 
@@ -256,7 +321,53 @@ bool GraphicsBezier::IsPolygonSmall(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, gl
 
 bool GraphicsBezier::IsPolygonInOnePixel(glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3)
 {
-	return false;
+	auto gv = Global_Variables::Instance();
+	// calculate area
+	glm::vec3 v1 = p1 - p0;
+	glm::vec3 v2 = p2 - p1;
+	glm::vec3 v3 = p2 - p0;
+	glm::vec3 v4 = p3 - p2;
+	auto area = 0.5*(glm::length(glm::cross(v1, v2)) + glm::length(glm::cross(v3, v4)));
+
+	return area < 1.0/ static_cast<double>(gv->width * gv->height);
+}
+
+void GraphicsBezier::DrawBezier()
+{
+	glUniform1i(glGetUniformLocation(shader_program, "pass"), 1);
+	glBindVertexArray(vao[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, drawPoints.size() * sizeof(glm::vec3), &drawPoints[0], GL_DYNAMIC_DRAW);
+	glDrawArrays(GL_LINES, 0, drawPoints.size());
+	glBindVertexArray(0);
+}
+
+void GraphicsBezier::DrawControlPolygons(int pass)
+{
+	auto gv = Global_Variables::Instance();
+	if (gv->pointsFlag)
+	{
+		glUniform1i(glGetUniformLocation(shader_program, "pass"), pass);
+		glBindVertexArray(vao[1]);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+		glBufferData(GL_ARRAY_BUFFER, controlPoints.size() * sizeof(glm::vec3), &controlPoints[0], GL_DYNAMIC_DRAW);
+		
+		int id = 0;
+		std::vector<float> ids(controlPoints.size());
+		std::for_each(ids.begin(), ids.end(), [&](float& i) {i = static_cast<float>(id++); });
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float)*ids.size(), &ids[0], GL_DYNAMIC_DRAW);
+		
+		glDrawArrays(GL_POINTS, 0, controlPoints.size());
+
+		// Draw control points polygon 
+		if (pass != -1)
+		{
+			glUniform1i(glGetUniformLocation(shader_program, "pass"), 3);
+			glDrawArrays(GL_LINE_STRIP, 0, controlPoints.size());
+			glBindVertexArray(0);
+		}
+	}
 }
 
 void GraphicsBezier::Draw_Shader_Uniforms()

@@ -36,6 +36,7 @@ public:
 	bool isRBtnPressed; // is right mouse button pressed
 	glm::vec2 lastMousePos;
 	glm::vec2 lastMMovement; // last mouse movement
+	glm::vec2 lastPressedMovement;
 
 	// Variables
 	std::vector<GraphicsBase*> graphics;

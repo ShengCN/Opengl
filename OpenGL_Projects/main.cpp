@@ -85,7 +85,7 @@ void InitOpenGL()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_PROGRAM_POINT_SIZE); //allows us to set point size in vertex shader
-	glPointSize(5.0);
+	glPointSize(8.0);
 	glEnable(GL_LINE_SMOOTH);
 	glLineWidth(1.0);
 
@@ -104,32 +104,12 @@ void Init_Global()
 	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
 	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
 	gv->float_uniforms["cameraSpeed"] = 0.5f;
-	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.7f, 0.7f, 0.0f, 1.0f);
+	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
 	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
 		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 
-	// Point Light
-//	GraphicsBase* point_light = new GraphicsLight();
-//	point_light->Init_Shaders(gv->test_vs, gv->test_fs);
-//	point_light->Load_Model(gv->light_model);
-//	point_light->vec3_uniforms["light_position"] = glm::vec3(0.0f, 100.0f, 0.0f);
-//	point_light->vec4_uniforms["light_color"] = glm::vec4(1.0f, 1.0f, 100.0f / 255.0f, 1.0f);
-//	gv->graphics.push_back(point_light);
-
-//	GraphicsBase* toy = new GraphicsShaderToy();
-//	toy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
-//	toy->Init_Buffers();
-//	gv->graphics.push_back(toy);
-
-	// Frame buffer demos
-//	GraphicsBase* picker = new GraphicsPicker();
-//	picker->Init_Shaders(gv->picker_vs, gv->picker_fs);
-//	picker->Load_Model(gv->fish_model_dir + gv->fish_model);
-//	picker->Load_Texture(gv->fish_model_dir + gv->fish_texture);
-//	picker->Init_Buffers();
-//	gv->graphics.push_back(picker);
 
 	// Bezier
 	GraphicsBase* bezier = new GraphicsBezier(glm::vec3(0, 0, 0), glm::vec3(0, 3, 3), glm::vec3(3, 3, -3), glm::vec3(3, 0, 0));

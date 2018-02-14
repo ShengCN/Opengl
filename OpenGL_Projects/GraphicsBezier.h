@@ -30,10 +30,15 @@ public:
 	inline void DeleteControlPoint() { if (controlPoints.size() > 4) controlPoints.erase(controlPoints.begin() + controlPoints.size() -1); }
 private:
 	glm::mat4 m_PVM;
-	GLuint vao[2],vbo[2];
+	GLuint vao[2],vbo[3];
+	GLuint fbo, idbo, tbo; // for mouse control
 	std::vector<glm::vec3> controlPoints;
 	std::vector<glm::vec3> drawPoints;
+	bool isFirstP;
+	unsigned int lastControlPointID;
+	glm::vec2 lastMousePos, offset;
 	CasteljauTerminal m;
+	int recursiveTimes;
 
 	// Tool functions
 	void Casteljau(std::vector<glm::vec3> controlPoints); // only draw the first four points
@@ -56,5 +61,8 @@ private:
 
 	inline bool floatEqual(float a, float b) { return abs(a - b) < 1e-4; }
 	inline bool floatEqualV(glm::vec2 a, glm::vec2 b) { return  floatEqual(a.x, b.x) && floatEqual(a.y, b.y); }
+
+	void DrawBezier();
+	void DrawControlPolygons(int pass);
 };
 
