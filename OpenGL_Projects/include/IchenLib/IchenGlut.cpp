@@ -14,7 +14,7 @@ void InitDefaultGlutEnvironment(int argc, char** argv)
 #if _DEBUG
 	glutInitContextFlags(GLUT_DEBUG);
 #endif
-	glutInitContextVersion(4, 6);
+	glutInitContextVersion(4, 3);
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);

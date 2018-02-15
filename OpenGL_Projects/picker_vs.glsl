@@ -1,4 +1,4 @@
-#version 460
+#version 430
 layout(location = 0) uniform mat4 PVM;
 uniform int pass; 
 uniform float iTime;

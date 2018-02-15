@@ -17,6 +17,5 @@ public:
 	GLuint GetTexture() const { return picker_buffer; }
 private:
 	GLuint frame_buffer,texture_buffer, render_buffer,picker_buffer;
-	float currentID;
 };
 

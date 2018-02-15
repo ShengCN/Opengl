@@ -66,6 +66,8 @@ void ImGui_Update()
 	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);
 	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);
 
+	ImGui::Image((void*)dynamic_cast<GraphicsPicker*>(gv->graphics[0])->GetTexture(), ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+
 	int i = 0;
 	for (auto g : gv->graphics)
 	{
@@ -110,12 +112,12 @@ void Init_Global()
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
 		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 
-
-	// Bezier
-	GraphicsBase* bezier = new GraphicsBezier(glm::vec3(0, 0, 0), glm::vec3(0, 3, 3), glm::vec3(3, 3, -3), glm::vec3(3, 0, 0));
-	bezier->Init_Shaders(gv->bezier_vs, gv->bezier_fs);
-	bezier->Init_Buffers();
-	gv->graphics.push_back(bezier);
+	GraphicsBase* picker = new GraphicsPicker();
+	picker->Init_Shaders(gv->picker_vs, gv->picker_fs);
+	picker->Load_Model(gv->fish_model_dir + gv->fish_model);
+	picker->Load_Texture(gv->fish_model_dir + gv->fish_texture);
+	picker->Init_Buffers();
+	gv->graphics.push_back(picker);
 }
 
 void Display()

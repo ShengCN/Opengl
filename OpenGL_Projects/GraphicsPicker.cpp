@@ -43,21 +43,15 @@ void GraphicsPicker::Draw()
 	glReadBuffer(GL_COLOR_ATTACHMENT0); // picker buffer
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	glReadPixels(gv->mouseX, gv->height - gv->mouseY, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-	currentID = buffer[0]/255.0f * 100.0f;
-	DEBUG("Current ID:", currentID);
+	float currentID = buffer[0];
+	
+	if(gv->isLBtnressed)
+		DEBUG("Current ID:", currentID);
+
 
 	// Pass 2
 	glUniform1i(pass_loc, 2);
-	glDrawBuffer(GL_COLOR_ATTACHMENT1);       // Imgui Show up buffer
-	glViewport(0, 0, gv->width, gv->height);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glBindVertexArray(m_mesh.mVao);
-	glDrawElementsInstanced(GL_TRIANGLES, m_mesh.mNumIndices, GL_UNSIGNED_INT, 0, 9);
-	glBindVertexArray(0);
-
-	// Pass 3
-	glUniform1i(pass_loc, 3);
-	glUniform1f(glGetUniformLocation(shader_program, "currentID"), currentID);
+	glUniform1i(glGetUniformLocation(shader_program, "currentID"), currentID);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glDrawBuffer(GL_BACK);
 	glViewport(0, 0, gv->width, gv->height);
@@ -93,7 +87,7 @@ void GraphicsPicker::Init_Buffers()
 
 	glGenTextures(1, &picker_buffer);
 	glBindTexture(GL_TEXTURE_2D, picker_buffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gv->width, gv->height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gv->width, gv->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_CLAMP);
@@ -103,7 +97,7 @@ void GraphicsPicker::Init_Buffers()
 
 	glGenTextures(1, &texture_buffer);
 	glBindTexture(GL_TEXTURE_2D, texture_buffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gv->width, gv->height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gv->width, gv->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_CLAMP);
