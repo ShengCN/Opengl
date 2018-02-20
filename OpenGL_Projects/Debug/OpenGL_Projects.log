@@ -1,2 +1,5 @@
-﻿  main.cpp
-  OpenGL_Projects.vcxproj -> E:\Eason\Codes\Git Rep\Opengl\Debug\OpenGL_Projects.exe
+﻿  GraphicsPicker.cpp
+c:\codes\github\opengl\opengl_projects\graphicspicker.cpp(53): warning C4244: 'argument': conversion from 'float' to 'GLint', possible loss of data
+  Generating Code...
+  Compiling...
+  main.cpp

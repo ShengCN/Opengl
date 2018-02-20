@@ -38,7 +38,6 @@ void GraphicsShaderToy::Init_Buffers()
 {
 	glUseProgram(shader_program);
 	InitQuad(vao, vbo, ebo);
-
 }
 
 void GraphicsShaderToy::BufferManage()

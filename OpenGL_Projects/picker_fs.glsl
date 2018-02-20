@@ -5,6 +5,7 @@ layout(location = 3) uniform vec2 mouse;
 layout(location = 4)uniform vec4 fcolor;
 uniform int pass;
 uniform sampler2D diffuse_color;
+uniform sampler2D color_tex;
 uniform int currentID;
 
 in vec2 tex_coord;
@@ -34,8 +35,20 @@ void main()
         }
         else
         {
+            
             color = texture(diffuse_color,tex_coord);
         }
+    }
+    else if(pass ==3)
+    {
+        ivec2 pixel_uv = ivec2(gl_FragCoord.xy);
+        vec4 left = texelFetch(color_tex,pixel_uv + ivec2(-1.0,0.0),0);
+		vec4 right = texelFetch(color_tex,pixel_uv + ivec2(1.0,0.0),0);
+		vec4 above = texelFetch(color_tex,pixel_uv + ivec2(0.0,1.0),0);
+		vec4 below = texelFetch(color_tex,pixel_uv + ivec2(0.0,-1.0),0);
+		color = (left-right)*(left-right) + (above-below)*(above-below);
+        color = sqrt(color);
+        // color = texelFetch(color_tex,ivec2(gl_FragCoord.xy),0);
     }
 
     fragColor += color;

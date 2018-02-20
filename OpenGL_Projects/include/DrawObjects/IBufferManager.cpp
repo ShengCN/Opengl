@@ -130,3 +130,10 @@ void IBufferManager::DrawSurfaceVao(GLuint vao)
 	glDrawElements(GL_TRIANGLE_STRIP, (ni - 1) * 2 * nj + (ni - 1), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
+
+void IBufferManager::DrawQuad(GLuint vao)
+{
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}

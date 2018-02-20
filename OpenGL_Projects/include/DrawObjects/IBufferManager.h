@@ -12,6 +12,7 @@ public:
 	
 	// Draw functions
 	void DrawSurfaceVao(GLuint vao);
+	void DrawQuad(GLuint vao);
 private:
 	glm::vec3 normal(float x, float y);
 	glm::vec3 surface(float x, float y);

@@ -63,6 +63,8 @@ mat3 rotateY(float radian)
 
 void main()
 {
+    if(pass!=3)
+    {
     int id = gl_InstanceID;
     float time = 0.0;
 
@@ -92,4 +94,9 @@ void main()
     tex_coord = tex_coord_attrib;
     normal = normal_attrib;
     instance_id = id;
+    }
+    else
+    {
+        gl_Position = vec4(pos_attrib,1.0);
+    }
 }

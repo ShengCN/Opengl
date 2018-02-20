@@ -1,7 +1,8 @@
 #pragma once
 #include "DrawObjects/GraphicsBase.h"
+#include "DrawObjects/IBufferManager.h"
 
-class GraphicsPicker:public GraphicsBase
+class GraphicsPicker:public GraphicsBase, public IBufferManager
 {
 public:
 	GraphicsPicker();
@@ -14,8 +15,9 @@ public:
 	void BufferManage() override;
 	void ReleaseBuffers() override;
 
-	GLuint GetTexture() const { return picker_buffer; }
+	GLuint GetPicker() const { return picker_buffer; }
+	GLuint GetTexture() const { return texture_buffer; }
 private:
-	GLuint frame_buffer,texture_buffer, render_buffer,picker_buffer;
+	GLuint frame_buffer,texture_buffer, picker_buffer, render_buffer;
+	GLuint vao, vbo, ebo; // quad
 };
-

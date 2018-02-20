@@ -48,16 +48,27 @@ void GraphicsPicker::Draw()
 	if(gv->isLBtnressed)
 		DEBUG("Current ID:", currentID);
 
-
 	// Pass 2
 	glUniform1i(pass_loc, 2);
 	glUniform1i(glGetUniformLocation(shader_program, "currentID"), currentID);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDrawBuffer(GL_BACK);
+	glDrawBuffer(GL_COLOR_ATTACHMENT1);
 	glViewport(0, 0, gv->width, gv->height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(m_mesh.mVao);
 	glDrawElementsInstanced(GL_TRIANGLES, m_mesh.mNumIndices, GL_UNSIGNED_INT, 0, 9);
+	glBindVertexArray(0);
+
+	// Pass 3
+	glUniform1i(pass_loc, 3);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_buffer);
+	glUniform1i(glGetUniformLocation(shader_program, "color_tex"), 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDrawBuffer(GL_BACK);
+	glViewport(0, 0, gv->width, gv->height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
 
@@ -90,8 +101,8 @@ void GraphicsPicker::Init_Buffers()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gv->width, gv->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, picker_buffer, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -100,8 +111,8 @@ void GraphicsPicker::Init_Buffers()
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gv->width, gv->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, texture_buffer, 0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -120,6 +131,8 @@ void GraphicsPicker::Init_Buffers()
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	InitQuad(vao, vbo, ebo);
 }
 
 void GraphicsPicker::BufferManage()
