@@ -70,6 +70,9 @@ Global_Variables::Global_Variables()
 	picker_vs = ".\\picker_vs.glsl";
 	picker_fs = ".\\picker_fs.glsl";
 
+	particle_system_vs = ".\\particlesystem_vs.glsl";
+	particle_system_fs = ".\\particlesystem_fs.glsl";
+
 	isF_MouseMovement = true;
 	isImguiOpen = true;
 	isInstance = true;

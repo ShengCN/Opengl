@@ -253,7 +253,7 @@ GLuint InitShader(const char* vShaderFile, const char* gShaderFile, const char* 
 }
 
 GLuint InitShader_TransformFeedback(const char* vertexShaderFile, const char* fragmentShaderFile,
-                                    vector<string> varying_names)
+	const char *vars[], unsigned int size)
 {
 	bool error = false;
 	struct Shader
@@ -298,14 +298,7 @@ GLuint InitShader_TransformFeedback(const char* vertexShaderFile, const char* fr
 	}
 
 	// Tranformfeed back
-	const size_t size = varying_names.size();
-	const GLchar* feedbackVaryings[10];
-	for(auto i = 0; i < 10; ++i)
-	{
-		feedbackVaryings[i] = varying_names[i].c_str();
-	}
-
-	glTransformFeedbackVaryings(program, sizeof(varying_names), feedbackVaryings, GL_INTERLEAVED_ATTRIBS);
+	glTransformFeedbackVaryings(program, size, vars, GL_SEPARATE_ATTRIBS);
 
 	/* link  and error check */
 	glLinkProgram(program);
@@ -332,7 +325,7 @@ GLuint InitShader_TransformFeedback(const char* vertexShaderFile, const char* fr
 
 
 GLuint InitShader_TransformFeedback(const char* vertexShaderFile, const char* geometryShader,
-                                    const char* fragmentShaderFile, vector<string> varying_names)
+                                    const char* fragmentShaderFile, const char *vars[], unsigned int size)
 {
 	bool error = false;
 	struct Shader
@@ -379,16 +372,7 @@ GLuint InitShader_TransformFeedback(const char* vertexShaderFile, const char* ge
 
 
 	// Tranformfeed back
-	const GLchar* feedbackVaryings[10];
-	for (unsigned int i = 0; i < 10; ++i)
-	{
-		if (i < varying_names.size())
-			feedbackVaryings[i] = varying_names[i].c_str();
-		else
-			feedbackVaryings[i] = "";
-	}
-
-	glTransformFeedbackVaryings(program, varying_names.size(), feedbackVaryings, GL_INTERLEAVED_ATTRIBS);
+	glTransformFeedbackVaryings(program, size, vars, GL_SEPARATE_ATTRIBS);
 	
 	/* link  and error check */
 	glLinkProgram(program);

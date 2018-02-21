@@ -60,9 +60,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="include\IchenLib\DebugCallback.cpp">
       <Filter>Header Files\IchenLib</Filter>
     </ClCompile>
@@ -114,6 +111,9 @@
     <ClCompile Include="GraphicsBezier.cpp">
       <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsParticleSystem.cpp">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\IchenLib\IchenGlut.h">
@@ -156,9 +156,6 @@
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GLCommon.h">
@@ -213,6 +210,9 @@
       <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
     <ClInclude Include="GraphicsBezier.h">
+      <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsParticleSystem.h">
       <Filter>Header Files\DrawObjects</Filter>
     </ClInclude>
   </ItemGroup>

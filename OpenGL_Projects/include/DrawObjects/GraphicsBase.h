@@ -14,6 +14,8 @@ public:
 
 	GLuint Init_Shaders(const std::string vs, const std::string fs);
 	GLuint Init_Shaders(const std::string vs, const std::string gs, const std::string fs);
+	GLuint Init_Shaders_TransformFeedback(const std::string vs, const std::string fs, const char *vars[], unsigned int size); // Tansform feedback
+
 	void Load_Model(const std::string model);
 	void Load_Texture(const std::string t);
 

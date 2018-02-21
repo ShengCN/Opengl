@@ -94,6 +94,10 @@ public:
 	std::string picker_vs;
 	std::string picker_fs;
 
+	// particle system
+	std::string particle_system_vs;
+	std::string particle_system_fs;
+
 	// BillBoard manipulation
 	std::map<int, int> layer_anglesize_map;
 	int layer_max;

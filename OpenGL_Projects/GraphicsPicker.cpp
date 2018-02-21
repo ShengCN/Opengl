@@ -50,7 +50,7 @@ void GraphicsPicker::Draw()
 
 	// Pass 2
 	glUniform1i(pass_loc, 2);
-	glUniform1i(glGetUniformLocation(shader_program, "currentID"), currentID);
+	glUniform1i(glGetUniformLocation(shader_program, "currentID"), static_cast<int>(currentID));
 	glDrawBuffer(GL_COLOR_ATTACHMENT1);
 	glViewport(0, 0, gv->width, gv->height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

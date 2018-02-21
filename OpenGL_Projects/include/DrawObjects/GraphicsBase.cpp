@@ -30,6 +30,15 @@ GLuint GraphicsBase::Init_Shaders(const std::string vs, const std::string fs)
 	return shader_program;
 }
 
+GLuint GraphicsBase::Init_Shaders_TransformFeedback(const std::string vs, const std::string fs, const char *vars[], unsigned int size)
+{
+	shader_program = InitShader_TransformFeedback(vs.c_str(), fs.c_str(), vars,size);
+	m_vs_file = vs;
+	m_fs_file = fs;
+	m_isGeo = false;
+	return shader_program;
+}
+
 GLuint GraphicsBase::Init_Shaders(const std::string vs, const std::string gs, const std::string fs)
 {
 	shader_program = InitShader(vs.c_str(), gs.c_str(), fs.c_str());

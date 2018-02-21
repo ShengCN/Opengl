@@ -16,18 +16,12 @@
 #include "Global_Variables.h"
 #include "DrawObjects/GraphicsLight.h"
 #include "IchenLib/Utilities.h"
-#include "DrawObjects/Graphics3DO.h"
-#include "DrawObjects/GraphicsPoints.h"
-#include "DrawObjects/GraphicsGrids.h"
-#include "DrawObjects/GraphicsFish.h"
-#include "DrawObjects/GraphicsShaderToy.h"
-#include "IchenLib/DebugCallback.h"
-#include "DrawObjects/GraphicsFBO.h"
-#include "GraphicsPicker.h"
 #include "GraphicsBezier.h"
+#include "GraphicsParticleSystem.h"
+#include "IchenLib/DebugCallback.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
-// #define DEBUG_REGISTER
+#define DEBUG_REGISTER
 
 void Init_Global();
 void ImGui_Update();
@@ -66,15 +60,14 @@ void ImGui_Update()
 	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);
 	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);
 
-	ImGui::Image((void*)dynamic_cast<GraphicsPicker*>(gv->graphics[0])->GetPicker(), ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-	ImGui::SameLine();
-	ImGui::Image((void*)dynamic_cast<GraphicsPicker*>(gv->graphics[0])->GetTexture(), ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+//#ifdef DEBUG_REGISTER
+//	int i = 0;
+//	for (auto g : gv->graphics)
+//	{
+//	 	g->Generate_ImGui("test" + std::to_string(i++));
+//	}
+//#endif
 
-	int i = 0;
-	for (auto g : gv->graphics)
-	{
-		g->Generate_ImGui("test" + std::to_string(i++));
-	}
 	ImGui::End();
 	ImGui::Render();
 
@@ -114,17 +107,11 @@ void Init_Global()
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
 		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 
-//	GraphicsBase *shadertoy = new GraphicsShaderToy();
-//	shadertoy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
-//	shadertoy->Init_Buffers();
-//	gv->graphics.push_back(shadertoy);
-
-	GraphicsBase *picker = new GraphicsPicker();
-	picker->Init_Shaders(gv->picker_vs, gv->picker_fs);
-	picker->Init_Buffers();
-	picker->Load_Model(gv->fish_model_dir + gv->fish_model);
-	picker->Load_Texture(gv->fish_model_dir + gv->fish_texture);
-	gv->graphics.push_back(picker);
+	GraphicsBase* particleSystem = new GraphicsParticleSystem();
+	const char *vars[] = { "pos_out", "vel_out", "age_out" };
+	particleSystem->Init_Shaders_TransformFeedback(gv->particle_system_vs, gv->particle_system_fs, vars,3);
+	particleSystem->Init_Buffers();
+	gv->graphics.push_back(particleSystem);
 }
 
 void Display()

@@ -124,6 +124,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Global_Variables.cpp" />
+    <ClCompile Include="GraphicsParticleSystem.cpp" />
     <ClCompile Include="GraphicsBezier.cpp" />
     <ClCompile Include="GraphicsPicker.cpp" />
     <ClCompile Include="include\DrawObjects\Graphics3DO.cpp" />
@@ -150,13 +151,13 @@
     <ClCompile Include="include\imgui\imgui_draw.cpp" />
     <ClCompile Include="include\imgui\imgui_impl_glut.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Mesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="GLCommon.h" />
     <ClInclude Include="Global_Variables.h" />
+    <ClInclude Include="GraphicsParticleSystem.h" />
     <ClInclude Include="GraphicsBezier.h" />
     <ClInclude Include="GraphicsPicker.h" />
     <ClInclude Include="include\DrawObjects\Graphics3DO.h" />
@@ -185,7 +186,6 @@
     <ClInclude Include="include\imgui\stb_rect_pack.h" />
     <ClInclude Include="include\imgui\stb_textedit.h" />
     <ClInclude Include="include\imgui\stb_truetype.h" />
-    <ClInclude Include="Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="fs.glsl" />
