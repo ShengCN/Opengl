@@ -11,7 +11,7 @@ out vec2 tex_coord;
 out vec3 normal; 
 flat out int instance_id;
 
-uniform float currentID;
+uniform int currentID;
 
 const float PI = 3.1415926;
 
@@ -65,35 +65,30 @@ void main()
 {
     if(pass!=3)
     {
-    int id = gl_InstanceID;
-    float time = 0.0;
+        int id = gl_InstanceID;
 
-    if(abs(currentID - id) < 0.5)
-    {
-      //  time =iTime;
-    }
+        float time = iTime;
 
+        // simple swim
+        vec3 dis = vec3(0.0);
+        dis.z = 0.5 * hash(id + 1.0) * sin(pos_attrib.x * 10.0 - time * 3.0 + fbm(vec3(id*756.97)) * 10.0); 
+
+        // random swimming
+        vec3 disV = vec3( sin(time + 10.0 * id) ,0.0, cos(time + 10.0 * id));
+        vec3 center = vec3(fbm(vec3(id)),fbm(vec3(3.0+id)),fbm(vec3(90.0 + id))) * 4.0 - 2.0;
+        dis += center + disV;
+        vec3 forward = normalize(cross(disV,vec3(0.0,1.0,0.0)));
+        float degree = acos(dot(forward,vec3(1.0,0.0,0.0)));
+
+        vec3 pos = rotateY(-degree) * pos_attrib;
     
-    // simple swim
-    vec3 dis = vec3(0.0);
-    dis.z = 0.5 * hash(id + 1.0) * sin(pos_attrib.x * 10.0 - time * 3.0 + fbm(vec3(id*756.97)) * 10.0); 
+        // DEBUG
+        // vec3 dis = vec3(id * 0.1);
 
-    // random swimming
-    vec3 disV = vec3( sin(time + 10.0 * id) ,0.0, cos(time + 10.0 * id));
-    vec3 center = vec3(fbm(vec3(id)),fbm(vec3(3.0+id)),fbm(vec3(90.0 + id))) * 4.0 - 2.0;
-    dis += center + disV;
-    vec3 forward = normalize(cross(disV,vec3(0.0,1.0,0.0)));
-    float degree = acos(dot(forward,vec3(1.0,0.0,0.0)));
-
-    vec3 pos = rotateY(-degree) * pos_attrib;
-    
-    // DEBUG
-    // vec3 dis = vec3(id * 0.1);
-
-    gl_Position = PVM * vec4(pos+dis,1.0);
-    tex_coord = tex_coord_attrib;
-    normal = normal_attrib;
-    instance_id = id;
+        gl_Position = PVM * vec4(pos+dis,1.0);
+        tex_coord = tex_coord_attrib;
+        normal = normal_attrib;
+        instance_id = id;
     }
     else
     {

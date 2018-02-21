@@ -12,6 +12,7 @@ in vec2 tex_coord;
 in vec3 normal; 
 flat in int instance_id;
 out vec4 fragColor;
+out vec4 pickerColor;
 
 void main()
 {
@@ -23,12 +24,12 @@ void main()
 
     if(pass == 1)
     {
-        color = vec4(vec3(instance_id/255.0),1.0);
+        color = vec4(vec3((instance_id+1)/255.0),1.0);
     }
     else if(pass == 2)
     {
         // clicked
-        if(currentID == instance_id)
+        if(currentID == instance_id+1)
         {
            color = vec4(1.0,0.0,0.0,1.0);
            // color = texture(diffuse_color,tex_coord);

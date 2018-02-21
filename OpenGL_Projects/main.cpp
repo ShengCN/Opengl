@@ -101,14 +101,14 @@ void InitOpenGL()
 void Init_Global()
 {
 	auto gv = Global_Variables::Instance();
-	gv->current_camera->Position *= 3.0;
+	gv->current_camera->Position *= 1.0;
 	gv->isImguiOpen = true;
 	gv->vec3_uniforms["cameraPos"] = glm::vec3(0.0f, -0.2f, 3.0f);
 	gv->vec3_uniforms["cameraFront"] = glm::vec3(0.0f, 0.0f, -1.0f);
 	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
 	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
 	gv->float_uniforms["cameraSpeed"] = 0.5f;
-	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.0f, 0.8f, 0.8f, 1.0f);
 	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
