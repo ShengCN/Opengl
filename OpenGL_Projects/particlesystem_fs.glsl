@@ -6,6 +6,8 @@ layout(location = 4)uniform vec4 fcolor;
 
 out vec4 fragcolor;            
 in float age_out;
+in vec4 pos_out;
+in vec4 camera_pos;
 
 void main()
 {
@@ -15,4 +17,8 @@ void main()
     vec4 color0 = vec4(0.7,0.4,0.3,0.7*s);
     vec4 color1 = vec4(0.7,0.1,0.0,0.3*s);
     fragcolor = mix(color1,color0,age_out/500.0);
+    fragcolor.a = 0.7;
+
+    // behind the sphere
+    
 }

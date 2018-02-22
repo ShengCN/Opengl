@@ -1,8 +1,9 @@
 #pragma once
 #include "DrawObjects/GraphicsBase.h"
+#include "DrawObjects/IBufferManager.h"
 
 class GraphicsParticleSystem :
-	public GraphicsBase
+	public GraphicsBase, public IBufferManager
 {
 public:
 	GraphicsParticleSystem();
@@ -17,6 +18,7 @@ public:
 
 private:
 	GLuint vao[2], vbo[2], tfo[2]; 
+	GLuint backVao, backVbo, backEbo;
 	int Write_Index, Read_Index;
 };
 

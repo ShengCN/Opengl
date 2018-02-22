@@ -24,6 +24,7 @@ void GraphicsParticleSystem::Draw()
 	auto M = glm::rotate(Degree2Radian(gv->float_uniforms["angle"]++),glm::vec3(0.0,1.0,0.0));
 	auto PVM = P*V*M;
 	glUniformMatrix4fv(glGetUniformLocation(shader_program, "PVM"), 1, false, glm::value_ptr(PVM));
+	glUniformMatrix4fv(glGetUniformLocation(shader_program, "V"), 1, false, glm::value_ptr(V));
 	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[Write_Index]);
 
 	glDepthMask(GL_FALSE);
@@ -105,6 +106,8 @@ void GraphicsParticleSystem::Init_Buffers()
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER,0);
+
+	// InitQuad(backVao, backVbo, backEbo);
 }
 
 void GraphicsParticleSystem::BufferManage()

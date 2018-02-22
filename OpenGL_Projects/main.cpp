@@ -19,6 +19,7 @@
 #include "GraphicsBezier.h"
 #include "GraphicsParticleSystem.h"
 #include "IchenLib/DebugCallback.h"
+#include "DrawObjects/GraphicsShaderToy.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 // #define DEBUG_REGISTER
@@ -81,6 +82,8 @@ void InitOpenGL()
 	RegisterOpenGLDebug();
 #endif
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_PROGRAM_POINT_SIZE); //allows us to set point size in vertex shader
 	glEnable(GL_LINE_SMOOTH);
@@ -100,7 +103,7 @@ void Init_Global()
 	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
 	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
 	gv->float_uniforms["cameraSpeed"] = 0.5f;
-	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.0f, 0.8f, 0.8f, 1.0f);
+	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,

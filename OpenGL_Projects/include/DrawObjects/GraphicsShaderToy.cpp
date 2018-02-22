@@ -15,8 +15,10 @@ void GraphicsShaderToy::Draw()
 	glUseProgram(shader_program);
 	glBindVertexArray(vao);
 	// mode indice_number 
+	glDisable(GL_DEPTH_TEST);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void GraphicsShaderToy::Draw_Shader_Uniforms()
