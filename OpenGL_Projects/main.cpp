@@ -21,7 +21,8 @@
 #include "IchenLib/DebugCallback.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
-#define DEBUG_REGISTER
+// #define DEBUG_REGISTER
+#define AUTO_GENERATE
 
 void Init_Global();
 void ImGui_Update();
@@ -56,17 +57,17 @@ void ImGui_Update()
 
 	ImGui_ImplGlut_NewFrame();
 	static bool isShown = true;
-	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);
-	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);
-	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);
+	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);	
+	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);	
+	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);			
 
-//#ifdef DEBUG_REGISTER
-//	int i = 0;
-//	for (auto g : gv->graphics)
-//	{
-//	 	g->Generate_ImGui("test" + std::to_string(i++));
-//	}
-//#endif
+#ifdef AUTO_GENERATE
+	int i = 0;
+	for (auto g : gv->graphics)
+	{
+	 	g->Generate_ImGui("test" + std::to_string(i++));
+	}
+#endif
 
 	ImGui::End();
 	ImGui::Render();
@@ -82,9 +83,7 @@ void InitOpenGL()
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_PROGRAM_POINT_SIZE); //allows us to set point size in vertex shader
-	glPointSize(8.0);
 	glEnable(GL_LINE_SMOOTH);
-	glLineWidth(1.0);
 
 	ImGui_ImplGlut_Init();
 	Init_Global();

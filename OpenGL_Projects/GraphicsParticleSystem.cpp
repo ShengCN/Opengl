@@ -1,5 +1,6 @@
 #include "GraphicsParticleSystem.h"
 #include "GLCommon.h"
+#include "IchenLib/Utilities.h"
 
 const int num_particles = 10000;
 GraphicsParticleSystem::GraphicsParticleSystem(): Write_Index(1), Read_Index(0)
@@ -20,7 +21,7 @@ void GraphicsParticleSystem::Draw()
 
 	auto P = gv->current_camera->GetP();
 	auto V = gv->current_camera->GetV();
-	auto M = glm::translate(glm::vec3(0.0));
+	auto M = glm::rotate(Degree2Radian(gv->float_uniforms["angle"]++),glm::vec3(0.0,1.0,0.0));
 	auto PVM = P*V*M;
 	glUniformMatrix4fv(glGetUniformLocation(shader_program, "PVM"), 1, false, glm::value_ptr(PVM));
 	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[Write_Index]);
@@ -42,6 +43,13 @@ void GraphicsParticleSystem::Draw_Shader_Uniforms()
 
 void GraphicsParticleSystem::Reload()
 {
+	const char *vars[] = { "pos_out", "vel_out", "age_out" };
+	if (shader_program != -1)
+	{
+		glDeleteProgram(shader_program);
+	}
+	Init_Shaders_TransformFeedback(m_vs_file, m_fs_file, vars, 3);
+	Init_Buffers();
 }
 
 void GraphicsParticleSystem::Init_Buffers()
