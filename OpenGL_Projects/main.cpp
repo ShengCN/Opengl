@@ -109,11 +109,10 @@ void Init_Global()
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
 		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 
-	GraphicsBase* particleSystem = new GraphicsParticleSystem();
-	const char *vars[] = { "pos_out", "vel_out", "age_out" };
-	particleSystem->Init_Shaders_TransformFeedback(gv->particle_system_vs, gv->particle_system_fs, vars,3);
-	particleSystem->Init_Buffers();
-	gv->graphics.push_back(particleSystem);
+	GraphicsBase* shaderToy = new GraphicsShaderToy();
+	shaderToy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
+	shaderToy->Init_Buffers();
+	gv->graphics.push_back(shaderToy);
 }
 
 void Display()
