@@ -20,6 +20,7 @@
 #include "GraphicsParticleSystem.h"
 #include "IchenLib/DebugCallback.h"
 #include "DrawObjects/GraphicsShaderToy.h"
+#include "DrawObjects/GraphicsFish.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 // #define DEBUG_REGISTER
@@ -60,6 +61,8 @@ void ImGui_Update()
 	static bool isShown = true;
 	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);	
 	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);	
+	ImGui::SliderFloat3("Light Position", &gv->vec3_uniforms["light_position"][0], -20.0f, 20.0f);
+	ImGui::ColorEdit3("Light Color", &gv->vec3_uniforms["light_color"][0]);
 	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);			
 
 #ifdef AUTO_GENERATE
@@ -104,15 +107,26 @@ void Init_Global()
 	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
 	gv->float_uniforms["cameraSpeed"] = 0.5f;
 	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	gv->vec3_uniforms["light_position"] = glm::vec3(0.0f, 20.0f, 0.0);
+	gv->vec3_uniforms["light_color"] = glm::vec3(1.0f);
 	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
 		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 
-	GraphicsBase* shaderToy = new GraphicsShaderToy();
-	shaderToy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
-	shaderToy->Init_Buffers();
-	gv->graphics.push_back(shaderToy);
+	GraphicsBase* light = new GraphicsLight();
+	light->Init_Shaders(gv->light_vs, gv->light_fs);
+	light->Load_Model(gv->light_model);
+	light->Init_Buffers();
+	gv->graphics.push_back(light);
+
+	GraphicsBase* fish = new GraphicsFish();
+	fish->Init_Shaders(gv->fish_vs,gv->fish_fs);
+	fish->Load_Model(gv->fish_model);
+	fish->Load_Texture(gv->fish_texture);
+	fish->Init_Buffers();
+	gv->graphics.push_back(fish);
+
 }
 
 void Display()

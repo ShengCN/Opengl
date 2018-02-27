@@ -154,6 +154,16 @@ void GraphicsBase::Update_Uniforms()
 			break;
 
 		case 35665: // vec3
+			if(Check_Name(keyname,"light_position"))
+			{
+				vec3_uniforms[keyname] = Global_Variables::Instance()->vec3_uniforms["light_position"];
+			}
+
+			if (Check_Name(keyname, "light_color"))
+			{
+				vec3_uniforms[keyname] = Global_Variables::Instance()->vec3_uniforms["light_color"];
+			}
+
 			loc = glGetUniformLocation(shader_program, uniformName);
 			glUniform3fv(glGetUniformLocation(shader_program, uniformName), 1, glm::value_ptr(vec3_uniforms[keyname]));
 			break;

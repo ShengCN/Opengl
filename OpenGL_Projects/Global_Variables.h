@@ -50,8 +50,8 @@ public:
 	std::unordered_map<std::string, glm::vec3> vec3_uniforms;
 	std::unordered_map<std::string, glm::vec4> vec4_uniforms;
 
-	std::string test_vs;
-	std::string test_fs;
+	std::string light_vs;
+	std::string light_fs;
 	std::string billboard_vs;
 	std::string billboard_gs;
 	std::string billboard_fs ;
@@ -61,7 +61,7 @@ public:
 	std::map<int, std::vector<std::string>> data_files;
 	
 	std::string light_model;
-	std::string fish_model_dir;
+	std::string model_dir;
 	std::string fish_model;
 	std::string fish_texture;
 	std::string fish_vs;

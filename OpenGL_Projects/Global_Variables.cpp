@@ -32,8 +32,8 @@ Global_Variables::Global_Variables()
 	template_vs = ".\\template_vs.glsl";
 	template_fs = ".\\template_fs.glsl";
 
-	test_vs = ".\\vs.glsl";
-	test_fs = ".\\fs.glsl";
+	light_vs = ".\\vs.glsl";
+	light_fs = ".\\fs.glsl";
 	grid_vs = ".\\grid_vs.glsl";
 	grid_fs = ".\\grid_fs.glsl";
 	billboard_vs = ".\\billboard_vs.glsl";
@@ -48,10 +48,10 @@ Global_Variables::Global_Variables()
 	dataset_dirs.push_back(".\\Materials\\CV_Test\\5\\");
 	cv_des_dir = ".\\Materials\\CV_Result\\";
 	
-	fish_model_dir = ".\\Materials\\";
-	fish_model = "Amago0.obj";
+	model_dir = ".\\Materials\\";
+	fish_model = model_dir + "Amago0.obj";
 	// fish_model = "cow.ply";
-	fish_texture = "AmagoT.bmp";
+	fish_texture = model_dir + "AmagoT.bmp";
 	fish_vs = ".\\fish_vs.glsl";
 	fish_fs = ".\\fish_fs.glsl";
 	naiveinstance_vs = ".\\fish_noninstance_vs.glsl";

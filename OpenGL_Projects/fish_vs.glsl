@@ -1,18 +1,25 @@
 #version 430
-uniform mat4 PVM;
- 
 layout(location = 0) in vec3 pos_attrib;
 layout(location = 1) in vec2 tex_coord_attrib;
 layout(location = 2) in vec3 normal_attrib;
-layout(location = 3) in mat4 displace;
-layout(location = 7) in vec4 crt_fish_color;
 
 out vec2 tex_coord;
-out vec4 fish_color;
+out vec3 fish_pos;
+out vec3 fish_norm;
+out vec3 camera;
+
+uniform mat4 PVM;
+uniform mat4 V;
+uniform mat4 M;
+
+const vec4 origin = vec4(0.0,0.0,0.0,1.0);
 
 void main()
 {
-    gl_Position = PVM * displace *vec4(pos_attrib,1.0);
+    gl_Position = PVM *vec4(pos_attrib,1.0);
     tex_coord = tex_coord_attrib;
-	fish_color = crt_fish_color;
+
+    camera = vec3(inverse(V)*origin);
+    fish_pos = gl_Position.xyz;
+    fish_norm = vec3(transpose(inverse(M))*vec4(normal_attrib,0.0));
 }

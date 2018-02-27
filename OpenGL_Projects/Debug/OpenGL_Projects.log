@@ -1,26 +1,2 @@
-﻿  main.cpp
-  ShaderProcessor.cpp
-  IchenGlut.cpp
-  GraphicsShaderToy.cpp
-  GraphicsBase.cpp
-  GraphicsPicker.cpp
-  GraphicsParticleSystem.cpp
-  Global_Variables.cpp
-  Generating Code...
-  Compiling...
-  Utilities.cpp
-  IBufferManager.cpp
-  GraphicsPoints.cpp
-  GraphicsNaiveInstance.cpp
-  GraphicsLight.cpp
-  GraphicsInstances.cpp
-  GraphicsGrids.cpp
-  GraphicsFish.cpp
-  GraphicsFBO.cpp
-  GraphicsBillboard.cpp
-  Graphics3DO.cpp
-  GraphicsBezier.cpp
-  Camera.cpp
-  Generating Code...
-  OpenGL_Projects.vcxproj -> C:\Users\45171\Documents\cgt521\Debug\OpenGL_Projects.exe
-  OpenGL_Projects.vcxproj -> C:\Users\45171\Documents\cgt521\Debug\OpenGL_Projects.pdb (Partial PDB)
+﻿  GraphicsFish.cpp
+  OpenGL_Projects.vcxproj -> E:\Eason\Codes\Git Rep\Opengl\Debug\OpenGL_Projects.exe
