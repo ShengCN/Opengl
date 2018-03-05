@@ -23,7 +23,7 @@ void GraphicsFish::Draw()
 
 	glUseProgram(shader_program);
 	// PVM
-	glm::mat4 T = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
+	glm::mat4 T = glm::translate(gv->vec3_uniforms["translate"]);
 	//glm::mat4 M = T * glm::scale(glm::vec3(m_mesh.mScaleFactor*0.1f));
 	glm::mat4 M = T;
 	M = glm::rotate(Degree2Radian(gv->float_uniforms["angle"]), glm::vec3(0.0f, 1.0f, 0.0f)) * M;

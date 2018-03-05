@@ -62,6 +62,7 @@ void ImGui_Update()
 	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);	
 	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);	
 	ImGui::SliderFloat3("Light Position", &gv->vec3_uniforms["light_position"][0], -20.0f, 20.0f);
+	ImGui::SliderFloat3("Object Position", &gv->vec3_uniforms["translate"][0], -20.0f, 20.0f);
 	ImGui::ColorEdit3("Light Color", &gv->vec3_uniforms["light_color"][0]);
 	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);			
 
@@ -114,19 +115,10 @@ void Init_Global()
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
 		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 
-	GraphicsBase* light = new GraphicsLight();
-	light->Init_Shaders(gv->light_vs, gv->light_fs);
-	light->Load_Model(gv->light_model);
-	light->Init_Buffers();
-	gv->graphics.push_back(light);
-
-	GraphicsBase* fish = new GraphicsFish();
-	fish->Init_Shaders(gv->fish_vs,gv->fish_fs);
-	fish->Load_Model(gv->fish_model);
-	fish->Load_Texture(gv->fish_texture);
-	fish->Init_Buffers();
-	gv->graphics.push_back(fish);
-
+	GraphicsBase* shadertoy = new GraphicsShaderToy();
+	shadertoy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
+	shadertoy->Init_Buffers();
+	gv->graphics.push_back(shadertoy);
 }
 
 void Display()
