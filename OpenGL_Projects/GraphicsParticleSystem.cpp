@@ -2,7 +2,7 @@
 #include "GLCommon.h"
 #include "IchenLib/Utilities.h"
 
-const int num_particles = 10000;
+const int num_particles = 256*256*256;
 GraphicsParticleSystem::GraphicsParticleSystem(): Write_Index(1), Read_Index(0)
 {
 }
@@ -21,7 +21,7 @@ void GraphicsParticleSystem::Draw()
 
 	auto P = gv->current_camera->GetP();
 	auto V = gv->current_camera->GetV();
-	auto M = glm::rotate(Degree2Radian(gv->float_uniforms["angle"]++),glm::vec3(0.0,1.0,0.0));
+	auto M = glm::rotate(Degree2Radian(gv->float_uniforms["angle"]),glm::vec3(0.0,1.0,0.0));
 	auto PVM = P*V*M;
 	glUniformMatrix4fv(glGetUniformLocation(shader_program, "PVM"), 1, false, glm::value_ptr(PVM));
 	glUniformMatrix4fv(glGetUniformLocation(shader_program, "V"), 1, false, glm::value_ptr(V));
@@ -30,7 +30,8 @@ void GraphicsParticleSystem::Draw()
 	glDepthMask(GL_FALSE);
 	glBindVertexArray(vao[Read_Index]);
 	glBeginTransformFeedback(GL_POINTS);
-	glDrawArrays(GL_POINTS, 0, num_particles);
+	// glDrawArrays(GL_POINTS, 0, num_particles);
+	glDrawArraysInstanced(GL_POINTS, 0, 1, num_particles);
 	glEndTransformFeedback();
 
 	glDepthMask(GL_TRUE);
@@ -59,7 +60,7 @@ void GraphicsParticleSystem::Init_Buffers()
 	glGenVertexArrays(2, vao);
 	glGenBuffers(2, vbo);
 
-	float zeros[7 * num_particles] = { 0.0f };
+	float* zeros = new float[7 * num_particles];
 	const GLint pos_loc = 0;
 	const GLint vel_loc = 1;
 	const GLint age_loc = 2;
@@ -67,7 +68,7 @@ void GraphicsParticleSystem::Init_Buffers()
 	// Write Index
 	glBindVertexArray(vao[Write_Index]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[Write_Index]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(zeros), zeros, GL_DYNAMIC_COPY);
+	glBufferData(GL_ARRAY_BUFFER, 7 * num_particles * sizeof(float), zeros, GL_DYNAMIC_COPY);
 
 	glEnableVertexAttribArray(pos_loc);
 	glVertexAttribPointer(pos_loc, 3, GL_FLOAT, false, 0, BUFFER_OFFSET(0));
@@ -87,7 +88,7 @@ void GraphicsParticleSystem::Init_Buffers()
 	// Read Index
 	glBindVertexArray(vao[Read_Index]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[Read_Index]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(zeros), zeros, GL_DYNAMIC_COPY);
+	glBufferData(GL_ARRAY_BUFFER, 7 * num_particles * sizeof(float), zeros, GL_DYNAMIC_COPY);
 
 	glEnableVertexAttribArray(pos_loc);
 	glVertexAttribPointer(pos_loc, 3, GL_FLOAT, false, 0, BUFFER_OFFSET(0));
@@ -108,6 +109,7 @@ void GraphicsParticleSystem::Init_Buffers()
 	glBindBuffer(GL_ARRAY_BUFFER,0);
 
 	// InitQuad(backVao, backVbo, backEbo);
+	delete zeros;
 }
 
 void GraphicsParticleSystem::BufferManage()

@@ -16,9 +16,7 @@ void main()
 
     vec4 color0 = vec4(0.7,0.4,0.3,0.7*s);
     vec4 color1 = vec4(0.7,0.1,0.0,0.3*s);
-    fragcolor = mix(color1,color0,age_out/500.0);
-    fragcolor.a = 0.7;
-
-    // behind the sphere
+    
+	fragcolor = vec4(s);
     
 }
