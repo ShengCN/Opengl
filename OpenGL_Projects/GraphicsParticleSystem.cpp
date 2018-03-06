@@ -27,14 +27,14 @@ void GraphicsParticleSystem::Draw()
 	glUniformMatrix4fv(glGetUniformLocation(shader_program, "V"), 1, false, glm::value_ptr(V));
 	glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, tfo[Write_Index]);
 
-	glDepthMask(GL_FALSE);
+	// glDepthMask(GL_FALSE);
 	glBindVertexArray(vao[Read_Index]);
 	glBeginTransformFeedback(GL_POINTS);
 	// glDrawArrays(GL_POINTS, 0, num_particles);
 	glDrawArraysInstanced(GL_POINTS, 0, 1, num_particles);
 	glEndTransformFeedback();
 
-	glDepthMask(GL_TRUE);
+	// glDepthMask(GL_TRUE);
 	Read_Index = 1 - Read_Index;
 	Write_Index = 1 - Write_Index;
 }
