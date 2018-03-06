@@ -19,7 +19,7 @@ vec3 Map2Coord(int id)
 	int x = (gl_InstanceID) % 256;
 	int y = (gl_InstanceID / (256)) % 256;
 	int z = (gl_InstanceID / (256*256)) % 256;
-	return vec3(x-256/2,y-256/2,z-256/2)/256 * 10.0;
+	return vec3(x-256/2,y-256/2,z-256/2)/256 * 10.0 - vec3(0.0,5.0,0.0);
 }
 
 void main()

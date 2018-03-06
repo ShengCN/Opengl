@@ -12,11 +12,8 @@ in vec4 camera_pos;
 void main()
 {
     float r = length(gl_PointCoord.st - vec2(0.5));
-    float s = smoothstep(0.5,0.3,r);
-
-    vec4 color0 = vec4(0.7,0.4,0.3,0.7*s);
-    vec4 color1 = vec4(0.7,0.1,0.0,0.3*s);
-    
+    float s = smoothstep(0.6,0.4,r);
+	
 	fragcolor = vec4(s);
     
 }
