@@ -1,11 +1,11 @@
 #pragma once
-#include "GraphicsBase.h"
-class GraphicsInstances :
+#include "DrawObjects\GraphicsBase.h"
+class GraphicsInstancePoints :
 	public GraphicsBase
 {
 public:
-	GraphicsInstances();
-	~GraphicsInstances();
+	GraphicsInstancePoints();
+	~GraphicsInstancePoints();
 
 	void Draw() override;
 	void Draw_Shader_Uniforms() override;
@@ -13,7 +13,8 @@ public:
 	void Init_Buffers() override;
 	void BufferManage() override;
 	void ReleaseBuffers() override;
+
 private:
-	GLuint vao,vbo,instance_buffer,ebo;
+	GLuint vao, vbo;
 };
 

@@ -114,6 +114,9 @@
     <ClCompile Include="GraphicsParticleSystem.cpp">
       <Filter>Header Files\DrawObjects</Filter>
     </ClCompile>
+    <ClCompile Include="GraphicsInstancePoints.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\IchenLib\IchenGlut.h">
@@ -214,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="GraphicsParticleSystem.h">
       <Filter>Header Files\DrawObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsInstancePoints.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

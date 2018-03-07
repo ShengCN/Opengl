@@ -124,6 +124,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Global_Variables.cpp" />
+    <ClCompile Include="GraphicsInstancePoints.cpp" />
     <ClCompile Include="GraphicsParticleSystem.cpp" />
     <ClCompile Include="GraphicsBezier.cpp" />
     <ClCompile Include="GraphicsPicker.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="GLCommon.h" />
     <ClInclude Include="Global_Variables.h" />
+    <ClInclude Include="GraphicsInstancePoints.h" />
     <ClInclude Include="GraphicsParticleSystem.h" />
     <ClInclude Include="GraphicsBezier.h" />
     <ClInclude Include="GraphicsPicker.h" />

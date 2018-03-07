@@ -21,6 +21,7 @@
 #include "IchenLib/DebugCallback.h"
 #include "DrawObjects/GraphicsShaderToy.h"
 #include "DrawObjects/GraphicsFish.h"
+#include "GraphicsInstancePoints.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 // #define DEBUG_REGISTER
@@ -115,9 +116,14 @@ void Init_Global()
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
 		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 
-	GraphicsBase* implicit = new GraphicsParticleSystem();
-	const char *vars[] = { "pos_out", "vel_out", "age_out" };
-	implicit->Init_Shaders_TransformFeedback(gv->particle_system_vs, gv->particle_system_fs,vars,3);
+//	GraphicsBase* implicit = new GraphicsParticleSystem();
+//	const char *vars[] = { "pos_out", "vel_out", "age_out" };
+//	implicit->Init_Shaders_TransformFeedback(gv->particle_system_vs, gv->particle_system_fs,vars,3);
+//	implicit->Init_Buffers();
+//	gv->graphics.push_back(implicit);
+
+	GraphicsBase* implicit = new GraphicsInstancePoints();
+	implicit->Init_Shaders(gv->particle_system_vs, gv->particle_system_fs);
 	implicit->Init_Buffers();
 	gv->graphics.push_back(implicit);
 }
