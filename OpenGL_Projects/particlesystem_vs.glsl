@@ -54,11 +54,11 @@ void main()
 
     gl_Position = PVM * vec4(pos,1.0);
 
-	// if(potential > 0.4 )
-    // 	gl_PointSize = 10.0;
-	// else
-	// 	gl_PointSize =  0.0;
+	if(potential > 0.4)
+    	gl_PointSize = 10.0;
+	else
+		gl_PointSize =  0.0;
 
-	gl_PointSize = step(0.4,potential) * 10.0;
+	//gl_PointSize = step(0.4,potential) * 10.0;
 }
 

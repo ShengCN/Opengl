@@ -1,8 +1,2 @@
-﻿  IchenGlut.cpp
-e:\eason\codes\git rep\opengl\opengl_projects\include\ichenlib\ichenglut.cpp(72): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-e:\eason\codes\git rep\opengl\opengl_projects\include\ichenlib\ichenglut.cpp(77): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-e:\eason\codes\git rep\opengl\opengl_projects\include\ichenlib\ichenglut.cpp(82): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-e:\eason\codes\git rep\opengl\opengl_projects\include\ichenlib\ichenglut.cpp(87): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-  GraphicsInstancePoints.cpp
-  Generating Code...
+﻿  main.cpp
   OpenGL_Projects.vcxproj -> E:\Eason\Codes\Git Rep\Opengl\Debug\OpenGL_Projects.exe
