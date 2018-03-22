@@ -69,22 +69,22 @@ void SpecialKeyboardEvents(int k, int x, int y)
 	switch(k)
 	{
 	case GLUT_KEY_UP:
-		gv->current_camera->ProcessKeyboard(Camera_Movement::FORWARD, gv->delta_time);
+		gv->current_camera->ProcessKeyboard(Camera_Movement::FORWARD, gv->delta_time*0.5);
 		gv->current_camera->Debug_Current_Pos();
 		break;
 
 	case GLUT_KEY_DOWN:
-		gv->current_camera->ProcessKeyboard(Camera_Movement::BACKWARD, gv->delta_time);
+		gv->current_camera->ProcessKeyboard(Camera_Movement::BACKWARD, gv->delta_time*0.5);
 		gv->current_camera->Debug_Current_Pos();
 		break;
 
 	case GLUT_KEY_LEFT:
-		gv->current_camera->ProcessKeyboard(Camera_Movement::LEFT, gv->delta_time);
+		gv->current_camera->ProcessKeyboard(Camera_Movement::LEFT, gv->delta_time*0.5);
 		gv->current_camera->Debug_Current_Pos();
 		break;
 
 	case GLUT_KEY_RIGHT:
-		gv->current_camera->ProcessKeyboard(Camera_Movement::RIGHT, gv->delta_time);
+		gv->current_camera->ProcessKeyboard(Camera_Movement::RIGHT, gv->delta_time*0.5);
 		gv->current_camera->Debug_Current_Pos();
 		break;
 	default:

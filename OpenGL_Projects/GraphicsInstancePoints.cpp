@@ -22,7 +22,7 @@ void GraphicsInstancePoints::Draw()
 
 	auto P = gv->current_camera->GetP();
 	auto V = gv->current_camera->GetV();
-	auto M = glm::rotate(Degree2Radian(gv->float_uniforms["angle"]), glm::vec3(0.0, 1.0, 0.0));
+	auto M = glm::rotate(Degree2Radian(gv->float_uniforms["angle"]++), glm::vec3(0.0, 1.0, 0.0));
 	auto PVM = P*V*M;
 	glUniformMatrix4fv(glGetUniformLocation(shader_program, "PVM"), 1, false, glm::value_ptr(PVM));
 	glUniformMatrix4fv(glGetUniformLocation(shader_program, "V"), 1, false, glm::value_ptr(V));
@@ -50,8 +50,6 @@ void GraphicsInstancePoints::Reload()
 void GraphicsInstancePoints::Init_Buffers()
 {
 	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	
 }
 
 void GraphicsInstancePoints::BufferManage()

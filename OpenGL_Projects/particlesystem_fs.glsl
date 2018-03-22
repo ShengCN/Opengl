@@ -12,8 +12,8 @@ out vec4 fragcolor;
 void main()
 {
     float r = length(gl_PointCoord.st - vec2(0.5));
-    float s = step(0.5,r);
+    float s = step(0.6,r);
 	
-	fragcolor = vec4(s)*0.7;
+	fragcolor = vec4(s)*0.8;
     
 }

@@ -131,6 +131,11 @@ void Init_Global()
 	implicit->Init_Shaders(gv->shadertoy_vs, gv->raymarching_fs);
 	implicit->Init_Buffers();
 	gv->graphics.push_back(implicit);
+
+//	GraphicsBase* rayMarching = new GraphicsShaderToy();
+//	rayMarching->Init_Shaders(gv->shadertoy_vs, gv->raymarching_fs);
+//	rayMarching->Init_Buffers();
+//	gv->graphics.push_back(rayMarching);
 }
 
 void Display()
