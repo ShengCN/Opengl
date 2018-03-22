@@ -122,8 +122,13 @@ void Init_Global()
 //	implicit->Init_Buffers();
 //	gv->graphics.push_back(implicit);
 
-	GraphicsBase* implicit = new GraphicsInstancePoints();
-	implicit->Init_Shaders(gv->particle_system_vs, gv->particle_system_fs);
+//	GraphicsBase* implicit = new GraphicsInstancePoints();
+//	implicit->Init_Shaders(gv->particle_system_vs, gv->particle_system_fs);
+//	implicit->Init_Buffers();
+//	gv->graphics.push_back(implicit);
+
+	GraphicsBase* implicit = new GraphicsShaderToy();
+	implicit->Init_Shaders(gv->shadertoy_vs, gv->raymarching_fs);
 	implicit->Init_Buffers();
 	gv->graphics.push_back(implicit);
 }
