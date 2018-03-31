@@ -73,6 +73,9 @@ Global_Variables::Global_Variables()
 	particle_system_vs = ".\\particlesystem_vs.glsl";
 	particle_system_fs = ".\\particlesystem_fs.glsl";
 
+	volume_vs = ".\\volume_vs.glsl";
+	volume_fs = ".\\volume_fs.glsl";
+
 	isF_MouseMovement = true;
 	isImguiOpen = true;
 	isInstance = true;

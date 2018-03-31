@@ -22,6 +22,7 @@
 #include "DrawObjects/GraphicsShaderToy.h"
 #include "DrawObjects/GraphicsFish.h"
 #include "GraphicsInstancePoints.h"
+#include "GraphicsVolumeRendering.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 // #define DEBUG_REGISTER
@@ -87,11 +88,10 @@ void InitOpenGL()
 	RegisterOpenGLDebug();
 #endif
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// glEnable(GL_BLEND);
+	// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_PROGRAM_POINT_SIZE); //allows us to set point size in vertex shader
-	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_CULL_FACE);
 
 	ImGui_ImplGlut_Init();
 	Init_Global();
@@ -116,26 +116,10 @@ void Init_Global()
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
 		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 
-//	GraphicsBase* implicit = new GraphicsParticleSystem();
-//	const char *vars[] = { "pos_out", "vel_out", "age_out" };
-//	implicit->Init_Shaders_TransformFeedback(gv->particle_system_vs, gv->particle_system_fs,vars,3);
-//	implicit->Init_Buffers();
-//	gv->graphics.push_back(implicit);
-
-//	GraphicsBase* implicit = new GraphicsInstancePoints();
-//	implicit->Init_Shaders(gv->particle_system_vs, gv->particle_system_fs);
-//	implicit->Init_Buffers();
-//	gv->graphics.push_back(implicit);
-
-	GraphicsBase* implicit = new GraphicsShaderToy();
-	implicit->Init_Shaders(gv->shadertoy_vs, gv->raymarching_fs);
-	implicit->Init_Buffers();
-	gv->graphics.push_back(implicit);
-
-//	GraphicsBase* rayMarching = new GraphicsShaderToy();
-//	rayMarching->Init_Shaders(gv->shadertoy_vs, gv->raymarching_fs);
-//	rayMarching->Init_Buffers();
-//	gv->graphics.push_back(rayMarching);
+	GraphicsBase *volume = new GraphicsVolumeRendering();
+	volume->Init_Shaders(gv->volume_vs, gv->volume_fs);
+	volume->Init_Buffers();
+	gv->graphics.push_back(volume);
 }
 
 void Display()

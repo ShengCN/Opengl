@@ -139,7 +139,8 @@ void main()
       vec2 p = (uv*2.0 - 1.0)*vec2(ratio,1.0);
 
       // camera
-      vec3 ro = 8.0 * vec3(cos(iTime),0.5,sin(iTime));
+      float time = iTime * 0.1;
+      vec3 ro = 8.0 * vec3(cos(time),0.5,sin(time));
       // vec3 ro = vec3(0.0,0.0,-4.0);
       vec3 ww = normalize(vec3(0.0)-ro);
       vec3 uu = normalize(cross(vec3(0.0,1.0,0.0),ww));

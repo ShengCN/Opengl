@@ -9,10 +9,13 @@ class IBufferManager
 public:
 	void InitQuad(GLuint& vao, GLuint& vbo, GLuint& ebo);
 	void InitSurface(GLuint& vao, GLuint& vbo, GLuint& ebo);
-	
+	void InitCube(GLuint& vao, GLuint& vbo);
+
+
 	// Draw functions
 	void DrawSurfaceVao(GLuint vao);
 	void DrawQuad(GLuint vao);
+	void DrawCube(GLuint vao);
 private:
 	glm::vec3 normal(float x, float y);
 	glm::vec3 surface(float x, float y);

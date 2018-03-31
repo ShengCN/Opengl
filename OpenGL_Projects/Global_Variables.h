@@ -98,6 +98,10 @@ public:
 	std::string particle_system_vs;
 	std::string particle_system_fs;
 
+	// volume rendering
+	std::string volume_vs;
+	std::string volume_fs;
+
 	// BillBoard manipulation
 	std::map<int, int> layer_anglesize_map;
 	int layer_max;

@@ -128,6 +128,7 @@
     <ClCompile Include="GraphicsParticleSystem.cpp" />
     <ClCompile Include="GraphicsBezier.cpp" />
     <ClCompile Include="GraphicsPicker.cpp" />
+    <ClCompile Include="GraphicsVolumeRendering.cpp" />
     <ClCompile Include="include\DrawObjects\Graphics3DO.cpp" />
     <ClCompile Include="include\DrawObjects\GraphicsBase.cpp" />
     <ClCompile Include="include\DrawObjects\GraphicsBillboard.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="GraphicsParticleSystem.h" />
     <ClInclude Include="GraphicsBezier.h" />
     <ClInclude Include="GraphicsPicker.h" />
+    <ClInclude Include="GraphicsVolumeRendering.h" />
     <ClInclude Include="include\DrawObjects\Graphics3DO.h" />
     <ClInclude Include="include\DrawObjects\GraphicsBase.h" />
     <ClInclude Include="include\DrawObjects\GraphicsBillboard.h" />
