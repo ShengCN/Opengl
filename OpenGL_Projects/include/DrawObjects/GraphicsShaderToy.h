@@ -18,5 +18,6 @@ public:
 
 private:
 	GLuint vao,vbo,ebo;
+	GLuint volume_tex;
 };
 

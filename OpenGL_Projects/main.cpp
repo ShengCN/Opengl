@@ -75,6 +75,8 @@ void ImGui_Update()
 	 	g->Generate_ImGui("test" + std::to_string(i++));
 	}
 #endif
+	static bool show_test = true;
+	ImGui::ShowTestWindow(&show_test);
 
 	ImGui::End();
 	ImGui::Render();
@@ -88,10 +90,10 @@ void InitOpenGL()
 	RegisterOpenGLDebug();
 #endif
 
-	// glEnable(GL_BLEND);
-	// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	// glEnable(GL_CULL_FACE);
 
 	ImGui_ImplGlut_Init();
 	Init_Global();

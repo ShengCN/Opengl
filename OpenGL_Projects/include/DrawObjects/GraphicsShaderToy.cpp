@@ -1,5 +1,6 @@
 #include "GraphicsShaderToy.h"
 #include "GLCommon.h"
+#include "IchenLib/LoadTexture.h"
 
 GraphicsShaderToy::GraphicsShaderToy()
 {
@@ -14,11 +15,12 @@ void GraphicsShaderToy::Draw()
 {
 	glUseProgram(shader_program);
 	glBindVertexArray(vao);
-	// mode indice_number 
-	glDisable(GL_DEPTH_TEST);
+	int V_loc = glGetUniformLocation(shader_program, "volume_tex");
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_3D, volume_tex);
+	glUniform1i(V_loc, 0);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
-	glEnable(GL_DEPTH_TEST);
 }
 
 void GraphicsShaderToy::Draw_Shader_Uniforms()
@@ -38,8 +40,10 @@ void GraphicsShaderToy::Reload()
 
 void GraphicsShaderToy::Init_Buffers()
 {
+	auto gv = Global_Variables::Instance();
 	glUseProgram(shader_program);
 	InitQuad(vao, vbo, ebo);
+	volume_tex = LoadTexture3D(gv->volume_dir + gv->volume_data);
 }
 
 void GraphicsShaderToy::BufferManage()

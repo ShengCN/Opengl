@@ -40,7 +40,6 @@ public:
 
 	// Variables
 	std::vector<GraphicsBase*> graphics;
-	std::vector<GraphicsBillboard*> billboards;
 
 	// Global variables
 	std::unordered_map<std::string, float> float_uniforms;
@@ -102,15 +101,9 @@ public:
 	std::string volume_vs;
 	std::string volume_fs;
 
-	// BillBoard manipulation
-	std::map<int, int> layer_anglesize_map;
-	int layer_max;
-	glm::vec2 current_dimension;
-	std::unordered_map<int,float> delta_angle;
-	float delta_layer;
-
-	int current_layer;
-	int current_angle;
+	// Volume data
+	std::string volume_dir;
+	std::string volume_data;
 
 	// Time 
 	int last_frame_time;

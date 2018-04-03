@@ -18,5 +18,6 @@ public:
 private:
 	GLuint vao, vbo;
 	GLuint fbo,fbo_texture;
+	GLuint volume_texture;  // 3D texture
 };
 

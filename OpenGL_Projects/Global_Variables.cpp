@@ -76,6 +76,9 @@ Global_Variables::Global_Variables()
 	volume_vs = ".\\volume_vs.glsl";
 	volume_fs = ".\\volume_fs.glsl";
 
+	volume_dir = ".\\Materials\\Volume\\";
+	volume_data = ".\\ch2better\\ch2better.nii.gz";
+
 	isF_MouseMovement = true;
 	isImguiOpen = true;
 	isInstance = true;

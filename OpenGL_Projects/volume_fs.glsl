@@ -6,7 +6,8 @@ layout(location = 3) uniform int mode = 0;
 layout(location = 6) uniform float time;
 layout(location = 7) uniform vec4 slider;
 layout(location = 8) uniform int scene = 0;
-uniform bool isAntiAliasing;
+uniform sampler3D volume_tex;
+uniform float slice;
 
 layout(location = 0) out vec4 fragcolor;
 
@@ -62,6 +63,7 @@ void main(void)
 		else if (mode == 1) // for debugging: show frontface colors
 		{
 			fragcolor = vec4((vpos), 1.0);
+			
 			return;
 		}
 		else // raycast
@@ -69,29 +71,10 @@ void main(void)
 			vec3 rayStart = vpos.xyz;
 			vec3 rayStop = texelFetch(backfaces_tex, ivec2(gl_FragCoord.xy), 0).xyz;
 			
-			if(!isAntiAliasing)
-			{
-				fragcolor = raytracedcolor(rayStart, rayStop);
-				return;
-			}
-			
-			// Anti-aliasing
-			int ns = 4;
-			int samples = ns * ns;
-			vec4 col = vec4(0.0);
-			for(float i = -(ns-1.0)/2; i <= (ns-1.0)/2; ++i)
-			{
-				for(float j = -(ns-1.0)/2; j <= (ns-1.0)/2;++j)
-				{
-					vec3 offsetX = dFdx(rayStop)/float(ns)*i;
-					vec3 offsetY = dFdy(rayStop)/float(ns)*j;
-					col += raytracedcolor(rayStart,rayStop+offsetX+offsetY)/float(samples);
-				}
-			}
-			fragcolor = col;
-			
-			
-			if (fragcolor.a == 0.0) discard;
+			fragcolor = raytracedcolor(rayStart, rayStop);
+			return;
+
+			// if (fragcolor.a == 0.0) discard;
 		}
 	}
 }
@@ -101,6 +84,7 @@ vec4 raytracedcolor(vec3 rayStart, vec3 rayStop)
 {
 	vec4 color = vec4(0.0, 0.0, 0.0, 0.0);
 	const int MaxSamples = 1000;
+	const int maxSteps = 512*2;
 
 	vec3 rayDir = normalize(rayStop - rayStart);
 	float travel = distance(rayStop, rayStart);
@@ -108,22 +92,19 @@ vec4 raytracedcolor(vec3 rayStart, vec3 rayStop)
 	vec3 pos = rayStart;
 	vec3 step = rayDir*stepSize;
 
-	for (int i = 0; i < MaxSamples && travel > 0.0; ++i, pos += step, travel -= stepSize)
+	for (int i = 0; i < maxSteps ; ++i)
 	{
-		float dist = distToShape(pos);
-
-		stepSize = dist;
-		step = rayDir*stepSize;
-
-		if (dist <= 0.001)
-		{
-			color = lighting(pos, rayDir);
-			return color;
-		}
+		vec4 tmp_color = vec4(vec3(0.8),0.1);
+		tmp_color = tmp_color * sin(0.015 * texture(volume_tex,pos).r);
+		color += tmp_color;
+		pos += step;
 	}
 
+	// pos += step * 40 * 15.0 * abs(sin(time*0.5));
+	// color += texture(volume_tex,pos);
+	
 	// sky
-	color = rayDir.x * vec4(1.0);
+	// color = rayDir.x * vec4(1.0);
 	return color;
 }
 
