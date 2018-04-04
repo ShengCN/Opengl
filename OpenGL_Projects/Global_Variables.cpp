@@ -49,6 +49,7 @@ Global_Variables::Global_Variables()
 	cv_des_dir = ".\\Materials\\CV_Result\\";
 	
 	model_dir = ".\\Materials\\";
+	test_model = "chair_0059.off";
 	fish_model = model_dir + "Amago0.obj";
 	// fish_model = "cow.ply";
 	fish_texture = model_dir + "AmagoT.bmp";
@@ -75,6 +76,9 @@ Global_Variables::Global_Variables()
 
 	volume_vs = ".\\volume_vs.glsl";
 	volume_fs = ".\\volume_fs.glsl";
+
+	script_vs = ".\\script_vs.glsl";
+	script_fs = ".\\script_fs.glsl";
 
 	volume_dir = ".\\Materials\\Volume\\";
 	volume_data = ".\\ch2better\\ch2better.nii.gz";

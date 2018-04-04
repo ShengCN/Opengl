@@ -23,6 +23,7 @@
 #include "DrawObjects/GraphicsFish.h"
 #include "GraphicsInstancePoints.h"
 #include "GraphicsVolumeRendering.h"
+#include "GraphicsScripts.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 // #define DEBUG_REGISTER
@@ -67,6 +68,7 @@ void ImGui_Update()
 	ImGui::SliderFloat3("Object Position", &gv->vec3_uniforms["translate"][0], -20.0f, 20.0f);
 	ImGui::ColorEdit3("Light Color", &gv->vec3_uniforms["light_color"][0]);
 	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);			
+	ImGui::Image((void*)dynamic_cast<GraphicsScripts*>(gv->graphics[0])->GetTexture(), ImVec2(128, 128));
 
 #ifdef AUTO_GENERATE
 	int i = 0;
@@ -75,8 +77,8 @@ void ImGui_Update()
 	 	g->Generate_ImGui("test" + std::to_string(i++));
 	}
 #endif
-	static bool show_test = true;
-	ImGui::ShowTestWindow(&show_test);
+	//static bool show_test = true;
+	//ImGui::ShowTestWindow(&show_test);
 
 	ImGui::End();
 	ImGui::Render();
@@ -118,10 +120,15 @@ void Init_Global()
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
 		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 
-	GraphicsBase *volume = new GraphicsVolumeRendering();
-	volume->Init_Shaders(gv->volume_vs, gv->volume_fs);
-	volume->Init_Buffers();
-	gv->graphics.push_back(volume);
+	//GraphicsBase *volume = new GraphicsVolumeRendering();
+	//volume->Init_Shaders(gv->volume_vs, gv->volume_fs);
+	//volume->Init_Buffers();
+	//gv->graphics.push_back(volume);
+	GraphicsBase *script = new GraphicsScripts();
+	script->Init_Shaders(gv->script_vs, gv->script_fs);
+	script->Load_Model(gv->model_dir + gv->test_model);
+	script->Init_Buffers();
+	gv->graphics.push_back(script);
 }
 
 void Display()

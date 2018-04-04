@@ -105,6 +105,11 @@ public:
 	std::string volume_dir;
 	std::string volume_data;
 
+	// scripts
+	std::string script_vs;
+	std::string script_fs;
+	std::string test_model;
+
 	// Time 
 	int last_frame_time;
 	int delta_time;
