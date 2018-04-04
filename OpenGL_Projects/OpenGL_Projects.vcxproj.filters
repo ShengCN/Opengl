@@ -123,6 +123,9 @@
     <ClCompile Include="GraphicsScripts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SaveTexture2D.cpp">
+      <Filter>Header Files\IchenLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\IchenLib\IchenGlut.h">
@@ -232,6 +235,9 @@
     </ClInclude>
     <ClInclude Include="GraphicsScripts.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SaveTexture2D.h">
+      <Filter>Header Files\IchenLib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -24,6 +24,7 @@
 #include "GraphicsInstancePoints.h"
 #include "GraphicsVolumeRendering.h"
 #include "GraphicsScripts.h"
+#include "SaveTexture2D.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 // #define DEBUG_REGISTER
@@ -68,7 +69,7 @@ void ImGui_Update()
 	ImGui::SliderFloat3("Object Position", &gv->vec3_uniforms["translate"][0], -20.0f, 20.0f);
 	ImGui::ColorEdit3("Light Color", &gv->vec3_uniforms["light_color"][0]);
 	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);			
-	ImGui::Image((void*)dynamic_cast<GraphicsScripts*>(gv->graphics[0])->GetTexture(), ImVec2(128, 128));
+	ImGui::Image((void*)dynamic_cast<GraphicsScripts*>(gv->graphics[0])->GetTexture(), ImVec2(128, 128), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
 #ifdef AUTO_GENERATE
 	int i = 0;
@@ -117,8 +118,8 @@ void Init_Global()
 	gv->vec3_uniforms["light_color"] = glm::vec3(1.0f);
 	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
-	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
-		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
+	glClearColor(gv->vec4_uniforms["Backgound_Color"].r, gv->vec4_uniforms["Backgound_Color"].g,
+		gv->vec4_uniforms["Backgound_Color"].b, gv->vec4_uniforms["Backgound_Color"].a);
 
 	//GraphicsBase *volume = new GraphicsVolumeRendering();
 	//volume->Init_Shaders(gv->volume_vs, gv->volume_fs);
@@ -208,33 +209,7 @@ void Keyboard(unsigned char key, int x, int y)
 		break;
 
 	case 'P':
-		dynamic_cast<GraphicsBezier*>(gv->graphics[0])->AddControlPointC1();
-		break;
-
-	case 'a':
-		dynamic_cast<GraphicsBezier*>(gv->graphics[0])->AddControlPointRandom();
-		break;
-
-	case 'z':
-	case 'Z':
-		dynamic_cast<GraphicsBezier*>(gv->graphics[0])->DeleteControlPoint();
-		break;
-
-	case '1':
-		static_cast<GraphicsBezier*>(gv->graphics[0])->TerminalMethod(CasteljauTerminal::IsFlat);
-		DEBUG("Current methods: ","Is flat? ");
-		break;
-	case '2':
-		static_cast<GraphicsBezier*>(gv->graphics[0])->TerminalMethod(CasteljauTerminal::IsInOnePixel);
-		DEBUG("Current methods: ", "Is in one pixel? ");
-		break;
-	case '3':
-		static_cast<GraphicsBezier*>(gv->graphics[0])->TerminalMethod(CasteljauTerminal::IsPolygonSmall);
-		DEBUG("Current methods: ", "Is polygon small enough? ");
-		break;
-	case '4':
-		static_cast<GraphicsBezier*>(gv->graphics[0])->TerminalMethod(CasteljauTerminal::IsPolygonInOnePixel);
-		DEBUG("Current methods: ", "Is polygon in one pixel? ");
+		SaveTexture2D("test.jpg", dynamic_cast<GraphicsScripts*>(gv->graphics[0])->GetTexture(), gv->width, gv->height);
 		break;
 
 	default:
