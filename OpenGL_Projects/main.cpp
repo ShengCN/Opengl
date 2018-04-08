@@ -24,6 +24,7 @@
 #include "GraphicsInstancePoints.h"
 #include "GraphicsVolumeRendering.h"
 #include "GraphicsScripts.h"
+#include "SaveTexture2D.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 // #define DEBUG_REGISTER
@@ -117,8 +118,8 @@ void Init_Global()
 	gv->vec3_uniforms["light_color"] = glm::vec3(1.0f);
 	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
-	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
-		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
+	glClearColor(gv->vec4_uniforms["Backgound_Color"].r, gv->vec4_uniforms["Backgound_Color"].g,
+		gv->vec4_uniforms["Backgound_Color"].b, gv->vec4_uniforms["Backgound_Color"].a);
 
 	GraphicsBase *volume = new GraphicsVolumeRendering();
 	volume->Init_Shaders(gv->volume_vs, gv->volume_fs);
@@ -193,6 +194,19 @@ void Keyboard(unsigned char key, int x, int y)
 	case 'R':
 		ReloadShaders();
 		break;
+
+	case 'c':
+		gv->curveFlag = !gv->curveFlag;
+		break;
+
+	case 'p':
+		gv->pointsFlag = !gv->pointsFlag;
+		break;
+
+	case 'P':
+		SaveTexture2D("test.jpg", dynamic_cast<GraphicsScripts*>(gv->graphics[0])->GetTexture(), gv->width, gv->height);
+		break;
+
 	default:
 		break;
 	}

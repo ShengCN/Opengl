@@ -2,6 +2,7 @@
 #include "Global_Variables.h"
 #include "IchenLib/Utilities.h"
 #include "Common.h"
+#include "../Gui demo/include/FreeImage.h"
 
 
 GraphicsScripts::GraphicsScripts()
@@ -31,7 +32,7 @@ void GraphicsScripts::Draw()
 	
 	// pass 1: render to texture to save
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	glDrawBuffer(GL_COLOR_ATTACHMENT0);       //picker buffer
 	glViewport(0, 0, gv->width, gv->height);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindVertexArray(m_mesh.mVao);
@@ -76,7 +77,7 @@ void GraphicsScripts::Init_Buffers()
 
 	glGenTextures(1, &FBO_texture);
 	glBindTextureEXT(GL_TEXTURE_2D, FBO_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gv->width, gv->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gv->width, gv->height, 0, GL_RGB, GL_BYTE, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -88,7 +89,6 @@ void GraphicsScripts::Init_Buffers()
 	glBindRenderbuffer(GL_RENDERBUFFER, RBO);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, gv->width, gv->height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_COMPONENT, GL_RENDERBUFFER, RBO);
-
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RBO);
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
