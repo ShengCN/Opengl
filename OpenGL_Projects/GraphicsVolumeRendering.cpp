@@ -40,9 +40,11 @@ void GraphicsVolumeRendering::Draw()
 	glUniform1i(pass_loc, 1);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+
 	glClear(GL_COLOR_BUFFER_BIT);
 	glCullFace(GL_FRONT);
 	DrawCube(vao);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// Pass 2
 	glUniform1i(pass_loc, 2);
@@ -60,7 +62,11 @@ void GraphicsVolumeRendering::Draw()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glCullFace(GL_BACK);
 	DrawCube(vao);
+
+	glDrawBuffer(GL_COLOR_ATTACHMENT1);
+	DrawCube(vao);
 	glDisable(GL_CULL_FACE);
+	
 }
 
 void GraphicsVolumeRendering::Draw_Shader_Uniforms()
@@ -84,9 +90,21 @@ void GraphicsVolumeRendering::Init_Buffers()
 	auto gv = Global_Variables::Instance();
 	glUseProgram(shader_program);
 	InitCube(vao, vbo);
+
+	// Bounding box texture
 	glGenTextures(1, &fbo_texture);
 	glBindTexture(GL_TEXTURE_2D, fbo_texture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, gv->width, gv->height, 0, GL_RGBA, GL_FLOAT, nullptr);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	// volume result texture
+	glGenTextures(1, &volume_result_texture);
+	glBindTexture(GL_TEXTURE_2D, volume_result_texture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gv->width, gv->height, 0, GL_RGBA, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -98,6 +116,7 @@ void GraphicsVolumeRendering::Init_Buffers()
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_texture, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, volume_result_texture, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -107,4 +126,9 @@ void GraphicsVolumeRendering::BufferManage()
 
 void GraphicsVolumeRendering::ReleaseBuffers()
 {
+}
+
+GLuint GraphicsVolumeRendering::Get_Volume_Result()
+{
+	return volume_result_texture;
 }

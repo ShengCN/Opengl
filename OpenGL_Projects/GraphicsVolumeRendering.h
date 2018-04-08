@@ -15,9 +15,12 @@ public:
 	void Init_Buffers() override;
 	void BufferManage() override;
 	void ReleaseBuffers() override;
+
+	GLuint Get_Volume_Result();
 private:
 	GLuint vao, vbo;
 	GLuint fbo,fbo_texture;
 	GLuint volume_texture;  // 3D texture
+	GLuint volume_result_texture;
 };
 

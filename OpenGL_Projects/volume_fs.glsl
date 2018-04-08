@@ -10,6 +10,7 @@ uniform sampler3D volume_tex;
 uniform float slice;
 
 layout(location = 0) out vec4 fragcolor;
+out vec4 volume_result;
 
 in vec3 vpos;
 
@@ -72,6 +73,7 @@ void main(void)
 			vec3 rayStop = texelFetch(backfaces_tex, ivec2(gl_FragCoord.xy), 0).xyz;
 			
 			fragcolor = raytracedcolor(rayStart, rayStop);
+			volume_result = fragcolor;
 			return;
 
 			// if (fragcolor.a == 0.0) discard;
