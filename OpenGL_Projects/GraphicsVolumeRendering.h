@@ -16,8 +16,8 @@ public:
 	void BufferManage() override;
 	void ReleaseBuffers() override;
 
-	GLuint Get_FBO();
-	GLuint Get_Volume_Result();
+	GLuint GetFBO();
+	GLuint GetVolumeResult();
 private:
 	GLuint vao, vbo;
 	GLuint fbo,fbo_texture;

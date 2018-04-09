@@ -16,8 +16,9 @@ public:
 	void BufferManage() override;
 	void ReleaseBuffers() override;
 
+	void SetTexture(const GLuint texture_id);
 private:
 	GLuint vao,vbo,ebo;
-	GLuint volume_tex;
+	GLuint m_texture;
 };
 

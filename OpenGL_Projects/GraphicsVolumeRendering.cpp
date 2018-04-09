@@ -125,12 +125,12 @@ void GraphicsVolumeRendering::ReleaseBuffers()
 {
 }
 
-GLuint GraphicsVolumeRendering::Get_FBO()
+GLuint GraphicsVolumeRendering::GetFBO()
 {
 	return fbo_texture;
 }
 
-GLuint GraphicsVolumeRendering::Get_Volume_Result()
+GLuint GraphicsVolumeRendering::GetVolumeResult()
 {
 	return volume_result_texture;
 }

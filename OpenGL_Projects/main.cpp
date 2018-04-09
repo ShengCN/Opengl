@@ -69,9 +69,9 @@ void ImGui_Update()
 	ImGui::SliderFloat3("Object Position", &gv->vec3_uniforms["translate"][0], -20.0f, 20.0f);
 	ImGui::ColorEdit3("Light Color", &gv->vec3_uniforms["light_color"][0]);
 	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);		
-	ImGui::Image((void*)(dynamic_cast<GraphicsVolumeRendering*>(gv->graphics[0])->Get_FBO()),
+	ImGui::Image((void*)(dynamic_cast<GraphicsVolumeRendering*>(gv->graphics[0])->GetFBO()),
 		ImVec2(128, 128), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-	ImGui::Image((void*)(dynamic_cast<GraphicsVolumeRendering*>(gv->graphics[0])->Get_Volume_Result()), 
+	ImGui::Image((void*)(dynamic_cast<GraphicsVolumeRendering*>(gv->graphics[0])->GetVolumeResult()), 
 						ImVec2(128, 128), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
 #ifdef AUTO_GENERATE
@@ -128,6 +128,12 @@ void Init_Global()
 	volume->Init_Shaders(gv->volume_vs, gv->volume_fs);
 	volume->Init_Buffers();
 	gv->graphics.push_back(volume);
+
+	GraphicsBase* shadertoy = new GraphicsShaderToy();
+	shadertoy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
+	shadertoy->Init_Buffers();
+	static_cast<GraphicsShaderToy*>(shadertoy)->SetTexture(static_cast<GraphicsVolumeRendering*>(volume)->GetVolumeResult());
+	gv->graphics.push_back(shadertoy);
 }
 
 void Display()
