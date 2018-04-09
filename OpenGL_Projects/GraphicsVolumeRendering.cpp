@@ -44,12 +44,9 @@ void GraphicsVolumeRendering::Draw()
 	glClear(GL_COLOR_BUFFER_BIT);
 	glCullFace(GL_FRONT);
 	DrawCube(vao);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// Pass 2
 	glUniform1i(pass_loc, 2);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDrawBuffer(GL_BACK);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, fbo_texture);
@@ -59,14 +56,14 @@ void GraphicsVolumeRendering::Draw()
 	glBindTexture(GL_TEXTURE_3D, volume_texture);
 	glUniform1i(V_loc, 1);
 
+	glDrawBuffer(GL_COLOR_ATTACHMENT1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glCullFace(GL_BACK);
 	DrawCube(vao);
-
-	glDrawBuffer(GL_COLOR_ATTACHMENT1);
-	DrawCube(vao);
 	glDisable(GL_CULL_FACE);
 	
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDrawBuffer(GL_BACK);
 }
 
 void GraphicsVolumeRendering::Draw_Shader_Uniforms()
@@ -126,6 +123,11 @@ void GraphicsVolumeRendering::BufferManage()
 
 void GraphicsVolumeRendering::ReleaseBuffers()
 {
+}
+
+GLuint GraphicsVolumeRendering::Get_FBO()
+{
+	return fbo_texture;
 }
 
 GLuint GraphicsVolumeRendering::Get_Volume_Result()

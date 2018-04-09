@@ -68,8 +68,11 @@ void ImGui_Update()
 	ImGui::SliderFloat3("Light Position", &gv->vec3_uniforms["light_position"][0], -20.0f, 20.0f);
 	ImGui::SliderFloat3("Object Position", &gv->vec3_uniforms["translate"][0], -20.0f, 20.0f);
 	ImGui::ColorEdit3("Light Color", &gv->vec3_uniforms["light_color"][0]);
-	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);			
-	ImGui::Image((void*)dynamic_cast<GraphicsVolumeRendering*>(gv->graphics[0])->Get_Volume_Result(), ImVec2(128, 128), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);		
+	ImGui::Image((void*)(dynamic_cast<GraphicsVolumeRendering*>(gv->graphics[0])->Get_FBO()),
+		ImVec2(128, 128), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+	ImGui::Image((void*)(dynamic_cast<GraphicsVolumeRendering*>(gv->graphics[0])->Get_Volume_Result()), 
+						ImVec2(128, 128), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
 #ifdef AUTO_GENERATE
 	int i = 0;
