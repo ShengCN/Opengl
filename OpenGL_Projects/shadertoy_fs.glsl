@@ -187,26 +187,26 @@ vec3 Shade(vec3 rpos, vec3 rdir, float t)
 	
 	bool waterSurface = IsWaterSurface(pos);
 	bool water = IsWater(pos);
-	vec3 waterSurfaceLight = vec3(0);;
+	vec3 waterSurfaceLight = vec3(0);
 	if (waterSurface)
 	{
-		vec3 refractionDir = refract(normalize(rdir), nor, 0.9);
+		vec3 refractionDir = refract(normalize(rdir), nor, 0.9);                                // refraction direction
 
-		waterSurfaceLight = Lighting(pos, nor, rpos, Material(pos), vec3(1.), LightSource);
+		waterSurfaceLight = Lighting(pos, nor, rpos, Material(pos), vec3(1.), LightSource);     // water surface color
 
-		float wt = Trace(pos, refractionDir, 0.03);		
-		pos += refractionDir * wt;
-		nor = Normal(pos);
+		float wt = Trace(pos, refractionDir, 0.03);		                                        // trace from refraction direction
+		pos += refractionDir * wt;                                                              // new hit position, only consider one time refraction
+		nor = Normal(pos);                                                                      // new normal vector for calculate lightning
 	}
-	MaterialInfo mat = Material(pos);
+	MaterialInfo mat = Material(pos);                                                           // new place's material
 
-	vec3 color = .11 * (1. - Occlusion(pos, nor)) * mat.Kd;
+	vec3 color = .11 * (1. - Occlusion(pos, nor)) * mat.Kd;                                     // new place color with AO
 
-	color += Lighting(pos, nor, rpos, mat, vec3(1.), LightSource);
+	color += Lighting(pos, nor, rpos, mat, vec3(1.), LightSource);                              // new place lighting result
 	
 	if (water || waterSurface) {
-		color *= WaterColor;
-		if (waterSurface)
+		color *= WaterColor;                                                                    // filter by water color
+		if (waterSurface)                                                                       // consider refaction result
 			color += waterSurfaceLight;
 	}
 	return color;
@@ -227,7 +227,7 @@ void main()
     vec2 uv = gl_FragCoord.xy / iResolution.xy * 2. - 1.;	
 	uv.x *= iResolution.x / iResolution.y;
     float radius = sqrt(3.5*3.5 + 6.0 * 6.0);
-	vec3 rayStart = vec3(radius*sin(abs(fract(iTime*0.1)-0.5)*3.5), 1.7, radius*cos(abs(fract(iTime*0.1)-0.5)*3.5));
+	vec3 rayStart = 1.2*vec3(radius*sin(abs(fract(iTime*0.1)-0.5)*3.5), 1.7, radius*cos(abs(fract(iTime*0.1)-0.5)*3.5));
 	vec3 rayDirection = LookAt(rayStart, vec3(0, -1, 0), normalize(vec3(uv, -2.)));
 	
 	float path = Trace(rayStart, rayDirection, 0.);	
