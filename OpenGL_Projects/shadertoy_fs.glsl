@@ -6,11 +6,13 @@ layout(location = 4)uniform vec4 fcolor;
 
 uniform sampler2D volume_tex;
 uniform int slice;
+uniform float slider;
 
 out vec4 fragColor;
 
 float hash( float n ) { return fract(sin(n)*753.5453123); }
 
+// 1D noise with normal vector
 vec4 noised(in vec3 x)
 {
     vec3 p = floor(x);      // noise generate source
@@ -52,6 +54,7 @@ vec4 sdBox(vec3 p, vec3 b)
     return vec4(x,n);
 }
 
+// fbm noise box
 vec4 fbmd(in vec3 x)
 {
     const float scale = 1.5;
@@ -75,14 +78,14 @@ vec4 fbmd(in vec3 x)
 
 vec4 map(in vec3 p)
 {
-    vec4 d1 = fbmd(p);
-    d1.x -= 0.37;
-	d1.x *= 0.7;
+    vec4 d1 = fbmd(p);                  // random get points
+    d1.x -= 0.37 * 1.03;                
+	d1.x *= 0.7;                        // shift and scale
     d1.yzw = normalize(d1.yzw);
 
     // clip to box
-    vec4 d2 = sdBox(p,vec3(1.5));
-    return (d1.x>d2.x) ? d1 : d2;
+    vec4 d2 = sdBox(p,vec3(1.3));
+    return (d1.x>d2.x) ? d1 : vec4(0.0);
 }
 
 // ray-box intersection in box space
@@ -96,7 +99,7 @@ vec2 iBox(in vec3 ro, in vec3 rd, in vec3 rad)
     float tN = max(max(t1.x,t1.y),t1.z);
     float tF = min(min(t2.x,t2.y),t2.z);
     if( tN > tF || tF < 0.0) return vec2(-1.0);
-    return vec2(tN,tF);
+    return vec2(tN,tF)*1.2;
 }
 
 vec4 intersect(in vec3 ro, in vec3 rd)
@@ -155,14 +158,14 @@ void main()
 
     // camera position
     float an = 0.1*iTime;
-	vec3 ro = 4.0*vec3( cos(an), 0.8, sin(an) );
+	vec3 ro = 3.0*vec3( cos(an), 0.8, sin(an) );
     vec3 ta = vec3(0.0);                 // target position
 
     // camera matrix
     vec3 cw = normalize(ta-ro);          // center forward
     vec3 cu = normalize(cross(cw,vec3(0.0,1.0,0.0)));
     vec3 cv = normalize(cross(cu,cw));
-    vec3 rd = normalize(p.x*cu + p.y*cv + 1.7*cw);
+    vec3 rd = normalize(p.x*cu + p.y*cv + (iResolution.x/float(iResolution.y)) *cw);
 
     // render
     vec3 col = vec3(0.0);
