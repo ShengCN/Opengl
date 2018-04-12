@@ -10,184 +10,229 @@ uniform float slider;
 
 out vec4 fragColor;
 
-float hash( float n ) { return fract(sin(n)*753.5453123); }
+#define MAX_STEPS 64
+#define EPSILON .001
 
-// 1D noise with normal vector
-vec4 noised(in vec3 x)
+#define M_PI 3.14159265358979
+
+const vec3 LightSource = vec3(2., 1.5, 0);
+
+vec3 WaterColor = vec3(0.4, 0.9, 1);
+
+const float WaterHeight = 0.0;
+const float MaxWaveAmplitude = 0.04;
+
+const float HeightPool = 1.;
+const float HalfSizePool = 3.;
+const float DepthPool = 2.;
+
+struct MaterialInfo {
+	vec3 Kd;
+	float Shininess;
+};
+
+float CyclicTime()
 {
-    vec3 p = floor(x);      // noise generate source
-    vec3 w = fract(x);      // noise blend factor
-
-    vec3 u = w*w*(3.0 - 2.0*w);
-    vec3 du = 6.0 * w * (1.0 - w);
-
-    float n = p.x + p.y*157.0 + 113.0*p.z;
-
-    float a = hash(n+  0.0);
-    float b = hash(n+  1.0);
-    float c = hash(n+157.0);
-    float d = hash(n+158.0);
-    float e = hash(n+113.0);
-	float f = hash(n+114.0);
-    float g = hash(n+270.0);
-    float h = hash(n+271.0);
-
-    float k0 =   a;
-    float k1 =   b - a;
-    float k2 =   c - a;
-    float k3 =   e - a;
-    float k4 =   a - b - c + d;
-    float k5 =   a - c - e + g;
-    float k6 =   a - b - e + f;
-    float k7 = - a + b + c - d + e - f - g + h;
-
-    return vec4( k0 + k1*u.x + k2*u.y + k3*u.z + k4*u.x*u.y + k5*u.y*u.z + k6*u.z*u.x + k7*u.x*u.y*u.z, 
-                 du * (vec3(k1,k2,k3) + u.yzx*vec3(k4,k5,k6) + u.zxy*vec3(k6,k4,k5) + k7*u.yzx*u.zxy ));
+	return mod(iTime, 30.);
 }
 
-// distance + normal
-vec4 sdBox(vec3 p, vec3 b)
-{
-    vec3 d = abs(p) - b;
-    float x = min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
-    vec3 n = step(d.yzx,d.xyz) * step(d.zxy,d.xyz)*sign(p);
-    return vec4(x,n);
+float WaveAmplitude() {
+	return MaxWaveAmplitude * exp(-CyclicTime() / 10.);
 }
 
-// fbm noise box
-vec4 fbmd(in vec3 x)
-{
-    const float scale = 1.5;
-
-    float a = 0.0;
-    float b = 0.5;
-	float f = 1.0;
-    vec3  d = vec3(0.0);
-
-    for(int i = 0; i < 8; i++)
-    {
-        vec4 n = noised(f*x*scale);
-        a += b*n.x;
-        d += b*n.yzw*f*scale;
-        b *= 0.5;
-        f *= 1.8;
-    }
-
-    return vec4(a,d);
+float WaterWave(vec3 a) {
+	return WaveAmplitude() * sin((2. * a.x * a.x + 2. * a.z * a.z) - 10. * CyclicTime());
 }
 
-vec4 map(in vec3 p)
-{
-    vec4 d1 = fbmd(p);                  // random get points
-    d1.x -= 0.37 * 1.03;                
-	d1.x *= 0.7;                        // shift and scale
-    d1.yzw = normalize(d1.yzw);
-
-    // clip to box
-    vec4 d2 = sdBox(p,vec3(1.3));
-    return (d1.x>d2.x) ? d1 : vec4(0.0);
+float BallOscillation() {
+	return sin(5. * CyclicTime() + 4.) * exp(-CyclicTime() / 6.) + 0.3;
 }
 
-// ray-box intersection in box space
-vec2 iBox(in vec3 ro, in vec3 rd, in vec3 rad)
-{
-    vec3 m = 1.0 / rd;
-    vec3 n = m * ro;
-    vec3 k = abs(m) * rad;
-    vec3 t1 = -n - k;
-    vec3 t2 = -n + k;
-    float tN = max(max(t1.x,t1.y),t1.z);
-    float tF = min(min(t2.x,t2.y),t2.z);
-    if( tN > tF || tF < 0.0) return vec2(-1.0);
-    return vec2(tN,tF)*1.2;
+float PoolBottom(vec3 a) {
+	return a.y + DepthPool + .01;
 }
 
-vec4 intersect(in vec3 ro, in vec3 rd)
-{
-    vec4 res = vec4(-1.0);  // nothing intersect
-
-    // bounding volume
-    vec2 dis = iBox(ro,rd,vec3(1.5));
-    if(dis.y<0.0) return res;
-
-    // ray marching
-    float tmax = dis.y;                 // bounding box end
-    float t = dis.x;                    // bounding box begin
-    for(int i = 0; i < 128; ++i)        // ray marching 
-    {
-        vec3 pos = ro + t*rd;
-        vec4 hnor = map(pos);           // input pos, out put distance and normal information
-        res = vec4(t,hnor.yzw);
-
-        if(hnor.x<0.001) break;         // intersect
-        t += hnor.x;                    // still not hit
-        if(t>tmax) break;               // out of bounding box
-    }
-    return res;
+float BackWall(vec3 a) {
+	return a.z + HalfSizePool + .01;
 }
 
-vec3 forwardSF( float i, float n) 
-{
-    const float PI  = 3.141592653589793238;
-    const float PHI = 1.618033988749894848;
-    float phi = 2.0*PI*fract(i/PHI);
-    float zi = 1.0 - (2.0*i+1.0)/n;
-    float sinTheta = sqrt( 1.0 - zi*zi);
-    return vec3( cos(phi)*sinTheta, sin(phi)*sinTheta, zi);
+float LeftWall(vec3 a) {
+	return a.x + HalfSizePool + .01;
 }
 
-float calcAO( in vec3 pos, in vec3 nor )
+float WaterSurface(vec3 a) {
+	vec3 sz = vec3(HalfSizePool, 0, HalfSizePool);
+	return length(max(abs(a + vec3(0, WaterWave(a), 0)) - sz, 0.));
+}
+
+float Pool(vec3 a) {
+	return min(PoolBottom(a), min(LeftWall(a), BackWall(a)));
+}
+
+float Ball(vec3 a) {
+	return length(a + vec3(0., BallOscillation(), 0.)) - 0.75;
+}
+
+float Scene(vec3 a) {
+	return min(WaterSurface(a), min(Ball(a), Pool(a)));
+}
+
+bool IsWaterSurface(vec3 a)
 {
-	float ao = 0.0;
-    for( int i=0; i<32; i++ )
-    {
-        vec3 ap = forwardSF( float(i), 32.0 );
-        float h = hash(float(i));
-		ap *= sign( dot(ap,nor) ) * h*0.25;
-        ao += clamp( map( pos + nor*0.001 + ap ).x*3.0, 0.0, 1.0 );
-    }
-	ao /= 32.0;
+	float closest = Ball(a);
+	float dist = Pool(a);
+	if (dist < closest) {
+		closest = dist;
+	}	
+	dist = WaterSurface(a);
+	if (dist < closest) {
+		return true;
+	}
+	return false;
+}
+
+bool IsWater(vec3 pos)
+{
+	return (pos.y < (WaterHeight - MaxWaveAmplitude));
+}
+
+vec3 PoolColor(vec3 pos) {		
+	if ((pos.y > HeightPool) || (pos.x > HalfSizePool) || (pos.z > HalfSizePool)) 
+		return vec3(0.0);
+	float tileSize = 0.2;
+	float thickness = 0.015;
+	vec3 thick = mod(pos, tileSize);
+	if ((thick.x > 0.) && (thick.x < thickness) || (thick.y > 0.) && (thick.y < thickness) || (thick.z > 0.) && (thick.z < thickness))
+		return vec3(1);
+	return vec3(sin(floor((pos.x + 1.) / tileSize)) * cos(floor((pos.y + 1.) / tileSize)) * sin(floor((pos.z + 1.) / tileSize)) + 3.);
+}
+
+MaterialInfo Material(vec3 a) {
+	MaterialInfo m = MaterialInfo(vec3(.5, .56, 1.), 50.);
+	float closest = Ball(a);
+
+	float dist = WaterSurface(a);
+	if (dist < closest) {
+		closest = dist;
+		m.Kd = WaterColor;
+		m.Shininess = 120.;
+	}
+	dist = Pool(a);
+	if (dist < closest) {
+		m.Kd = PoolColor(a);		
+		m.Shininess = 0.;
+	}
+	return m;
+}
+
+vec3 Normal(vec3 a) {
+	vec2 e = vec2(.001, 0.);
+	float s = Scene(a);
+	return normalize(vec3(
+		Scene(a+e.xyy) - s,
+		Scene(a+e.yxy) - s,
+		Scene(a+e.yyx) - s));
+}
+
+float Occlusion(vec3 at, vec3 normal) {
+	float b = 0.;
+	for (int i = 1; i <= 4; ++i) {
+		float L = .06 * float(i);
+		float d = Scene(at + normal * L);		
+		b += max(0., L - d);
+	}
+	return min(b, 1.);
+}
+
+vec3 LookAt(vec3 pos, vec3 at, vec3 rDir) {
+	vec3 f = normalize(at - pos);
+	vec3 r = cross(f, vec3(0., 1., 0.));
+	vec3 u = cross(r, f);
+	return mat3(r, u, -f) * rDir;
+}
+
+float Trace(vec3 rPos, vec3 rDir, float distMin) {
+	float L = distMin;
+	for (int i = 0; i < MAX_STEPS; ++i) {
+		float d = Scene(rPos + rDir * L);
+		L += d;
+		if (d < EPSILON * L) break;
+	}
+	return L;
+}
+
+vec3 Lighting(vec3 at, vec3 normal, vec3 eye, MaterialInfo m, vec3 lColor, vec3 lPos) {
+	vec3 lDir = lPos - at;
 	
-    return clamp( ao*5.0, 0.0, 1.0 );
+	vec3 lDirN = normalize(lDir);
+	float t = Trace(at, lDirN, EPSILON*2.);
+	if (t < length(lDir)) {
+		vec3 pos = at + lDirN * t;
+		if(!IsWaterSurface(pos))
+			return vec3(0.);
+	}
+	vec3 color = m.Kd * lColor * max(0., dot(normal, normalize(lDir)));
+	
+	if (m.Shininess > 0.) {
+		vec3 h = normalize(normalize(lDir) + normalize(eye - at));
+		color += lColor * pow(max(0., dot(normal, h)), m.Shininess) * (m.Shininess + 8.) / 25.;
+	}
+	return color / dot(lDir, lDir);
+}
+
+vec3 Shade(vec3 rpos, vec3 rdir, float t)
+{
+	vec3 pos = rpos + rdir * t;
+	vec3 nor = Normal(pos);
+	
+	bool waterSurface = IsWaterSurface(pos);
+	bool water = IsWater(pos);
+	vec3 waterSurfaceLight = vec3(0);;
+	if (waterSurface)
+	{
+		vec3 refractionDir = refract(normalize(rdir), nor, 0.9);
+
+		waterSurfaceLight = Lighting(pos, nor, rpos, Material(pos), vec3(1.), LightSource);
+
+		float wt = Trace(pos, refractionDir, 0.03);		
+		pos += refractionDir * wt;
+		nor = Normal(pos);
+	}
+	MaterialInfo mat = Material(pos);
+
+	vec3 color = .11 * (1. - Occlusion(pos, nor)) * mat.Kd;
+
+	color += Lighting(pos, nor, rpos, mat, vec3(1.), LightSource);
+	
+	if (water || waterSurface) {
+		color *= WaterColor;
+		if (waterSurface)
+			color += waterSurfaceLight;
+	}
+	return color;
+}
+
+vec3 Camera(vec2 px) {
+	vec2 uv = px.xy / iResolution.xy * 2. - 1.;	
+	uv.x *= iResolution.x / iResolution.y;
+	vec3 rayStart = vec3(3.5, 1.7, 6.);
+	vec3 rayDirection = LookAt(rayStart, vec3(0, -1, 0), normalize(vec3(uv, -2.)));
+	
+	float path = Trace(rayStart, rayDirection, 0.);	
+	return Shade(rayStart, rayDirection, path);
 }
 
 void main()
 {
-    // map gl_FragCoord to [-1,1] domain
-    vec2 p = (-iResolution.xy + 2.0*gl_FragCoord.xy) / iResolution.y;
+    vec2 uv = gl_FragCoord.xy / iResolution.xy * 2. - 1.;	
+	uv.x *= iResolution.x / iResolution.y;
+    float radius = sqrt(3.5*3.5 + 6.0 * 6.0);
+	vec3 rayStart = vec3(radius*sin(abs(fract(iTime*0.1)-0.5)*3.5), 1.7, radius*cos(abs(fract(iTime*0.1)-0.5)*3.5));
+	vec3 rayDirection = LookAt(rayStart, vec3(0, -1, 0), normalize(vec3(uv, -2.)));
+	
+	float path = Trace(rayStart, rayDirection, 0.);	
 
-    // camera position
-    float an = 0.1*iTime;
-	vec3 ro = 3.0*vec3( cos(an), 0.8, sin(an) );
-    vec3 ta = vec3(0.0);                 // target position
+    vec3 col = Shade(rayStart, rayDirection, path);
 
-    // camera matrix
-    vec3 cw = normalize(ta-ro);          // center forward
-    vec3 cu = normalize(cross(cw,vec3(0.0,1.0,0.0)));
-    vec3 cv = normalize(cross(cu,cw));
-    vec3 rd = normalize(p.x*cu + p.y*cv + (iResolution.x/float(iResolution.y)) *cw);
-
-    // render
-    vec3 col = vec3(0.0);
-    vec4 tnor = intersect(ro,rd);
-    float t = tnor.x;                    // step t
-
-    if( t > 0.0)
-    {
-        vec3 pos = ro + t * rd;         // intersection point
-        // numerical normals
-        vec3 nor = tnor.yzw;
-        // float occ = calcAO(pos,nor);
-        float occ = calcAO( pos, nor );
-        float fre = clamp( 1.0+dot(rd,nor), 0.0, 1.0 );
-        float fro = clamp( dot(nor,-rd), 0.0, 1.0 );
-        col = mix( vec3(0.05,0.2,0.3), vec3(1.0,0.95,0.85), 0.5+0.5*nor.y );
-        //col = 0.5+0.5*nor;
-        col += 10.0*pow(fro,12.0)*(0.04+0.96*pow(fre,5.0));
-        col *= pow(vec3(occ),vec3(1.0,1.1,1.1) );
-    }
-
-    col = sqrt(col);
-
-    fragColor = vec4(col,1.0);
+	fragColor = vec4(col, 1.);
 }
