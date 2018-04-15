@@ -131,6 +131,10 @@ void GraphicsBase::Update_Uniforms()
 			break;
 
 		case 5124: // int
+			if(Check_Name(keyname,"keyboard"))
+			{
+				int_uniforms[keyname] = Global_Variables::Instance()->int_uniforms["keyboard"];
+			}
 			glUniform1i(glGetUniformLocation(shader_program, uniformName), int_uniforms[keyname]);
 			break;
 

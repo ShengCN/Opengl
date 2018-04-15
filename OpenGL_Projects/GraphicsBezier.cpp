@@ -345,8 +345,8 @@ void GraphicsBezier::DrawBezier()
 void GraphicsBezier::DrawControlPolygons(int pass)
 {
 	auto gv = Global_Variables::Instance();
-	if (gv->pointsFlag)
-	{
+//	if (gv->pointsFlag)
+//	{
 		glUniform1i(glGetUniformLocation(shader_program, "pass"), pass);
 		glBindVertexArray(vao[1]);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
@@ -367,7 +367,7 @@ void GraphicsBezier::DrawControlPolygons(int pass)
 			glDrawArrays(GL_LINE_STRIP, 0, controlPoints.size());
 			glBindVertexArray(0);
 		}
-	}
+	//}
 }
 
 void GraphicsBezier::Draw_Shader_Uniforms()

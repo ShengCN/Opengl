@@ -59,7 +59,9 @@ int GetCurrentWindowHeight()
 
 void KeyboardUpEvents(unsigned char key, int x, int y)
 {
+	auto gv = Global_Variables::Instance();
 	ImGui_ImplGlut_KeyUpCallback(key);
+	gv->int_uniforms["keyboard"] = 0; 
 }
 
 void SpecialKeyboardEvents(int k, int x, int y)

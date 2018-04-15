@@ -18,6 +18,10 @@ void GraphicsShaderToy::Draw()
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 	glUniform1i(glGetUniformLocation(shader_program, "volume_tex"), 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, m_textureId);
+	glUniform1i(glGetUniformLocation(shader_program, "noise_tex"), 1);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }

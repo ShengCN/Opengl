@@ -111,14 +111,18 @@ void Init_Global()
 	auto gv = Global_Variables::Instance();
 	gv->current_camera->Position *= 1.0;
 	gv->isImguiOpen = true;
+	
+	gv->int_uniforms["keyboard"] = 0;
+	gv->float_uniforms["cameraSpeed"] = 0.5f;
+	
 	gv->vec3_uniforms["cameraPos"] = glm::vec3(0.0f, -0.2f, 3.0f);
 	gv->vec3_uniforms["cameraFront"] = glm::vec3(0.0f, 0.0f, -1.0f);
 	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
 	gv->vec3_uniforms["Billboard_Pos"] = glm::vec3(0.0f);
-	gv->float_uniforms["cameraSpeed"] = 0.5f;
-	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	gv->vec3_uniforms["light_position"] = glm::vec3(0.0f, 20.0f, 0.0);
 	gv->vec3_uniforms["light_color"] = glm::vec3(1.0f);
+
+	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].r, gv->vec4_uniforms["Backgound_Color"].g,
@@ -132,6 +136,8 @@ void Init_Global()
 	GraphicsBase* shadertoy = new GraphicsShaderToy();
 	shadertoy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
 	shadertoy->Init_Buffers();
+	std::string noisefile = "./Materials/noise.png";
+	shadertoy->Load_Texture(noisefile);
 	static_cast<GraphicsShaderToy*>(shadertoy)->SetTexture(static_cast<GraphicsVolumeRendering*>(volume)->GetVolumeResult());
 	gv->graphics.push_back(shadertoy);
 }
@@ -204,16 +210,20 @@ void Keyboard(unsigned char key, int x, int y)
 		ReloadShaders();
 		break;
 
-	case 'c':
-		gv->curveFlag = !gv->curveFlag;
+	case 'w':
+		gv->int_uniforms["keyboard"] = 1;
 		break;
 
-	case 'p':
-		gv->pointsFlag = !gv->pointsFlag;
+	case 'a':
+		gv->int_uniforms["keyboard"] = 2;
 		break;
 
-	case 'P':
-		SaveTexture2D("test.jpg", dynamic_cast<GraphicsScripts*>(gv->graphics[0])->GetTexture(), gv->width, gv->height);
+	case 's':
+		gv->int_uniforms["keyboard"] = 3;
+		break;
+
+	case 'd':
+		gv->int_uniforms["keyboard"] = 4;
 		break;
 
 	default:

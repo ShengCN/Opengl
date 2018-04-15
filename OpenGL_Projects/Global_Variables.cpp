@@ -16,11 +16,6 @@ Global_Variables::Global_Variables()
 	width = 1200;
 	height = 800;
 	windowPos = glm::vec2(20,20);
-	bezier_vs = ".\\bezier_vs.glsl";
-	bezier_fs = ".\\bezier_fs.glsl";
-	curveFlag = false;
-	pointsFlag = false;
-
 
 	isLBtnressed = false;
 	isRBtnPressed = false;
