@@ -12,6 +12,31 @@ uniform vec4 slider;
 
 out vec4 fragColor;
 
+const vec3 LightPos = vec3(2.0,1.5,0.0)*10.0; 
+const vec3 WaterColor = vec3(0.4, 0.9, 1);
+const float waterSZ = 1.0;
+const float waterHeight = 0.8;
+const float MaxWaveAmplitude = 0.04;
+// ***********************
+// Data Structures
+// ***********************
+struct Intersection
+{
+	float dist;			// distance to the object
+	int id;				// object id
+};
+
+struct MaterialInfo
+{
+	vec3 Kd;
+	float Shininess;
+};
+
+// ***********************
+// Functions
+// ***********************
+Intersection Intersect(vec3 ro, vec3 rd);
+
 // ***********************
 //	Tool functions
 // ***********************
@@ -26,91 +51,39 @@ mat3 rotate3X(float v)
 	);
 }
 
+float CyclicTime()
+{
+	return mod(iTime, 30.);
+}
+
 // ***********************
 //	SD functions
 // ***********************
-float sdWater(vec3 pos)
+float WaveAmplitude() 
 {
-	float height = -2.0;
-	return pos.y - height;
+	return MaxWaveAmplitude * exp(-CyclicTime() / 10.);
 }
 
-// ***********************
-// Lighting functions
-// ***********************
-vec3 palette(vec3 a, vec3 b, vec3 c, float t)
+float WaterWave(vec3 a) 
 {
-    float x = smoothstep(0.0, 0.7, t);
-    float y = smoothstep(0.5, 1.0, t);
-    return mix(a, mix(c, b, y), x);
+	return WaveAmplitude() * sin((2. * a.x * a.x + 2. * a.z * a.z) - 10. * CyclicTime());
 }
 
-vec3 sun(vec3 ro, vec3 rd)
+float sdWaterSurface(vec3 pos)
 {
-	vec3 dir = normalize(vec3(-0.04, -0.26, 0.4));
-	float n = dot(normalize(rd), dir) * 0.5 + 0.62 - rd.y * 0.3;
-	n = pow(n,16.0);
-	return palette(vec3(0.003, 0.003, 0.050), vec3(0.95, 0.85, 0.8), vec3(1.2, 0.5, 0.1), n);
+	vec3 sz = vec3(waterSZ,waterHeight,waterSZ);
+	return length(max(abs(pos+vec3(0.0,WaterWave(pos),0.0)) - sz, 0.));
 }
 
-vec3 stars(vec3 ro,vec3 rd)
+float sdSphere(vec3 pos)
 {
-    vec3 f = texture(noise_tex, rd.xy * 2.0).xyz;
-    float p = length(pow(f, vec3(100.0, 75.0, 50.0)) * vec3(0.05, 0.02, 0.01));
-    return vec3(p);
+	return length(pos-vec3(0.0)) - 0.5;
 }
 
-
-vec3 venus(vec3 ro, vec3 rd)
+bool IsWater(vec3 pos)
 {
-	vec2 n = vec2(0.5,0.1) - rd.xy;
-	float t = length(dFdx(n));
-    float v = smoothstep(t * 2.2, t * 0.2, length(n));
-    return v * vec3(0.17, 0.16, 0.15);
+	return (pos.y < (waterHeight-MaxWaveAmplitude));
 }
-
-vec4 clouds(vec3 ro, vec3 rd)
-{
-	float dist = (ro.y + 2000.0)/rd.y;
-	vec3 pos = ro + dist * rd;
-	pos.z += sin(pos.x * 0.0005 + 2.0) * 500.0;
-	float a = max(0.0, sin(pos.z * 0.003 + pos.x * 0.001) * 0.5 + 0.6);
-    float m = smoothstep(13000.0, 5000.0, distance(pos.xz, vec2(-15000, 10000)));
-    float t = a * m * 0.4;
-    return vec4(mix(vec3(0.0), vec3(0.20, 0.07, 0.01) * 0.4, t), t);
-}
-
-vec3 sky(vec3 ro, vec3 rd)
-{
-	vec3 power = vec3(1.0);
-	vec4 c = clouds(ro,rd);
-	c.xyz = pow(c.xyz, power);
-	vec3 s = pow(sun(ro,rd), power) + venus(ro,rd) + stars(ro,rd);
-	return mix(s,c.xyz,c.w);
-}
-
-vec2 trees(vec3 ro, vec3 rd)
-{
-	vec2 result = vec2(0.0);
-	result.x = (ro.z - 200.0) / -rd.z;
-	vec3 pos = ro + result.x * rd;
-	float n = pos.y;
-
-	n *= (smoothstep(0.0, 600.0, abs(pos.x + 30.0)) + 0.18);
-    n *= (smoothstep(0.0, 200.0, abs(pos.x + 300.0)));
-    n += sin(pos.x + pos.y * 2.0) * 0.05;
-    n += (texture(noise_tex, vec2(pos.x * 0.004, pos.x * 0.003)).x - 0.5) * 0.5;
-    float t = max(0.1, length(vec2(dFdx(n), dFdy(n))));
-    result.y = smoothstep(4.0 + t, 4.0 - t, n);
-    return result;
-}
-
-struct Intersection
-{
-	float dist;			// distance to the object
-	int id;				// object id
-};
-
 
 // map is a function that maps a pos to the scene information
 // Intersection has information:
@@ -121,13 +94,17 @@ Intersection map(vec3 pos)
 	Intersection result;
 	
 	// find the closest intersect point
-	float dis_water = sdWater(pos);
+	float dis_water = sdWaterSurface(pos);
 	result.dist = dis_water;
 	result.id = 1;
 	// .....
 
-	// find the closest
-	// if(...)
+	float dis_sphere = sdSphere(pos);
+	if(result.dist>dis_sphere)
+	{
+		result.dist = dis_sphere;
+		result.id = 2;
+	}
 
 	// calculate the closest object's normal
 
@@ -135,45 +112,120 @@ Intersection map(vec3 pos)
 }
 
 /**********************
+	Lighting and colors
+**********************/
+MaterialInfo Material(vec3 pos) {
+	MaterialInfo m;
+
+	Intersection itsct = map(pos);
+
+	if(itsct.id == 1) 				// water
+	{
+		m.Kd = WaterColor;
+		m.Shininess = 120.;
+	}
+
+	if(itsct.id == 2)
+	{
+		m.Kd = vec3(0.1);
+		m.Shininess = 10.;
+	}
+
+	return m;
+}
+
+float Occlusion(vec3 at, vec3 normal)
+{
+	float b = 0.;
+	for (int i = 1; i <= 4; ++i) 
+	{
+		float L = .06 * float(i);
+		Intersection d = map(at + normal * L);		
+		b += max(0., L - d.dist);
+	}
+	return min(b, 1.);
+}
+
+vec3 Normal(vec3 pos)
+{
+	float epison = 0.001;
+	return normalize(vec3(map(pos+vec3(epison,0.0,0.0)).dist-map(pos-vec3(epison,0.0,0.0)).dist,
+								 map(pos+vec3(0.0,epison,0.0)).dist-map(pos-vec3(0.0,epison,0.0)).dist,
+								 map(pos+vec3(0.0,0.0,epison)).dist-map(pos-vec3(0.0,0.0,epison)).dist));
+
+}
+
+vec3 Lighting(vec3 pos, vec3 normal, vec3 eye, MaterialInfo m, vec3 lightColor, vec3 lightPos)
+{
+	vec3 lightDir = lightPos - pos;
+	vec3 nlightDir = normalize(lightDir);
+	Intersection t = Intersect(pos,nlightDir);
+	if(t.dist<length(lightDir))
+	{
+		//vec3 p = pos + nlightDir * t.dist;
+		return vec3(0.0);
+	}
+
+	vec3 color = m.Kd * lightColor * max(0.0,dot(normal,nlightDir));
+	if(m.Shininess>0.0)
+	{
+		vec3 h = normalize(nlightDir + normalize(eye-pos));
+		color += lightColor * pow(max(0.0,dot(normal,h)),m.Shininess) * (m.Shininess + 8.0) / 25.0;
+	}
+
+	return color;
+}
+
+/**********************
 	0	background
 	1	water
+	2   sphere     ---- for debug
 **********************/
 vec3 Shade(vec3 ro, vec3 rd, Intersection t)
 {
 	int id = t.id;
 	// normal calculate
-	float epison = 0.001;
 	vec3 pos = ro + t.dist * rd;
-	vec3 normal = normalize(vec3(map(pos+vec3(epison,0.0,0.0)).dist-map(pos-vec3(epison,0.0,0.0)).dist,
-								 map(pos+vec3(0.0,epison,0.0)).dist-map(pos-vec3(0.0,epison,0.0)).dist,
-								 map(pos+vec3(0.0,0.0,epison)).dist-map(pos-vec3(0.0,0.0,epison)).dist));
+	vec3 nor = Normal(pos);
 
 	if(id == 0)					// sky
 	{
-		vec2 tree = trees(ro,rd);
-		vec3 s = sky(ro,rd);
-		float b = 1.0;
-		return mix(s, vec3(0, 0, 0), tree.y) * b;
+		return vec3(0.8);
 	}
 	if(id == 1)					// water
 	{
-		// fake normal
-		normal = normalize(vec3(sin(pos.z + iTime) * 0.2,
-        				  		10.0 + (pos.z + 15.0) * 0.33,
-        						cos(pos.x + iTime * 0.1) * 0.05));
-
-		float b = 1.0;
-		vec2 tree = trees(ro,rd);
-
-		if(t.dist>0.0 && t.dist<tree.x)
+		vec3 waterSurfaceLight = vec3(0.0);
+		
+		if(!IsWater(pos)) 		// water surface
 		{
-			b = pow(1.1 - abs(dot(normal, rd)), 5.0);
-			// ro = min(pos,199.9);			
-			rd = reflect(rd,normal);
-			tree = trees(ro,rd);
+			// refraction
+			waterSurfaceLight = Lighting(pos,nor,ro,Material(pos),vec3(1.0),LightPos);
+			vec3 refractionDir = refract(rd,nor,0.9);
+			Intersection inWaterIntersect = Intersect(pos,refractionDir); 
+			
+			// update new pos and nor
+			pos += refractionDir * inWaterIntersect.dist;
+			nor = Normal(pos);
 		}
-		vec3 s = sky(ro,rd);
-		return mix(s, vec3(0, 0, 0), tree.y) * b;;
+
+		// otherwise, just water
+		MaterialInfo mat = Material(pos);
+		vec3 color = 0.11 * (1.0 - Occlusion(pos, nor)) * mat.Kd;
+		color += Lighting(pos,nor,ro,mat,vec3(1.0),LightPos);
+		color *= WaterColor;
+
+		if(!IsWater(pos)) 		// water surface
+		{
+			// color += waterSurfaceLight;
+		}
+		return color;
+	}
+	if(id == 2)
+	{
+		MaterialInfo mat = Material(pos);
+		vec3 color = .11 * (1. - Occlusion(pos, nor)) * mat.Kd;
+		color += Lighting(pos,nor,ro,mat,vec3(1.0),LightPos);
+		return color;
 	}
 }
 
@@ -196,8 +248,8 @@ vec3 Camera()
 	vec2 p = (-iResolution.xy + 2.0*gl_FragCoord.xy) / iResolution.y;
 	
 	// camera anim
-    vec3 ro = vec3( 0.0, 0.0, -3.0);
-	vec3 ta = vec3(0.0) + slider.xyz;
+    vec3 ro = vec3( 0.0, 2.0, 3.0);
+	vec3 ta = vec3(0.0);
 
     // camera matrix	
 	vec3  cw = normalize( ta-ro );							 	// forward ray
