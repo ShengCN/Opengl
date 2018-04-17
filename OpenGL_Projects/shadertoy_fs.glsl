@@ -12,7 +12,7 @@ uniform vec4 slider;
 
 out vec4 fragColor;
 
-const vec3 LightPos = vec3(2.0,1.5,0.0)*10.0; 
+const vec3 LightPos = vec3(2.0,3.5,5.0); 
 const vec3 WaterColor = vec3(0.4, 0.9, 1);
 const float waterSZ = 1.0;
 const float waterHeight = 0.8;
@@ -40,17 +40,6 @@ Intersection Intersect(vec3 ro, vec3 rd,float minD, float maxD);
 // ***********************
 //	Tool functions
 // ***********************
-mat3 rotate3X(float v)
-{
-    float s = sin(v);
-    float c = cos(v);
-    return mat3(
-        1, 0, 0,
-        0, c,-s,
-        0, s, c
-	);
-}
-
 float CyclicTime()
 {
 	return mod(iTime, 30.);
@@ -77,7 +66,13 @@ float sdWaterSurface(vec3 pos)
 
 float sdSphere(vec3 pos)
 {
-	return length(pos-vec3(0.0,0.8,0.0)) - 0.5;
+	return length(pos-vec3(0.0,0.5,0.0)) - 0.5;
+}
+
+float sdPlane(vec3 pos)
+{
+	vec4 plane = vec4(0.0,1.0,0.0,0.0 + slider.x);
+	return dot(pos,plane.xyz) - plane.w;
 }
 
 bool IsWater(vec3 pos)
@@ -91,26 +86,16 @@ bool IsWater(vec3 pos)
 // 2. distance to the instersect object
 Intersection map(vec3 pos)
 {
-	Intersection result = Intersection(1000.0,1); 	// default is sky
-	
-	// find the closest intersect point
-	float dis_water = sdWaterSurface(pos);
-	if(result.dist > dis_water)
-	{
-		result.dist = dis_water;
-		result.id = 1;
-	}
-	
-	float dis_sphere = sdSphere(pos);
-	if(result.dist>dis_sphere)
-	{
-		result.dist = dis_sphere;
-		result.id = 2;
-	}
+	Intersection d0 = Intersection(10000.0,0);
+	Intersection d1 = Intersection(sdWaterSurface(pos),1);
+	Intersection d2 = Intersection(sdSphere(pos),2);
+	Intersection d3 = Intersection(sdPlane(pos),3);
 
-	// calculate the closest object's normal
+	if(d0.dist<d1.dist) d0 = d1;
+	if(d2.dist<d1.dist) d0 = d2;
+	if(d3.dist<d1.dist) d0 = d3;
 
-	return result;
+	return d0;
 }
 
 /**********************
@@ -148,25 +133,26 @@ float Occlusion(vec3 at, vec3 normal)
 	return min(b, 1.);
 }
 
-vec3 Normal(vec3 pos)
+vec3 Normal(vec3 p)
 {
-	float epison = 0.00001;
-	return normalize(vec3(map(pos+vec3(epison,0.0,0.0)).dist-map(pos-vec3(epison,0.0,0.0)).dist,
-								 map(pos+vec3(0.0,epison,0.0)).dist-map(pos-vec3(0.0,epison,0.0)).dist,
-								 map(pos+vec3(0.0,0.0,epison)).dist-map(pos-vec3(0.0,0.0,epison)).dist));
-
+	vec3 e = vec3(0.001,0.0,0.0);
+	vec3 n;
+	n.x = map(p+e.xyy).dist - map(p-e.xyy).dist;
+    n.y = map(p+e.yxy).dist - map(p-e.yxy).dist;
+    n.z = map(p+e.yyx).dist - map(p-e.yyx).dist;
+	return normalize(n);
 }
 
 vec3 Lighting(vec3 pos, vec3 normal, vec3 eye, MaterialInfo m, vec3 lightColor, vec3 lightPos)
 {
 	vec3 lightDir = lightPos - pos;
 	vec3 nlightDir = normalize(lightDir);
-	// Intersection t = Intersect(pos,nlightDir, 0.001, 1000.0);
-	// if(t.dist<length(lightDir))
-	// {
-	// 	//vec3 p = pos + nlightDir * t.dist;
-	// 	return vec3(0.0);
-	// }
+	Intersection t = Intersect(pos,nlightDir, 0.001, 1000.0);
+	if(t.dist<length(lightDir))
+	{
+		//vec3 p = pos + nlightDir * t.dist;
+		return vec3(0.0);
+	}
 
 	vec3 color = m.Kd * lightColor * max(0.0,dot(normal,nlightDir));
 	if(m.Shininess>0.0)
@@ -175,7 +161,7 @@ vec3 Lighting(vec3 pos, vec3 normal, vec3 eye, MaterialInfo m, vec3 lightColor, 
 		color += lightColor * pow(max(0.0,dot(normal,h)),m.Shininess) * (m.Shininess + 8.0) / 25.0;
 	}
 
-	return color;
+	return color/pow(length(lightDir),2) * 10.0;
 }
 
 /**********************
@@ -190,11 +176,9 @@ vec3 Shade(vec3 ro, vec3 rd, Intersection t)
 	vec3 pos = ro + t.dist * rd;
 	vec3 nor = Normal(pos);
 
-	return nor;
-
 	if(id == 0)					// sky
 	{
-		return vec3(0.8);
+		return vec3(0.0);
 	}
 	if(id == 1)					// water
 	{
@@ -214,8 +198,8 @@ vec3 Shade(vec3 ro, vec3 rd, Intersection t)
 
 		// otherwise, just water
 		MaterialInfo mat = Material(pos);
-		vec3 color = 0.11 * (1.0 - Occlusion(pos, nor)) * mat.Kd;
-		color += Lighting(pos,nor,ro,mat,vec3(1.0),LightPos);
+		// vec3 color = 0.11 * (1.0 - Occlusion(pos, nor)) * mat.Kd;
+		vec3 color = Lighting(pos,nor,ro,mat,vec3(1.0),LightPos);
 		color *= WaterColor;
 
 		if(!IsWater(pos)) 		// water surface
@@ -227,9 +211,13 @@ vec3 Shade(vec3 ro, vec3 rd, Intersection t)
 	if(id == 2)
 	{
 		MaterialInfo mat = Material(pos);
-		vec3 color = .11 * (1. - Occlusion(pos, nor)) * mat.Kd;
-		color += Lighting(pos,nor,ro,mat,vec3(1.0),LightPos);
+		// vec3 color = .11 * (1. - Occlusion(pos, nor)) * mat.Kd;
+		vec3 color = Lighting(pos,nor,ro,mat,vec3(1.0),LightPos);
 		return color;
+	}
+	if(id == 3)
+	{
+		return vec3(0.7);
 	}
 }
 
@@ -241,7 +229,7 @@ Intersection Intersect(vec3 ro, vec3 rd,float minD, float maxD)
 	for(int i =0; i < 128; ++i)
 	{
 		Intersection curIntersect = map(ro + t.dist * rd);	
-		if(curIntersect.dist < 0.00001)	return curIntersect;
+		if(curIntersect.dist < 0.001)	return curIntersect;
 		t.dist += curIntersect.dist;
 	}
 
