@@ -35,7 +35,7 @@ struct MaterialInfo
 // ***********************
 // Functions
 // ***********************
-Intersection Intersect(vec3 ro, vec3 rd);
+Intersection Intersect(vec3 ro, vec3 rd,float minD, float maxD);
 
 // ***********************
 //	Tool functions
@@ -77,7 +77,7 @@ float sdWaterSurface(vec3 pos)
 
 float sdSphere(vec3 pos)
 {
-	return length(pos-vec3(0.0)) - 0.5;
+	return length(pos-vec3(0.0,0.8,0.0)) - 0.5;
 }
 
 bool IsWater(vec3 pos)
@@ -91,14 +91,16 @@ bool IsWater(vec3 pos)
 // 2. distance to the instersect object
 Intersection map(vec3 pos)
 {
-	Intersection result;
+	Intersection result = Intersection(1000.0,1); 	// default is sky
 	
 	// find the closest intersect point
 	float dis_water = sdWaterSurface(pos);
-	result.dist = dis_water;
-	result.id = 1;
-	// .....
-
+	if(result.dist > dis_water)
+	{
+		result.dist = dis_water;
+		result.id = 1;
+	}
+	
 	float dis_sphere = sdSphere(pos);
 	if(result.dist>dis_sphere)
 	{
@@ -125,7 +127,7 @@ MaterialInfo Material(vec3 pos) {
 		m.Shininess = 120.;
 	}
 
-	if(itsct.id == 2)
+	if(itsct.id == 2)				// sphere
 	{
 		m.Kd = vec3(0.1);
 		m.Shininess = 10.;
@@ -148,7 +150,7 @@ float Occlusion(vec3 at, vec3 normal)
 
 vec3 Normal(vec3 pos)
 {
-	float epison = 0.001;
+	float epison = 0.00001;
 	return normalize(vec3(map(pos+vec3(epison,0.0,0.0)).dist-map(pos-vec3(epison,0.0,0.0)).dist,
 								 map(pos+vec3(0.0,epison,0.0)).dist-map(pos-vec3(0.0,epison,0.0)).dist,
 								 map(pos+vec3(0.0,0.0,epison)).dist-map(pos-vec3(0.0,0.0,epison)).dist));
@@ -159,12 +161,12 @@ vec3 Lighting(vec3 pos, vec3 normal, vec3 eye, MaterialInfo m, vec3 lightColor, 
 {
 	vec3 lightDir = lightPos - pos;
 	vec3 nlightDir = normalize(lightDir);
-	Intersection t = Intersect(pos,nlightDir);
-	if(t.dist<length(lightDir))
-	{
-		//vec3 p = pos + nlightDir * t.dist;
-		return vec3(0.0);
-	}
+	// Intersection t = Intersect(pos,nlightDir, 0.001, 1000.0);
+	// if(t.dist<length(lightDir))
+	// {
+	// 	//vec3 p = pos + nlightDir * t.dist;
+	// 	return vec3(0.0);
+	// }
 
 	vec3 color = m.Kd * lightColor * max(0.0,dot(normal,nlightDir));
 	if(m.Shininess>0.0)
@@ -188,6 +190,8 @@ vec3 Shade(vec3 ro, vec3 rd, Intersection t)
 	vec3 pos = ro + t.dist * rd;
 	vec3 nor = Normal(pos);
 
+	return nor;
+
 	if(id == 0)					// sky
 	{
 		return vec3(0.8);
@@ -201,7 +205,7 @@ vec3 Shade(vec3 ro, vec3 rd, Intersection t)
 			// refraction
 			waterSurfaceLight = Lighting(pos,nor,ro,Material(pos),vec3(1.0),LightPos);
 			vec3 refractionDir = refract(rd,nor,0.9);
-			Intersection inWaterIntersect = Intersect(pos,refractionDir); 
+			Intersection inWaterIntersect = Intersect(pos,refractionDir,0.0,1000.0); 
 			
 			// update new pos and nor
 			pos += refractionDir * inWaterIntersect.dist;
@@ -229,13 +233,15 @@ vec3 Shade(vec3 ro, vec3 rd, Intersection t)
 	}
 }
 
-Intersection Intersect(vec3 ro, vec3 rd)
+Intersection Intersect(vec3 ro, vec3 rd,float minD, float maxD)
 {
 	Intersection t;
+	ro += minD * rd;
+
 	for(int i =0; i < 128; ++i)
 	{
 		Intersection curIntersect = map(ro + t.dist * rd);	
-		if(curIntersect.dist < 0.001)	return curIntersect;
+		if(curIntersect.dist < 0.00001)	return curIntersect;
 		t.dist += curIntersect.dist;
 	}
 
@@ -257,7 +263,7 @@ vec3 Camera()
 	vec3  cv = normalize( cross(cu,cw) );						// y
 	vec3  rd = normalize( p.x*cu + p.y*cv + 2.0 *cw);
 
-	Intersection t = Intersect(ro,rd);
+	Intersection t = Intersect(ro,rd,0.0, 1000.0);
 	return Shade(ro,rd,t);
 }
 
