@@ -12,7 +12,7 @@ uniform vec4 slider;
 
 out vec4 fragColor;
 
-const vec3 LightPos = vec3(2.0,3.5,5.0); 
+const vec3 LightPos = vec3(7.0,-6.5,-1.4); 
 const vec3 WaterColor = vec3(0.4, 0.9, 1);
 const float waterSZ = 1.0;
 const float waterHeight = 0.8;
@@ -20,12 +20,6 @@ const float MaxWaveAmplitude = 0.04;
 // ***********************
 // Data Structures
 // ***********************
-struct Intersection
-{
-	float dist;			// distance to the object
-	float id;				// object id
-};
-
 struct MaterialInfo
 {
 	vec3 Kd;
@@ -35,7 +29,8 @@ struct MaterialInfo
 // ***********************
 // Functions
 // ***********************
-Intersection Intersect(vec3 ro, vec3 rd,float minD, float maxD);
+vec2 Intersect(vec3 ro, vec3 rd);
+vec2 map(vec3 pos);
 
 // ***********************
 //	Tool functions
@@ -43,6 +38,16 @@ Intersection Intersect(vec3 ro, vec3 rd,float minD, float maxD);
 float CyclicTime()
 {
 	return mod(iTime, 30.);
+}
+
+vec3 calcNormal(vec3 p)
+{
+    vec3 e = vec3(0.001,0.0,0.0);
+    vec3 n;
+    n.x = map(p+e.xyy).x - map(p-e.xyy).x;
+    n.y = map(p+e.yxy).x - map(p-e.yxy).x;
+    n.z = map(p+e.yyx).x - map(p-e.yyx).x;
+    return normalize(n);
 }
 
 // ***********************
@@ -66,13 +71,13 @@ float sdWaterSurface(vec3 pos)
 
 float sdSphere(vec3 pos)
 {
-	return length(pos-vec3(0.0,0.5,0.0)) - 0.5;
+	return length(pos-vec3(0.0,0.8,0.0)) - 0.5;
 }
 
 float sdPlane(vec3 pos)
 {
 	vec4 plane = vec4(0.0,1.0,0.0,0.0);
-	return dot(pos,plane.xyz) - slider.x;
+	return dot(pos,plane.xyz) + 0.5;
 }
 
 bool IsWater(vec3 pos)
@@ -85,168 +90,135 @@ bool FloatEqual(float a, float b)
 	return abs(a-b)<0.1;
 }
 
-// map is a function that maps a pos to the scene information
-// Intersection has information:
-// 1. intersect object id
-// 2. distance to the instersect object
-Intersection map(vec3 pos)
-{
-	// Intersection d0 = Intersection(10000.0,0.0);
-	Intersection d1 = Intersection(sdWaterSurface(pos),1.0);
-	Intersection d2 = Intersection(sdSphere(pos),2.0);
-	Intersection d3 = Intersection(sdPlane(pos),3.0);
-
-	if(d2.dist<d1.dist) d1 = d2;
-	if(d3.dist<d1.dist) d1 = d3;
-	// if(d3.dist<d1.dist) d0 = d3;
-
-	return d1;
-}
-
 /**********************
 	Lighting and colors
 **********************/
-MaterialInfo Material(vec3 pos) {
-	MaterialInfo m;
-
-	Intersection itsct = map(pos);
-
-	if(itsct.id == 1) 				// water
-	{
-		m.Kd = WaterColor;
-		m.Shininess = 120.;
-	}
-
-	if(itsct.id == 2)				// sphere
-	{
-		m.Kd = vec3(0.1);
-		m.Shininess = 10.;
-	}
-
-	return m;
-}
-
-float Occlusion(vec3 at, vec3 normal)
+float softShadow(in vec3 ro, in vec3 rd)
 {
-	float b = 0.;
-	for (int i = 1; i <= 4; ++i) 
+	float res = 1.0;
+	for(float t = 0.1; t < 15.0;)
 	{
-		float L = .06 * float(i);
-		Intersection d = map(at + normal * L);		
-		b += max(0., L - d.dist);
+		float h = map(ro+t*rd).x;
+		if(h<0.001) return 0.0;
+        res = min(res,6.0 * h/t);
+        t += h;
 	}
-	return min(b, 1.);
-}
-
-vec3 Normal(vec3 p)
-{
-	vec3 e = vec3(0.001,0.0,0.0);
-	vec3 n;
-	n.x = map(p+e.xyy).dist - map(p-e.xyy).dist;
-    n.y = map(p+e.yxy).dist - map(p-e.yxy).dist;
-    n.z = map(p+e.yyx).dist - map(p-e.yyx).dist;
-	return normalize(n);
+	return res;
 }
 
 vec3 Lighting(vec3 pos, vec3 normal, vec3 eye, MaterialInfo m, vec3 lightColor, vec3 lightPos)
 {
 	vec3 lightDir = lightPos - pos;
 	vec3 nlightDir = normalize(lightDir);
-	Intersection t = Intersect(pos,nlightDir, 0.001, 1000.0);
-	if(t.dist<length(lightDir))
-	{
-		//vec3 p = pos + nlightDir * t.dist;
-		return vec3(0.0);
-	}
+	vec3 light = normalize(vec3(1.0,0.8,0.6));
+	vec3 viewDir = normalize(pos-eye);
+	vec3 ref = reflect(viewDir,normal);
 
-	vec3 color = m.Kd * lightColor * max(0.0,dot(normal,nlightDir));
-	if(m.Shininess>0.0)
-	{
-		vec3 h = normalize(nlightDir + normalize(eye-pos));
-		color += lightColor * pow(max(0.0,dot(normal,h)),m.Shininess) * (m.Shininess + 8.0) / 25.0;
-	}
+	// Phong light
+	float amb = 0.6 + 0.5 * normal.y;
+	float dif = max(0.0,dot(normal,light));
+	float spe = pow(max(dot(light,ref),0.0),m.Shininess) * (m.Shininess + 8.) / 25.0;
+	float sha = softShadow(pos,light);
 
-	return color/pow(length(lightDir),2) * 10.0;
+	vec3 color = amb * vec3(0.3);
+	color += dif * sha * m.Kd * lightColor;
+	if(spe>0.0) color += spe * lightColor * 0.08;
+
+	return color;
 }
 
 /**********************
 	0	background
-	1	water
+	1	ground
 	2   sphere     ---- for debug
 **********************/
-vec3 Shade(vec3 ro, vec3 rd, Intersection t)
+MaterialInfo Material(vec3 pos) {
+	MaterialInfo m;
+
+	vec2 itsct = map(pos);
+
+	if(FloatEqual(itsct.y,1.0)) 			// plane
+	{
+		m.Kd = vec3(1.0);
+		m.Shininess = 0.0;
+	}
+
+	if(FloatEqual(itsct.y,2.0))				// sphere
+	{
+		m.Kd = vec3(0.1);
+		m.Shininess = 10. * slider.z;
+	}
+
+	if(FloatEqual(itsct.y,3.0))				// water
+	{
+		m.Kd = WaterColor;
+		m.Shininess = 120.0;
+	}
+
+	return m;
+}
+
+vec3 Shade(vec3 ro, vec3 rd, vec2 t)
 {
-	float id = t.id;
+	float id = t.y;
 	// normal calculate
-	vec3 pos = ro + t.dist * rd;
-	vec3 nor = Normal(pos);
+	vec3 pos = ro + t.x * rd;
+	vec3 nor = calcNormal(pos);
+	MaterialInfo m = Material(pos);
+
+	vec3 color 	= vec3(0.0);
 
 	if(FloatEqual(id,0))					// sky
 	{
-		return vec3(0.0);
+		color = vec3(0.0);
 	}
-	if(FloatEqual(id,1))					// water
+	if(FloatEqual(id,1.0))					// ground
 	{
-		vec3 waterSurfaceLight = vec3(0.0);
-		
-		if(!IsWater(pos)) 		// water surface
-		{
-			// refraction
-			waterSurfaceLight = Lighting(pos,nor,ro,Material(pos),vec3(1.0),LightPos);
-			vec3 refractionDir = refract(rd,nor,0.9);
-			Intersection inWaterIntersect = Intersect(pos,refractionDir,0.0,1000.0); 
-			
-			// update new pos and nor
-			pos += refractionDir * inWaterIntersect.dist;
-			nor = Normal(pos);
-		}
+		color = Lighting(pos,nor,ro,m,vec3(1.0),LightPos);
+	}
+	if(FloatEqual(id,2.0))					// sphere
+	{
+		color = Lighting(pos,nor,ro,m,vec3(1.0),LightPos);
+	}
+	if(FloatEqual(id,3.0))
+	{
+		color = Lighting(pos,nor,ro,m,vec3(1.0),LightPos);
+	}
 
-		// otherwise, just water
-		MaterialInfo mat = Material(pos);
-		// vec3 color = 0.11 * (1.0 - Occlusion(pos, nor)) * mat.Kd;
-		vec3 color = Lighting(pos,nor,ro,mat,vec3(1.0),LightPos);
-		color *= WaterColor;
-
-		if(!IsWater(pos)) 		// water surface
-		{
-			// color += waterSurfaceLight;
-		}
-		return color;
-	}
-	if(FloatEqual(id,2))
-	{
-		MaterialInfo mat = Material(pos);
-		// vec3 color = .11 * (1. - Occlusion(pos, nor)) * mat.Kd;
-		vec3 color = Lighting(pos,nor,ro,mat,vec3(1.0),LightPos);
-		return color;
-	}
-	if(FloatEqual(id,3))
-	{
-		return vec3(0.7);
-	}
+	return color;
 }
 
-Intersection Intersect(vec3 ro, vec3 rd,float minD, float maxD)
+vec2 map(vec3 pos)
 {
-	Intersection t;
-	ro += minD * rd;
+	vec2 d1 = vec2(sdPlane(pos),1.0);
+	vec2 d2 = vec2(sdSphere(pos),2.0);
+	vec2 d3 = vec2(sdWaterSurface(pos),3.0);
 
-	for(int i =0; i < 128; ++i)
-	{
-		Intersection curIntersect = map(ro + t.dist * rd);	
-		if(curIntersect.dist < 0.001)	return curIntersect;
-		t.dist += curIntersect.dist;
-	}
+	if(d2.x<d1.x) d1 = d2;
+	if(d3.x<d1.x) d1 = d3;
+	return d1;
+}
 
-	return 	t;
+vec2 Intersect(vec3 ro, vec3 rd)
+{
+    for(float t = 0.0; t < 100.0;)
+    {
+		vec2 h = map(ro+t*rd);
+        if(h.x<0.0001) return vec2(t,h.y);
+        t += h.x;
+    }
+
+    return vec2(0.0);
 }
 
 vec3 Camera()
 {
 	vec2 p = (-iResolution.xy + 2.0*gl_FragCoord.xy) / iResolution.y;
-	
+
 	// camera anim
-    vec3 ro = vec3( 0.0, 2.0, 3.0);
+	float cr = 3.0;
+	float cTime = iTime;
+    vec3 ro = vec3(cr * sin(cTime) , 2.0, cr * cos(cTime));
 	vec3 ta = vec3(0.0);
 
     // camera matrix	
@@ -255,14 +227,14 @@ vec3 Camera()
 	vec3  cv = normalize( cross(cu,cw) );						// y
 	vec3  rd = normalize( p.x*cu + p.y*cv + 2.0 *cw);
 
-	Intersection t = Intersect(ro,rd,0.0, 1000.0);
+	vec2 t = Intersect(ro,rd);
 	return Shade(ro,rd,t);
 }
 
 void main()
 {
 	vec3 col = Camera();	
-	col = pow(col,vec3(1.0/2.2));
+	//col = pow(col,vec3(1.0/2.2));
 	// col += texture(noise_tex,gl_FragCoord.xy/256.0).xyz/100.0;
     fragColor=vec4(col,1.0);
 }
