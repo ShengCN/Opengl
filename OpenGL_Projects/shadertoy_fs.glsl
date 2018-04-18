@@ -12,7 +12,7 @@ uniform vec4 slider;
 
 out vec4 fragColor;
 
-const vec3 LightPos = vec3(7.0,-6.5,-1.4); 
+const vec3 LightPos = vec3(7.0,6.5,1.4) *0.1; 
 const vec3 WaterColor = vec3(0.4, 0.9, 1);
 const float waterSZ = 1.0;
 const float waterHeight = 0.8;
@@ -65,7 +65,7 @@ float WaterWave(vec3 a)
 
 float sdWaterSurface(vec3 pos)
 {
-	vec3 sz = vec3(waterSZ,0.0,waterSZ);
+	vec3 sz = vec3(waterSZ,0.001,waterSZ);
 	return length(max(abs(pos+vec3(0.0,WaterWave(pos),0.0)) - sz, 0.));
 }
 
@@ -122,6 +122,7 @@ vec3 Lighting(vec3 pos, vec3 normal, vec3 eye, MaterialInfo m, vec3 lightColor, 
 	vec3 lightDir = lightPos - pos;
 	vec3 nlightDir = normalize(lightDir);
 	vec3 light = normalize(vec3(1.0,0.8,0.6));
+	light = nlightDir;
 	vec3 viewDir = normalize(pos-eye);
 	vec3 ref = reflect(viewDir,normal);
 
@@ -136,7 +137,7 @@ vec3 Lighting(vec3 pos, vec3 normal, vec3 eye, MaterialInfo m, vec3 lightColor, 
 	color += dif * sha.x * m.Kd * lightColor;
 	if(spe>0.0) color += spe * lightColor * 0.08;
 
-	return color;
+	return color / dot(lightDir,lightDir);
 }
 
 /**********************
@@ -158,7 +159,7 @@ MaterialInfo Material(vec3 pos) {
 	if(FloatEqual(itsct.y,2.0))				// sphere
 	{
 		m.Kd = vec3(0.1);
-		m.Shininess = 10. * slider.z;
+		m.Shininess = 10.0;
 	}
 
 	if(FloatEqual(itsct.y,3.0))				// water
