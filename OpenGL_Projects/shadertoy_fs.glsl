@@ -23,7 +23,7 @@ const float MaxWaveAmplitude = 0.04;
 struct Intersection
 {
 	float dist;			// distance to the object
-	int id;				// object id
+	float id;				// object id
 };
 
 struct MaterialInfo
@@ -71,13 +71,18 @@ float sdSphere(vec3 pos)
 
 float sdPlane(vec3 pos)
 {
-	vec4 plane = vec4(0.0,1.0,0.0,0.0 + slider.x);
-	return dot(pos,plane.xyz) - plane.w;
+	vec4 plane = vec4(0.0,1.0,0.0,0.0);
+	return dot(pos,plane.xyz) - slider.x;
 }
 
 bool IsWater(vec3 pos)
 {
 	return (pos.y < (waterHeight-MaxWaveAmplitude));
+}
+
+bool FloatEqual(float a, float b)
+{
+	return abs(a-b)<0.1;
 }
 
 // map is a function that maps a pos to the scene information
@@ -86,16 +91,16 @@ bool IsWater(vec3 pos)
 // 2. distance to the instersect object
 Intersection map(vec3 pos)
 {
-	Intersection d0 = Intersection(10000.0,0);
-	Intersection d1 = Intersection(sdWaterSurface(pos),1);
-	Intersection d2 = Intersection(sdSphere(pos),2);
-	Intersection d3 = Intersection(sdPlane(pos),3);
+	// Intersection d0 = Intersection(10000.0,0.0);
+	Intersection d1 = Intersection(sdWaterSurface(pos),1.0);
+	Intersection d2 = Intersection(sdSphere(pos),2.0);
+	Intersection d3 = Intersection(sdPlane(pos),3.0);
 
-	if(d0.dist<d1.dist) d0 = d1;
-	if(d2.dist<d1.dist) d0 = d2;
-	if(d3.dist<d1.dist) d0 = d3;
+	if(d2.dist<d1.dist) d1 = d2;
+	if(d3.dist<d1.dist) d1 = d3;
+	// if(d3.dist<d1.dist) d0 = d3;
 
-	return d0;
+	return d1;
 }
 
 /**********************
@@ -171,16 +176,16 @@ vec3 Lighting(vec3 pos, vec3 normal, vec3 eye, MaterialInfo m, vec3 lightColor, 
 **********************/
 vec3 Shade(vec3 ro, vec3 rd, Intersection t)
 {
-	int id = t.id;
+	float id = t.id;
 	// normal calculate
 	vec3 pos = ro + t.dist * rd;
 	vec3 nor = Normal(pos);
 
-	if(id == 0)					// sky
+	if(FloatEqual(id,0))					// sky
 	{
 		return vec3(0.0);
 	}
-	if(id == 1)					// water
+	if(FloatEqual(id,1))					// water
 	{
 		vec3 waterSurfaceLight = vec3(0.0);
 		
@@ -208,14 +213,14 @@ vec3 Shade(vec3 ro, vec3 rd, Intersection t)
 		}
 		return color;
 	}
-	if(id == 2)
+	if(FloatEqual(id,2))
 	{
 		MaterialInfo mat = Material(pos);
 		// vec3 color = .11 * (1. - Occlusion(pos, nor)) * mat.Kd;
 		vec3 color = Lighting(pos,nor,ro,mat,vec3(1.0),LightPos);
 		return color;
 	}
-	if(id == 3)
+	if(FloatEqual(id,3))
 	{
 		return vec3(0.7);
 	}
@@ -233,7 +238,6 @@ Intersection Intersect(vec3 ro, vec3 rd,float minD, float maxD)
 		t.dist += curIntersect.dist;
 	}
 
-	// nothing hit
 	return 	t;
 }
 
