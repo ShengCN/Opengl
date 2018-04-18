@@ -65,13 +65,13 @@ float WaterWave(vec3 a)
 
 float sdWaterSurface(vec3 pos)
 {
-	vec3 sz = vec3(waterSZ,waterHeight,waterSZ);
+	vec3 sz = vec3(waterSZ,0.0,waterSZ);
 	return length(max(abs(pos+vec3(0.0,WaterWave(pos),0.0)) - sz, 0.));
 }
 
 float sdSphere(vec3 pos)
 {
-	return length(pos-vec3(0.0,0.8,0.0)) - 0.5;
+	return length(pos-vec3(0.0,0.0,0.0)) - 0.5;
 }
 
 float sdPlane(vec3 pos)
@@ -93,17 +93,28 @@ bool FloatEqual(float a, float b)
 /**********************
 	Lighting and colors
 **********************/
-float softShadow(in vec3 ro, in vec3 rd)
+vec2 softShadow(in vec3 ro, in vec3 rd)
 {
-	float res = 1.0;
-	for(float t = 0.1; t < 15.0;)
+	vec2 res = vec2(1.0,0.0);
+	for(float t = 0.01; t < 15.0;)
 	{
-		float h = map(ro+t*rd).x;
-		if(h<0.001) return 0.0;
-        res = min(res,6.0 * h/t);
-        t += h;
+		vec2 h = map(ro+t*rd);
+		if(h.x<0.0001) return vec2(0.0,h.y);
+        if(!FloatEqual(h.y,3.0)) res.x = min(res.x,6.0 * h.x / t);
+        t += h.x;
 	}
 	return res;
+}
+
+vec2 refractIntersect(in vec3 ro, in vec3 rd)
+{
+	for(float t = 0.01; t < 15.0;)
+	{
+		vec2 h = map(ro+t*rd);
+		if(h.x < 0.0001) return vec2(t,h.y);
+		t += h.x;
+	}	
+	return vec2(0.0);
 }
 
 vec3 Lighting(vec3 pos, vec3 normal, vec3 eye, MaterialInfo m, vec3 lightColor, vec3 lightPos)
@@ -118,10 +129,11 @@ vec3 Lighting(vec3 pos, vec3 normal, vec3 eye, MaterialInfo m, vec3 lightColor, 
 	float amb = 0.6 + 0.5 * normal.y;
 	float dif = max(0.0,dot(normal,light));
 	float spe = pow(max(dot(light,ref),0.0),m.Shininess) * (m.Shininess + 8.) / 25.0;
-	float sha = softShadow(pos,light);
+	vec2 sha = softShadow(pos,light);
+	if(FloatEqual(sha.y,3.0)) sha.x = 1.0;
 
 	vec3 color = amb * vec3(0.3);
-	color += dif * sha * m.Kd * lightColor;
+	color += dif * sha.x * m.Kd * lightColor;
 	if(spe>0.0) color += spe * lightColor * 0.08;
 
 	return color;
@@ -180,9 +192,21 @@ vec3 Shade(vec3 ro, vec3 rd, vec2 t)
 	{
 		color = Lighting(pos,nor,ro,m,vec3(1.0),LightPos);
 	}
-	if(FloatEqual(id,3.0))
+	if(FloatEqual(id,3.0))					// water
 	{
+		vec3 surfaceColor = Lighting(pos,nor,ro,m,vec3(1.0),LightPos);
+		bool isSurface = !IsWater(pos); 
+
+		// refract
+		vec3 refractionDir = refract(normalize(rd),nor,0.9);
+		vec2 refractTrace = refractIntersect(pos,refractionDir); 
+		pos += refractionDir * refractTrace.x;
+		nor = calcNormal(pos);
+		m = Material(pos);
+
 		color = Lighting(pos,nor,ro,m,vec3(1.0),LightPos);
+		color *= WaterColor;
+		if(isSurface)	color+= surfaceColor;
 	}
 
 	return color;
