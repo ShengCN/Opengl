@@ -9,6 +9,8 @@ uniform sampler2D noise_tex;
 uniform int slice;
 uniform int keyboard;
 uniform vec4 slider;
+uniform float angle;
+uniform int octave;
 
 out vec4 fragColor;
 
@@ -73,11 +75,11 @@ vec3 noised(in vec2 x)
 // ***********************
 float terrainL(in vec2 x)
 {
-	vec2  p = x*0.003;
+	vec2  p = (x+slider.yz)*3.0;
     float a = 0.0;
     float b = 1.0;
-	vec2  d = vec2(0.0);
-    for( int i=0; i<3; i++ )
+	vec2  d = vec2(1.0);
+    for( int i=0; i<1+octave; i++ )
     {
         vec3 n = noised(p);
         d += n.yz;
@@ -86,7 +88,7 @@ float terrainL(in vec2 x)
         p = m2*p*2.0;
     }
 
-	return a;
+	return a*5.0;
 }
 
 float WaveAmplitude() 
@@ -114,9 +116,9 @@ float sdSphere(vec3 pos)
 float sdPlane(vec3 pos)
 {
 	vec4 plane = vec4(0.0,1.0,0.0,0.0);
-	vec3 nor = noised(pos.xz);
-	return dot(pos,nor) + 0.5;
-	// return (pos.y - sin(pos.x)*cos(pos.z));
+	//vec3 nor = noised(pos.xz);
+	// return dot(pos,nor) + 0.5;
+	return (pos.y - terrainL(pos.xz));
 }
 
 
@@ -200,7 +202,7 @@ MaterialInfo Material(vec3 pos) {
 
 	if(FloatEqual(itsct.y,1.0)) 			// plane
 	{
-		m.Kd = vec3(1.0);
+		m.Kd = vec3(0.0);
 		m.Shininess = 0.0;
 	}
 
@@ -297,8 +299,8 @@ vec3 Camera()
 
 	// camera anim
 	float cr = 3.0;
-	float cTime = iTime;
-    vec3 ro = vec3(cr * sin(cTime) , 2.0, cr * cos(cTime)) * 10.0;
+	float cTime = angle * 3.1415 / 20.0;
+    vec3 ro = vec3(cr * sin(cTime) , 2.0, cr * cos(cTime))*3.0;
 	vec3 ta = vec3(0.0);
 
     // camera matrix	
