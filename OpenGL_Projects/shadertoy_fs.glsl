@@ -17,6 +17,9 @@ const vec3 WaterColor = vec3(0.4, 0.9, 1);
 const float waterSZ = 1.0;
 const float waterHeight = 0.8;
 const float MaxWaveAmplitude = 0.04;
+const float SC = 25.0;
+const mat2 m2 = mat2(0.8,-0.6,0.6,0.8);
+
 // ***********************
 // Data Structures
 // ***********************
@@ -29,7 +32,7 @@ struct MaterialInfo
 // ***********************
 // Functions
 // ***********************
-vec2 Intersect(vec3 ro, vec3 rd);
+vec2 Intersect(vec3 ro, vec3 rd,float tmin, float tmax);
 vec2 map(vec3 pos);
 
 // ***********************
@@ -50,9 +53,42 @@ vec3 calcNormal(vec3 p)
     return normalize(n);
 }
 
+vec3 noised(in vec2 x)
+{
+	vec2 f = fract(x);
+	vec2 u = f*f*(3.0-2.0*f);
+
+	ivec2 p = ivec2(floor(x));
+	float a = texelFetch(noise_tex,(p+ivec2(0,0))&255,0).x;
+	float b = texelFetch(noise_tex,(p+ivec2(1,0))&255,0).x;
+	float c = texelFetch(noise_tex,(p+ivec2(0,1))&255,0).x;
+	float d = texelFetch(noise_tex,(p+ivec2(1,1))&255,0).x;
+
+	return vec3(a+(b-a)*u.x+(c-a)*u.y+(a-b-c+d)*u.x*u.y,
+			6.0*f*(1.0-f)*(vec2(b-a,c-a)+(a-b-c+d)*u.yx));
+}
+
 // ***********************
 //	SD functions
 // ***********************
+float terrainL(in vec2 x)
+{
+	vec2  p = x*0.003;
+    float a = 0.0;
+    float b = 1.0;
+	vec2  d = vec2(0.0);
+    for( int i=0; i<3; i++ )
+    {
+        vec3 n = noised(p);
+        d += n.yz;
+        a += b*n.x/(1.0+dot(d,d));
+		b *= 0.5;
+        p = m2*p*2.0;
+    }
+
+	return a;
+}
+
 float WaveAmplitude() 
 {
 	return MaxWaveAmplitude * exp(-CyclicTime() / 10.);
@@ -65,7 +101,8 @@ float WaterWave(vec3 a)
 
 float sdWaterSurface(vec3 pos)
 {
-	vec3 sz = vec3(waterSZ,0.001,waterSZ);
+	pos.y -= 0.8;
+	vec3 sz = vec3(waterSZ,0.0,waterSZ);
 	return length(max(abs(pos+vec3(0.0,WaterWave(pos),0.0)) - sz, 0.));
 }
 
@@ -77,7 +114,17 @@ float sdSphere(vec3 pos)
 float sdPlane(vec3 pos)
 {
 	vec4 plane = vec4(0.0,1.0,0.0,0.0);
-	return dot(pos,plane.xyz) + 0.5;
+	vec3 nor = noised(pos.xz);
+	return dot(pos,nor) + 0.5;
+	// return (pos.y - sin(pos.x)*cos(pos.z));
+}
+
+
+
+float sdTerrain(in vec3 pos)
+{
+	float h = terrainL(pos.xz);
+	return 0.5 * (pos.y - h);
 }
 
 bool IsWater(vec3 pos)
@@ -96,7 +143,7 @@ bool FloatEqual(float a, float b)
 vec2 softShadow(in vec3 ro, in vec3 rd)
 {
 	vec2 res = vec2(1.0,0.0);
-	for(float t = 0.01; t < 15.0;)
+	for(float t = 0.01; t < 150.0;)
 	{
 		vec2 h = map(ro+t*rd);
 		if(h.x<0.0001) return vec2(0.0,h.y);
@@ -122,7 +169,7 @@ vec3 Lighting(vec3 pos, vec3 normal, vec3 eye, MaterialInfo m, vec3 lightColor, 
 	vec3 lightDir = lightPos - pos;
 	vec3 nlightDir = normalize(lightDir);
 	vec3 light = normalize(vec3(1.0,0.8,0.6));
-	light = nlightDir;
+	// light = nlightDir;
 	vec3 viewDir = normalize(pos-eye);
 	vec3 ref = reflect(viewDir,normal);
 
@@ -137,7 +184,8 @@ vec3 Lighting(vec3 pos, vec3 normal, vec3 eye, MaterialInfo m, vec3 lightColor, 
 	color += dif * sha.x * m.Kd * lightColor;
 	if(spe>0.0) color += spe * lightColor * 0.08;
 
-	return color / dot(lightDir,lightDir);
+	// return color / dot(lightDir,lightDir);
+	return color;
 }
 
 /**********************
@@ -224,13 +272,20 @@ vec2 map(vec3 pos)
 	return d1;
 }
 
-vec2 Intersect(vec3 ro, vec3 rd)
+vec2 Intersect(vec3 ro, vec3 rd,float tmin, float tmax)
 {
-    for(float t = 0.0; t < 100.0;)
+	float t = tmin;
+    for(int i = 0; i < 256; i++)
     {
-		vec2 h = map(ro+t*rd);
+		vec3 pos = ro + t * rd;
+		vec2 h = map(pos);
+		// deal with terrain
+		// float te = pos.y - terrainL(pos.xz);
+
         if(h.x<0.0001) return vec2(t,h.y);
         t += h.x;
+		
+		if(t>tmax)	break;
     }
 
     return vec2(0.0);
@@ -243,7 +298,7 @@ vec3 Camera()
 	// camera anim
 	float cr = 3.0;
 	float cTime = iTime;
-    vec3 ro = vec3(cr * sin(cTime) , 2.0, cr * cos(cTime));
+    vec3 ro = vec3(cr * sin(cTime) , 2.0, cr * cos(cTime)) * 10.0;
 	vec3 ta = vec3(0.0);
 
     // camera matrix	
@@ -252,7 +307,7 @@ vec3 Camera()
 	vec3  cv = normalize( cross(cu,cw) );						// y
 	vec3  rd = normalize( p.x*cu + p.y*cv + 2.0 *cw);
 
-	vec2 t = Intersect(ro,rd);
+	vec2 t = Intersect(ro,rd,0.0,1000.0);
 	return Shade(ro,rd,t);
 }
 
