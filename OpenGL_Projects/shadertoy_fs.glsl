@@ -17,11 +17,13 @@ out vec4 fragColor;
 
 const vec3 LightPos = vec3(7.0,6.5,1.4) *0.1; 
 const vec3 WaterColor = vec3(0.4, 0.9, 1);
+const vec3 kSunDir = vec3(-0.624695,0.468521,-0.624695);
 const float waterSZ = 1.0;
 const float waterHeight = 0.8;
 const float MaxWaveAmplitude = 0.04;
 const float SC = 25.0;
-const mat2 m2 = mat2(0.8,-0.6,0.6,0.8);
+const float kMaxTreeHeight = 2.0;
+#define LOWQUALITY
 
 // ***********************
 // Data Structures
@@ -41,6 +43,21 @@ vec2 map(vec3 pos);
 // ***********************
 //	Tool functions
 // ***********************
+float sdEllipsoidY( in vec3 p, in vec2 r )
+{
+    return (length( p/r.xyx ) - 1.0) * r.x;
+}
+
+// return smoothstep and its derivative
+vec2 smoothstepd( float a, float b, float x)
+{
+	if( x<a ) return vec2( 0.0, 0.0 );
+	if( x>b ) return vec2( 1.0, 0.0 );
+    float ir = 1.0/(b-a);
+    x = (x-a)*ir;
+    return vec2( x*x*(3.0-2.0*x), 6.0*x*(1.0-x)*ir );
+}
+
 float CyclicTime()
 {
 	return mod(iTime, 30.);
@@ -56,42 +73,262 @@ vec3 calcNormal(vec3 p)
     return normalize(n);
 }
 
-vec3 noised(in vec2 x)
+vec3 fog(in vec3 col, float t)
 {
-	vec2 f = fract(x);
-	vec2 u = f*f*(3.0-2.0*f);
+	vec3 fogCol = vec3(0.4,0.6,1.15);
+	return mix( col, fogCol, 1.0-exp(-0.000001*t*t) );
+}
 
-	ivec2 p = ivec2(floor(x));
-	float a = texelFetch(noise_tex,(p+ivec2(0,0))&255,0).x;
-	float b = texelFetch(noise_tex,(p+ivec2(1,0))&255,0).x;
-	float c = texelFetch(noise_tex,(p+ivec2(0,1))&255,0).x;
-	float d = texelFetch(noise_tex,(p+ivec2(1,1))&255,0).x;
+float hash1( vec2 p )
+{
+    p  = 50.0*fract( p*0.3183099 );
+    return fract( p.x*p.y*(p.x+p.y) );
+}
 
-	return vec3(a+(b-a)*u.x+(c-a)*u.y+(a-b-c+d)*u.x*u.y,
-			6.0*f*(1.0-f)*(vec2(b-a,c-a)+(a-b-c+d)*u.yx));
+float hash1( float n )
+{
+    return fract( n*17.0*fract( n*0.3183099 ) );
+}
+
+vec2 hash2( float n ) { return fract(sin(vec2(n,n+1.0))*vec2(43758.5453123,22578.1459123)); }
+
+
+vec2 hash2( vec2 p ) 
+{
+    const vec2 k = vec2( 0.3183099, 0.3678794 );
+    p = p*k + k.yx;
+    return fract( 16.0 * k*fract( p.x*p.y*(p.x+p.y)) );
+}
+
+//==========================================================================================
+// noises
+//==========================================================================================
+
+// value noise, and its analytical derivatives
+vec4 noised( in vec3 x )
+{
+    vec3 p = floor(x);
+    vec3 w = fract(x);
+    
+    vec3 u = w*w*w*(w*(w*6.0-15.0)+10.0);
+    vec3 du = 30.0*w*w*(w*(w-2.0)+1.0);
+
+    float n = p.x + 317.0*p.y + 157.0*p.z;
+    
+    float a = hash1(n+0.0);
+    float b = hash1(n+1.0);
+    float c = hash1(n+317.0);
+    float d = hash1(n+318.0);
+    float e = hash1(n+157.0);
+	float f = hash1(n+158.0);
+    float g = hash1(n+474.0);
+    float h = hash1(n+475.0);
+
+    float k0 =   a;
+    float k1 =   b - a;
+    float k2 =   c - a;
+    float k3 =   e - a;
+    float k4 =   a - b - c + d;
+    float k5 =   a - c - e + g;
+    float k6 =   a - b - e + f;
+    float k7 = - a + b + c - d + e - f - g + h;
+
+    return vec4( -1.0+2.0*(k0 + k1*u.x + k2*u.y + k3*u.z + k4*u.x*u.y + k5*u.y*u.z + k6*u.z*u.x + k7*u.x*u.y*u.z), 
+                      2.0* du * vec3( k1 + k4*u.y + k6*u.z + k7*u.y*u.z,
+                                      k2 + k5*u.z + k4*u.x + k7*u.z*u.x,
+                                      k3 + k6*u.x + k5*u.y + k7*u.x*u.y ) );
+}
+
+float noise( in vec3 x )
+{
+    vec3 p = floor(x);
+    vec3 w = fract(x);
+    
+    vec3 u = w*w*w*(w*(w*6.0-15.0)+10.0);
+    
+    float n = p.x + 317.0*p.y + 157.0*p.z;
+    
+    float a = hash1(n+0.0);
+    float b = hash1(n+1.0);
+    float c = hash1(n+317.0);
+    float d = hash1(n+318.0);
+    float e = hash1(n+157.0);
+	float f = hash1(n+158.0);
+    float g = hash1(n+474.0);
+    float h = hash1(n+475.0);
+
+    float k0 =   a;
+    float k1 =   b - a;
+    float k2 =   c - a;
+    float k3 =   e - a;
+    float k4 =   a - b - c + d;
+    float k5 =   a - c - e + g;
+    float k6 =   a - b - e + f;
+    float k7 = - a + b + c - d + e - f - g + h;
+
+    return -1.0+2.0*(k0 + k1*u.x + k2*u.y + k3*u.z + k4*u.x*u.y + k5*u.y*u.z + k6*u.z*u.x + k7*u.x*u.y*u.z);
+}
+
+vec3 noised( in vec2 x )
+{
+    vec2 p = floor(x);
+    vec2 w = fract(x);
+    
+    vec2 u = w*w*w*(w*(w*6.0-15.0)+10.0);
+    vec2 du = 30.0*w*w*(w*(w-2.0)+1.0);
+    
+    float a = hash1(p+vec2(0,0));
+    float b = hash1(p+vec2(1,0));
+    float c = hash1(p+vec2(0,1));
+    float d = hash1(p+vec2(1,1));
+
+    float k0 = a;
+    float k1 = b - a;
+    float k2 = c - a;
+    float k4 = a - b - c + d;
+
+    return vec3( -1.0+2.0*(k0 + k1*u.x + k2*u.y + k4*u.x*u.y), 
+                      2.0* du * vec2( k1 + k4*u.y,
+                                      k2 + k4*u.x ) );
+}
+
+float noise( in vec2 x )
+{
+    vec2 p = floor(x);
+    vec2 w = fract(x);
+    vec2 u = w*w*w*(w*(w*6.0-15.0)+10.0);
+    
+#if 0
+    p *= 0.3183099;
+    float kx0 = 50.0*fract( p.x );
+    float kx1 = 50.0*fract( p.x+0.3183099 );
+    float ky0 = 50.0*fract( p.y );
+    float ky1 = 50.0*fract( p.y+0.3183099 );
+
+    float a = fract( kx0*ky0*(kx0+ky0) );
+    float b = fract( kx1*ky0*(kx1+ky0) );
+    float c = fract( kx0*ky1*(kx0+ky1) );
+    float d = fract( kx1*ky1*(kx1+ky1) );
+#else
+    float a = hash1(p+vec2(0,0));
+    float b = hash1(p+vec2(1,0));
+    float c = hash1(p+vec2(0,1));
+    float d = hash1(p+vec2(1,1));
+#endif
+    
+    return -1.0+2.0*( a + (b-a)*u.x + (c-a)*u.y + (a - b - c + d)*u.x*u.y );
+}
+
+//==========================================================================================
+// fbm constructions
+//==========================================================================================
+
+const mat3 m3  = mat3( 0.00,  0.80,  0.60,
+                      -0.80,  0.36, -0.48,
+                      -0.60, -0.48,  0.64 );
+const mat3 m3i = mat3( 0.00, -0.80, -0.60,
+                       0.80,  0.36, -0.48,
+                       0.60, -0.48,  0.64 );
+const mat2 m2 = mat2(  0.80,  0.60,
+                      -0.60,  0.80 );
+const mat2 m2i = mat2( 0.80, -0.60,
+                       0.60,  0.80 );
+
+//------------------------------------------------------------------------------------------
+
+float fbm_4( in vec3 x )
+{
+    float f = 2.0;
+    float s = 0.5;
+    float a = 0.0;
+    float b = 0.5;
+    for( int i=0; i<4; i++ )
+    {
+        float n = noise(x);
+        a += b*n;
+        b *= s;
+        x = f*m3*x;
+    }
+	return a;
+}
+
+vec4 fbmd_8( in vec3 x )
+{
+    float f = 1.92;
+    float s = 0.5;
+    float a = 0.0;
+    float b = 0.5;
+    vec3  d = vec3(0.0);
+    mat3  m = mat3(1.0,0.0,0.0,
+                   0.0,1.0,0.0,
+                   0.0,0.0,1.0);
+    for( int i=0; i<7; i++ )
+    {
+        vec4 n = noised(x);
+        a += b*n.x;          // accumulate values		
+        d += b*m*n.yzw;      // accumulate derivatives
+        b *= s;
+        x = f*m3*x;
+        m = f*m3i*m;
+    }
+	return vec4( a, d );
+}
+
+float fbm_9( in vec2 x )
+{
+    float f = 1.9;
+    float s = 0.55;
+    float a = 0.0;
+    float b = 0.5;
+    for( int i=0; i<9; i++ )
+    {
+        float n = noise(x);
+        a += b*n;
+        b *= s;
+        x = f*m2*x;
+    }
+	return a;
+}
+
+vec3 fbmd_9( in vec2 x )
+{
+    float f = 1.9;
+    float s = 0.55;
+    float a = 0.0;
+    float b = 0.5;
+    vec2  d = vec2(0.0);
+    mat2  m = mat2(1.0,0.0,0.0,1.0);
+    for( int i=0; i<9; i++ )
+    {
+        vec3 n = noised(x);
+        a += b*n.x;          // accumulate values		
+        d += b*m*n.yz;       // accumulate derivatives
+        b *= s;
+        x = f*m2*x;
+        m = f*m2i*m;
+    }
+	return vec3( a, d );
+}
+
+float fbm_4( in vec2 x )
+{
+    float f = 1.9;
+    float s = 0.55;
+    float a = 0.0;
+    float b = 0.5;
+    for( int i=0; i<4; i++ )
+    {
+        float n = noise(x);
+        a += b*n;
+        b *= s;
+        x = f*m2*x;
+    }
+	return a;
 }
 
 // ***********************
 //	SD functions
 // ***********************
-float terrainL(in vec2 x)
-{
-	vec2  p = (x+camera.yz)*0.5;
-    float a = 0.0;
-    float b = 4.0 * (1.0+slider.x);
-	vec2  d = vec2(1.0) + slider.yz;
-    for( int i=0; i<1+octave; i++ )
-    {
-        vec3 n = noised(p);
-        d += n.yz;
-        a += b*n.x/(1.0+dot(d,d));
-		b *= 0.5 * (1.0+slider.w);
-        p = m2*p*2.0;
-    }
-
-	return a*1.0;
-}
-
 float WaveAmplitude() 
 {
 	return MaxWaveAmplitude * exp(-CyclicTime() / 10.);
@@ -117,15 +354,8 @@ float sdSphere(vec3 pos)
 float sdPlane(vec3 pos)
 {
 	vec4 plane = vec4(0.0,1.0,0.0,0.0);
-	//vec3 nor = noised(pos.xz);
-	// return dot(pos,nor) + 0.5;
-	return (pos.y - terrainL(pos.xz));
-}
-
-float sdTerrain(in vec3 pos)
-{
-	float h = terrainL(pos.xz);
-	return 0.5 * (pos.y - h);
+	//vec3 nor = noise(pos.xz);
+	return dot(pos,plane.xyz) + 0.5;
 }
 
 bool IsWater(vec3 pos)
@@ -220,6 +450,182 @@ MaterialInfo Material(vec3 pos) {
 	return m;
 }
 
+vec2 terrainMap(in vec2 p)
+{
+	const float sca = 0.0010;		// scale
+	const float amp = 300.0;		// amplitude
+
+	p *= sca;
+	float e = fbm_9(p+vec2(1.0,-2.0));						// noise factor in xz
+	float a = 1.0 - smoothstep(0.12,0.13,abs(e+0.12)); 		// [0.87,0.88]
+	e = e + 0.15*smoothstep(-0.08,-0.01,e);					// offset
+	e *= amp;												
+	return vec2(e,a);
+}
+
+vec4 terrainMapD(in vec2 p)
+{
+	const float sca = 0.0010;
+    const float amp = 300.0;
+    p *= sca;
+    vec3 e = fbmd_9( p + vec2(1.0,-2.0) );
+    vec2 c = smoothstepd( -0.08, -0.01, e.x );
+	e.x = e.x + 0.15*c.x;
+	e.yz = e.yz + 0.15*c.y*e.yz;    
+    e.x *= amp;
+    e.yz *= amp*sca;
+    return vec4( e.x, normalize( vec3(-e.y,1.0,-e.z) ) );
+}
+
+vec3 terrainNormal(in vec2 pos)
+{
+#if 1
+    return terrainMapD(pos).yzw;
+#else    
+    vec2 e = vec2(0.03,0.0);
+	return normalize( vec3(terrainMap(pos-e.xy).x - terrainMap(pos+e.xy).x,
+                           2.0*e.x,
+                           terrainMap(pos-e.yx).x - terrainMap(pos+e.yx).x ) );
+#endif  
+}
+
+vec2 raymarchTerrain(in vec3 ro, in vec3 rd, float tmin, float tmax)
+{
+    float dis, th;
+    float t2 = -1.0;
+    float t = tmin; 
+    float ot = t;
+    float odis = 0.0;
+    float odis2 = 0.0;
+
+	for(int i = 0; i < 400; i++)
+	{
+		th = 0.001*t;
+		vec3 pos = ro + t*rd;
+		vec2 env = terrainMap(pos.xz); 		// important
+		float hei = env.x;
+
+		// tree envelope
+		float dis2 = pos.y - (hei+kMaxTreeHeight*1.1);
+		if(dis2<th)
+		{
+			if(t2<0.0)
+			{
+				t2 = ot + (th-odis2)*(t-ot)/(dis2-odis2);	// linear interpolation
+			}
+		}
+		odis2 = dis2;
+
+		// terrain
+		dis = pos.y - hei;
+		if(dis<th) break;
+
+		ot = t;
+		odis = dis;
+		t+= dis*0.8*(1.0-0.75*env.y);
+		if(t>tmax) break;
+	}
+
+	if(t>tmax) t = -1.0;
+	else t = ot + (th-odis)*(t-ot)/(dis-odis);
+	return vec2(t,t2);
+}
+
+float terrainShadow(in vec3 ro, in vec3 rd, in float mint)
+{
+	float res = 1.0;
+	float t = mint;
+#ifdef	LOWQUALITY
+	for(int i = 0; i < 32; i++)
+	{
+		vec3 pos = ro + t*rd;
+		vec2 env = terrainMap(pos.xz);
+		float hei = pos.y - env.x;
+		res = min(res,32.0*hei/t);
+		if(res<0.001) break;
+		t += clamp(hei,1.0+t*0.1,50.0);
+	}
+#else
+		for(int i = 0; i < 32; i++)
+	{
+		vec3 pos = ro + t*rd;
+		vec2 env = terrainMap(pos.xz);
+		float hei = pos.y - env.x;
+		res = min(res,32.0*hei/t);
+		if(res<0.0001) break;
+		t += clamp( hei, 0.5+t*0.05, 25.0 );
+	}
+#endif
+    return clamp( res, 0.0, 1.0 );
+}
+
+vec4 renderTerrain(in vec3 ro, in vec3 rd, in vec2 tmima, out float teShadow,out vec2 teDistance,inout float resT)
+{
+	vec4 res = vec4(0.0);
+	teShadow = 0.0;
+	teDistance = vec2(0.0);
+
+	vec2 t = raymarchTerrain(ro,rd,tmima.x,tmima.y);
+	if(t.x>0.0)
+	{
+		vec3 pos = ro + t.x * rd;
+		vec3 nor = terrainNormal(pos.xz);
+
+		// bump map
+		nor = normalize( nor + 0.8*(1.0-abs(nor.y))*0.8*fbmd_8( pos*0.3*vec3(1.0,0.2,1.0) ).yzw );
+		vec3 col = vec3(0.18,0.11,0.10)*0.75;
+		col = 1.0*mix(col,vec3(0.1,0.1,0.0)*0.3,smoothstep(0.7,0.9,nor.y));
+
+		// shadow
+		float sha = 0.0;
+		float dif = clamp(dot(nor,kSunDir),0.0,1.0);
+		if(dif > 0.001)
+		{
+			sha = terrainShadow(pos+nor*0.01,kSunDir,0.001);
+			dif *= sha;
+		}
+		vec3  ref = reflect(rd,nor);
+    	float bac = clamp( dot(normalize(vec3(-kSunDir.x,0.0,-kSunDir.z)),nor), 0.0, 1.0 )*clamp( (pos.y+100.0)/100.0, 0.0,1.0);
+        float dom = clamp( 0.5 + 0.5*nor.y, 0.0, 1.0 );
+        vec3  lin  = 1.0*0.2*mix(0.1*vec3(0.1,0.2,0.0),vec3(0.7,0.9,1.0),dom);//pow(vec3(occ),vec3(1.5,0.7,0.5));
+              lin += 1.0*5.0*vec3(1.0,0.9,0.8)*dif;        
+              lin += 1.0*0.35*vec3(1.0)*bac;
+        
+	    col *= lin;
+
+        col = fog(col,t.x);
+
+        teShadow = sha;
+        teDistance = t;
+        res = vec4( col, 1.0 );
+        resT = t.x;
+	}
+
+	return res;
+}
+
+vec3 renderSky(in vec3 ro, in vec3 rd)
+{
+	// background sky
+	vec3 col = 0.9*vec3(0.4,0.65,1.0) - rd.y*vec3(0.4,0.36,0.4);
+
+	// clouds
+	float t = (1000.0-ro.y)/ro.y;
+	if(t>0.0)
+	{
+		vec2 uv = (ro+t*rd).xz;
+		float cl = fbm_9(uv*0.002);
+		float dl = smoothstep(-0.2,0.6,cl);
+		col = mix(col,vec3(1.0),0.4*dl);
+	}
+
+	// sun glare
+	float sun = clamp(dot(kSunDir,rd),0.0,1.0);
+	col += 0.6*vec3(1.0,0.6,0.3)*pow(sun,32.0);
+
+	return col;
+}
+
 vec3 Shade(vec3 ro, vec3 rd, vec2 t)
 {
 	float id = t.y;
@@ -280,8 +686,6 @@ vec2 Intersect(vec3 ro, vec3 rd,float tmin, float tmax)
     {
 		vec3 pos = ro + t * rd;
 		vec2 h = map(pos);
-		// deal with terrain
-		// float te = pos.y - terrainL(pos.xz);
 
         if(h.x<0.0001) return vec2(t,h.y);
         t += h.x;
@@ -298,8 +702,9 @@ vec3 Camera()
 
 	// camera anim
 	float cr = 3.0;
-	float cTime = angle * 3.1415 / 20.0;
-    vec3 ro = vec3(cr * sin(cTime) , 2.0, cr * cos(cTime))*(3.0+camera.x);
+	float cTime = -angle * 3.1415 / 20.0;
+    // float cTime = iTime * 0.5;
+	vec3 ro = (vec3(cr * sin(cTime) , 2.0 + camera.y, cr * cos(cTime)))*(3.0+camera.w);
 	vec3 ta = vec3(0.0);
 
     // camera matrix	
@@ -307,9 +712,25 @@ vec3 Camera()
 	vec3  cu = normalize( cross(cw,vec3(0.0,1.0,0.0)) );		// x
 	vec3  cv = normalize( cross(cu,cw) );						// y
 	vec3  rd = normalize( p.x*cu + p.y*cv + 2.0 *cw);
+	float resT = 1000.0; 										// ray max step
 
+	// sky
+	vec3 col = renderSky(ro,rd); 
+	
+	// terrain
+	vec2 teDistance;
+	float teShadow;
+	vec2 tmima = vec2(15.0,1000.0);
+	{
+		vec4 res = renderTerrain(ro,rd,tmima,teShadow,teDistance,resT);
+		col = col * (1.0-res.w) + res.xyz;
+	}
+
+
+	// water, sphere
 	vec2 t = Intersect(ro,rd,0.0,1000.0);
-	return Shade(ro,rd,t);
+	//col += Shade(ro,rd,t);
+	return col;
 }
 
 void main()
