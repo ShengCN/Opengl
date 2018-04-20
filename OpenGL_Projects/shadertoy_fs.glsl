@@ -8,6 +8,7 @@ uniform sampler2D volume_tex;
 uniform sampler2D noise_tex;
 uniform int slice;
 uniform int keyboard;
+uniform vec4 camera;
 uniform vec4 slider;
 uniform float angle;
 uniform int octave;
@@ -75,20 +76,20 @@ vec3 noised(in vec2 x)
 // ***********************
 float terrainL(in vec2 x)
 {
-	vec2  p = (x+slider.yz)*3.0;
+	vec2  p = (x+camera.yz)*0.5;
     float a = 0.0;
-    float b = 1.0;
-	vec2  d = vec2(1.0);
+    float b = 4.0 * (1.0+slider.x);
+	vec2  d = vec2(1.0) + slider.yz;
     for( int i=0; i<1+octave; i++ )
     {
         vec3 n = noised(p);
         d += n.yz;
         a += b*n.x/(1.0+dot(d,d));
-		b *= 0.5;
+		b *= 0.5 * (1.0+slider.w);
         p = m2*p*2.0;
     }
 
-	return a*5.0;
+	return a*1.0;
 }
 
 float WaveAmplitude() 
@@ -120,8 +121,6 @@ float sdPlane(vec3 pos)
 	// return dot(pos,nor) + 0.5;
 	return (pos.y - terrainL(pos.xz));
 }
-
-
 
 float sdTerrain(in vec3 pos)
 {
@@ -202,7 +201,7 @@ MaterialInfo Material(vec3 pos) {
 
 	if(FloatEqual(itsct.y,1.0)) 			// plane
 	{
-		m.Kd = vec3(0.0);
+		m.Kd = vec3(1.0);
 		m.Shininess = 0.0;
 	}
 
@@ -300,7 +299,7 @@ vec3 Camera()
 	// camera anim
 	float cr = 3.0;
 	float cTime = angle * 3.1415 / 20.0;
-    vec3 ro = vec3(cr * sin(cTime) , 2.0, cr * cos(cTime))*3.0;
+    vec3 ro = vec3(cr * sin(cTime) , 2.0, cr * cos(cTime))*(3.0+camera.x);
 	vec3 ta = vec3(0.0);
 
     // camera matrix	
