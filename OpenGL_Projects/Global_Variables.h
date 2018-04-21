@@ -24,6 +24,7 @@ public:
 
 	// Camera properties
 	Camera* current_camera;
+	glm::vec3 current_camera_pos;
 
 	// Control Varibles
 	bool isLBtnressed;  // is left mouse button pressed

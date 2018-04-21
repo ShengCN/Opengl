@@ -23,6 +23,7 @@ Global_Variables::Global_Variables()
 	lastMousePos = glm::vec2(0);
 
 	current_camera = new Camera();
+	current_camera_pos = glm::vec3(0.0);
 
 	template_vs = ".\\template_vs.glsl";
 	template_fs = ".\\template_fs.glsl";

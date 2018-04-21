@@ -211,19 +211,19 @@ void Keyboard(unsigned char key, int x, int y)
 		break;
 
 	case 'w':
-		gv->int_uniforms["keyboard"] = 1;
+		gv->current_camera_pos += glm::vec3(0.0, 0.0, 1.0);
 		break;
 
 	case 'a':
-		gv->int_uniforms["keyboard"] = 2;
+		gv->current_camera_pos += glm::vec3(1.0, 0.0, 0.0);
 		break;
 
 	case 's':
-		gv->int_uniforms["keyboard"] = 3;
+		gv->current_camera_pos -= glm::vec3(0.0, 0.0, 1.0);
 		break;
 
 	case 'd':
-		gv->int_uniforms["keyboard"] = 4;
+		gv->current_camera_pos -= glm::vec3(0.0, 0.0, 1.0);
 		break;
 
 	default:

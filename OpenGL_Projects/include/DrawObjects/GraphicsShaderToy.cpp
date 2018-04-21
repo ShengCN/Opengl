@@ -22,6 +22,8 @@ void GraphicsShaderToy::Draw()
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, m_textureId);
 	glUniform1i(glGetUniformLocation(shader_program, "noise_tex"), 1);
+	
+	glUniform3fv(glGetUniformLocation(shader_program, "camera_pos"),1, glm::value_ptr(Global_Variables::Instance()->current_camera_pos));
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
@@ -39,6 +41,7 @@ void GraphicsShaderToy::Reload()
 
 	Init_Shaders(m_vs_file, m_fs_file);
 	Init_Buffers();
+	Global_Variables::Instance()->current_camera_pos = glm::vec3(0.0);
 }
 
 void GraphicsShaderToy::Init_Buffers()
