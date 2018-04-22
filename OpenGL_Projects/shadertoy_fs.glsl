@@ -4,7 +4,7 @@ layout(location = 2) uniform vec2 iResolution;
 layout(location = 3) uniform vec2 iMouse;
 layout(location = 4)uniform vec4 fcolor;
 
-uniform sampler2D volume_tex;
+uniform sampler3D volume_tex;
 uniform sampler2D noise_tex;
 uniform int slice;
 uniform vec4 camera;
@@ -44,6 +44,20 @@ vec2 map(vec3 pos);
 // ***********************
 //	Tool functions
 // ***********************
+mat4 rotationMatrix(vec3 axis, float angle)
+{
+	angle = angle/180.0*3.1415926;
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+    
+    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+                0.0,                                0.0,                                0.0,                                1.0);
+}
+
 float sdEllipsoidY( in vec3 p, in vec2 r )
 {
     return (length( p/r.xyx ) - 1.0) * r.x;
@@ -987,6 +1001,35 @@ vec2 Intersect(vec3 ro, vec3 rd,float tmin, float tmax)
     return vec2(0.0);
 }
 
+vec4 volume_map(vec3 pos)
+{
+	// domain mapping
+	mat4 rotate1 = rotationMatrix(vec3(1.0,0.0,0.0),180.0);
+	mat4 rotate2 = rotationMatrix(vec3(0.0,1.0,0.0),90.0);
+	pos = (rotate2*rotate1*vec4(pos,1.0)).xyz + slider.xyz;
+
+	vec4 tmp_color = vec4(vec3(0.8)*0.1,0.1);
+	tmp_color = tmp_color * sin(0.1 * texture(volume_tex,pos).r);
+	return clamp(tmp_color,0.0,1.0);
+}
+
+vec3 volume_marching(in vec3 ro, in vec3 rd, in vec2 px)
+{
+	vec4 sum = vec4(0.0);
+	float t = 0.0;
+
+	for(int i = 0; i < 3000; i++)
+	{
+		if(sum.a>0.99)	break;
+		vec3 pos = ro + t*rd;
+		vec4 col = volume_map(pos);
+		sum += col*(1.0-sum.a);
+		t += 0.005;
+	}
+
+	return clamp(sum.xyz,0.0,1.0);
+}
+
 vec3 Camera()
 {
 	vec2 p = (-iResolution.xy + 2.0*gl_FragCoord.xy) / iResolution.y;
@@ -1009,40 +1052,48 @@ vec3 Camera()
 	vec3  rd = normalize( p.x*cu + p.y*cv + 2.0 *cw);
 	float resT = 1000.0; 										// ray max step
 
-	// // sky
-	vec3 col = renderSky(ro,rd); 
+	// // // sky
+	// vec3 col = renderSky(ro,rd); 
 	
-	// terrain
-	vec2 teDistance;
-	float teShadow;
-	vec2 tmima = vec2(15.0,1000.0);
-	{
-		vec4 res = renderTerrain(ro,rd,tmima,teShadow,teDistance,resT);
-		col = col * (1.0-res.w) + res.xyz;
-	}
+	// // terrain
+	// vec2 teDistance;
+	// float teShadow;
+	// vec2 tmima = vec2(15.0,1000.0);
+	// {
+	// 	vec4 res = renderTerrain(ro,rd,tmima,teShadow,teDistance,resT);
+	// 	col = col * (1.0-res.w) + res.xyz;
+	// }
 
-	// trees
-	if(teDistance.y>0.0)
-	{
-		tmima = vec2(teDistance.y,(teDistance.x>0.0)?teDistance.x:tmima.y);
-		vec4 res = renderTrees(ro,rd,tmima.x,tmima.y,teShadow,resT);
-		col = col*(1.0 - res.w) + res.xyz;
-	}
+	// // trees
+	// if(teDistance.y>0.0)
+	// {
+	// 	tmima = vec2(teDistance.y,(teDistance.x>0.0)?teDistance.x:tmima.y);
+	// 	vec4 res = renderTrees(ro,rd,tmima.x,tmima.y,teShadow,resT);
+	// 	col = col*(1.0 - res.w) + res.xyz;
+	// }
 
-	//----------------------------------
-    // clouds
-    //----------------------------------
-    {
-        vec4 res = renderClouds( ro, rd, 0.0, (teDistance.x>0.0)?teDistance.x:tmima.y, resT );
-        col = col*(1.0-res.w) + res.xyz;
-    }
+	// //----------------------------------
+    // // clouds
+    // //----------------------------------
+    // {
+    //     vec4 res = renderClouds( ro, rd, 0.0, (teDistance.x>0.0)?teDistance.x:tmima.y, resT );
+    //     col = col*(1.0-res.w) + res.xyz;
+    // }
 
-	// water, sphere
-	// vec2 t = Intersect(ro,rd,0.0,1000.0);
-	//col += Shade(ro,rd,t);
+	// // water, sphere
+	// // vec2 t = Intersect(ro,rd,0.0,1000.0);
+	// //col += Shade(ro,rd,t);
 
-	// clouds
+	// // clouds
+	vec3 marching_ro = vec3(0.0,0.0,4.0);
+	vec3 marching_ta = vec3(0.0,0.0,0.0);
 
+	vec3  marching_cw = normalize( marching_ta-marching_ro );					// forward ray
+	vec3  marching_cu = normalize( cross(marching_cw,vec3(1.0,0.0,0.0)) );		// x
+	vec3  marching_cv = normalize( cross(marching_cu,marching_cw) );			// y
+	vec3  marching_rd = normalize( p.x*marching_cu + p.y*marching_cv + 2.0 *marching_cw);
+
+	vec3 col = volume_marching(marching_ro,marching_rd,gl_FragCoord.xy);
 	return col;
 }
 

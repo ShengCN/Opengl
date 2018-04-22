@@ -20,5 +20,6 @@ public:
 private:
 	GLuint vao,vbo,ebo;
 	GLuint m_texture;
+	GLuint m_volume_texture;
 };
 

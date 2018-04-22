@@ -16,8 +16,8 @@ void GraphicsShaderToy::Draw()
 	glUseProgram(shader_program);
 	glBindVertexArray(vao);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
-	glUniform1i(glGetUniformLocation(shader_program, "volume_tex"), 0);
+	glBindTexture(GL_TEXTURE_3D, m_volume_texture);
+	glUniform1i(glGetUniformLocation(shader_program,"volume_tex"), 0);
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, m_textureId);
@@ -49,6 +49,7 @@ void GraphicsShaderToy::Init_Buffers()
 	auto gv = Global_Variables::Instance();
 	glUseProgram(shader_program);
 	InitQuad(vao, vbo, ebo);
+	m_volume_texture = LoadTexture3D(gv->volume_dir + gv->volume_data);
 }
 
 void GraphicsShaderToy::BufferManage()
