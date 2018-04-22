@@ -136,7 +136,7 @@ void Init_Global()
 	GraphicsBase* shadertoy = new GraphicsShaderToy();
 	shadertoy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
 	shadertoy->Init_Buffers();
-	std::string noisefile = "./Materials/noise.png";
+	std::string noisefile = "./Materials/color_noise.png";
 	shadertoy->Load_Texture(noisefile);
 	static_cast<GraphicsShaderToy*>(shadertoy)->SetTexture(static_cast<GraphicsVolumeRendering*>(volume)->GetVolumeResult());
 	gv->graphics.push_back(shadertoy);
@@ -215,7 +215,7 @@ void Keyboard(unsigned char key, int x, int y)
 		break;
 
 	case 'a':
-		gv->current_camera_pos += glm::vec3(1.0, 0.0, 0.0);
+		gv->current_camera_pos -= glm::vec3(1.0, 0.0, 0.0);
 		break;
 
 	case 's':
@@ -223,7 +223,7 @@ void Keyboard(unsigned char key, int x, int y)
 		break;
 
 	case 'd':
-		gv->current_camera_pos -= glm::vec3(0.0, 0.0, 1.0);
+		gv->current_camera_pos += glm::vec3(1.0, 0.0, 0.0);
 		break;
 
 	default:
