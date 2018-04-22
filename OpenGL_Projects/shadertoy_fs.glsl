@@ -23,6 +23,7 @@ const float waterHeight = 0.8;
 const float MaxWaveAmplitude = 0.04;
 const float SC = 25.0;
 const float kMaxTreeHeight = 2.0;
+const vec3 COLOR_SNOW = vec3(1.0,1.0,1.1) ;
 //#define LOWQUALITY
 
 // ***********************
@@ -577,7 +578,8 @@ vec4 renderTerrain(in vec3 ro, in vec3 rd, in vec2 tmima, out float teShadow,out
 		nor = normalize( nor + 0.8*(1.0-abs(nor.y))*0.8*fbmd_8( pos*0.3*vec3(1.0,0.2,1.0) ).yzw );
 		vec3 col = vec3(0.18,0.11,0.10)*0.75;
 		//vec3 col = vec3(79.0, 65.0, 57.0)/255.0;
-		col = 1.0*mix(col,vec3(0.1,0.1,0.0)*0.3,smoothstep(0.7,0.9,nor.y));
+		//col = 1.0*mix(col,vec3(0.1,0.1,0.0)*0.3,smoothstep(0.7,0.9,nor.y));
+		col = 1.0*mix(col,COLOR_SNOW*0.7,smoothstep(0.7,0.9,nor.y));
 
 		// shadow
 		float sha = 0.0;
@@ -626,7 +628,7 @@ float treesMap( in vec3 p, in float rt, out float oHei, out float oMat, out floa
         vec2  v = hash2( n +g + vec2(13.1,71.7) );
         vec2  r = g - f + o;
 
-        float height = kMaxTreeHeight * (0.4+0.8*v.x) * (1.0 +cos(iTime)*0.1);
+        float height = kMaxTreeHeight * (0.4+0.8*v.x) * (cos(iTime));
         float width = 0.9*(0.5 + 0.2*v.x + 0.3*v.y);
         vec3  q = vec3(r.x,p.y-base-height*0.5,r.y);
         float k = sdEllipsoidY( q, vec2(width,0.5*height) );
