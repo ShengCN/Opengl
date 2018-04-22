@@ -999,7 +999,7 @@ vec3 Camera()
 	// ro = vec3(0.0, -99.25, 5.0) + vec3(10.0*sin(0.02*iTime),0.0,-10.0*sin(0.2+0.031*iTime)) + vec3(cos(cTime),0.0,sin(cTime))*100.0;
 	// vec3 ta = vec3(0.0, -98.25, -45.0 + ro.z );
 
-	ro = vec3(0.0,-99.25,5.0) + camera_pos;
+	ro = vec3(0.0,-99.25+camera.y*100.0,5.0) + camera_pos;
 	vec3 ta = vec3(ro.x,ro.y + 1.0,-45.0 + ro.z);
 
     // camera matrix	
