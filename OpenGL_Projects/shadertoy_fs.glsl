@@ -498,13 +498,13 @@ MaterialInfo Material(vec3 pos) {
 
 vec2 terrainMap(in vec2 p)
 {
-	const float sca = 0.0010;		// scale
+	//const float sca = 0.0010 * sin(degree2radus(CyclicTime()*10.0));		// scale
+	const float sca = 0.0010;
 	const float amp = 300.0;		// amplitude
 
 	p *= sca;
 	float e = fbm_9(p+vec2(1.0,-2.0));						// noise factor in xz
-	float a = 1.0 - smoothstep(0.12,0.13,abs(e+0.12)); 		// [0.87,0.88]
-	e = e + 0.15*smoothstep(-0.08,-0.01,e);					// offset
+	float a = 1.0 - smoothstep(0.12,0.13,abs(e+0.12)) ; 		// [0.87,0.88]
 	e *= amp;												
 	return vec2(e,a);
 }
@@ -525,17 +525,10 @@ vec4 terrainMapD(in vec2 p)
 
 vec3 terrainNormal(in vec2 pos)
 {
-#if 1
     return terrainMapD(pos).yzw;
-#else    
-    vec2 e = vec2(0.03,0.0);
-	return normalize( vec3(terrainMap(pos-e.xy).x - terrainMap(pos+e.xy).x,
-                           2.0*e.x,
-                           terrainMap(pos-e.yx).x - terrainMap(pos+e.yx).x ) );
-#endif  
 }
 
-// return terrain (distance,tree) 
+// return terrain (terrain distance,tree distance) 
 vec2 raymarchTerrain(in vec3 ro, in vec3 rd, float tmin, float tmax)
 {
     float dis, th;
@@ -570,7 +563,7 @@ vec2 raymarchTerrain(in vec3 ro, in vec3 rd, float tmin, float tmax)
 
 		ot = t;
 		odis = dis;
-		t += dis*0.8*(1.0-0.75*env.y);				// estimate distance
+		t += dis * 0.8 * (1.0-0.75 * env.y);				// estimate distance
 		if(t>tmax) break;
 	}
 
@@ -675,7 +668,7 @@ float treesMap( in vec3 p, in float rt, out float oHei, out float oMat, out floa
         vec2  v = hash2( n +g + vec2(13.1,71.7) );
         vec2  r = g - f + o;
 
-        float height = kMaxTreeHeight * (0.4+0.8*v.x) * (cos(iTime));
+        float height = kMaxTreeHeight * (0.4+0.8*v.x) * (cos(degree2radus(CyclicTime())));
         float width = 0.9*(0.5 + 0.2*v.x + 0.3*v.y);
         vec3  q = vec3(r.x,p.y-base-height*0.5,r.y);
         float k = sdEllipsoidY( q, vec2(width,0.5*height) );
@@ -852,7 +845,7 @@ vec3 renderSky(in vec3 ro, in vec3 rd)
 // clouds density and its gradient
 vec4 cloudsMap(in vec3 pos)
 {
-	vec3 p = pos + vec3(CyclicTime(),CyclicTime(),CyclicTime())*5.0;
+	vec3 p = pos + vec3(-100.0,-100.0,-100.0) + sin(vec3(degree2radus(CyclicTime()*10.0),degree2radus(CyclicTime()*10.0),degree2radus(CyclicTime()*10.0)))*10.0;
 	vec4 n = fbmd_8(p*0.003*vec3(0.6,1.0,0.6)-vec3(0.1,1.9,2.8));
 	vec2 h = smoothstepd(-60,10.0,p.y) - smoothstepd(10.0,500.0,p.y);
     h.x = 2.0*n.x + h.x - 1.4;
@@ -929,7 +922,7 @@ vec4 renderClouds(in vec3 ro, in vec3 rd, float tmin, float tmax, inout float re
 			float fre = clamp(1.0+dot(nor,rd),0.0,1.0)*sha;
 			// lighting
 			vec3 lin = vec3(0.70,0.80,1.00)*0.9*(0.6+0.4*nor.y);
-			lin += vec3(0.20,0.25,0.20)*0.7*(0.5-0.5*nor.y);
+			// lin += vec3(0.20,0.25,0.20)*0.7*(0.5-0.5*nor.y);
 			lin += vec3(1.00,0.70,0.40)*4.5*dif*(1.0-den);
 			lin += vec3(0.80,0.70,0.50)*1.3*pow(fre,32.0)*(1.0-den);
 			// color
@@ -1187,7 +1180,6 @@ float map2( in vec3 p )
 
 
 #define MARCH(STEPS,MAPLOD) for(int i=0; i<STEPS; i++) { vec3  pos = ro + t*rd; if( pos.y<-3.0 || pos.y>2.0 || sum.a > 0.99 ) break; float den = MAPLOD( pos ); if( den>0.01 ) { float dif =  clamp((den - MAPLOD(pos+0.3*sundir))/0.6, 0.0, 1.0 ); sum = integrate( sum, dif, den, bgcol, t ); } t += 0.01; }
-
 vec4 cloud_raymarch(in vec3 ro,in vec3 rd,inout vec3 bgcol, in vec2 px)
 {
 	vec4 sum = vec4(0.0);
@@ -1250,10 +1242,10 @@ vec3 Camera()
 	{
 		// camera anim
 		float cr = 3.0;
-		float cTime = -angle * 3.1415 / 20.0;
+		float cTime = (15.0) * 3.1415 / 20.0;
 
 		vec3 ro = vec3(0.0,-99.25,5.0) + camera_pos;
-		vec3 ta = vec3(ro.x,ro.y + 1.0,ro.z) + 45.0 * vec3(sin(degree2radus(angle/10.0*360.0)),camera.y,cos(degree2radus(angle/10.0*360.0))) ;
+		vec3 ta = vec3(ro.x,ro.y + 1.0,ro.z) + 45.0 * vec3(sin(cTime),camera.y,cos(cTime)) ;
 		mat3 ca = setCamera(ro,ta,0.0);
 		vec3 rd = ca * normalize(vec3(p,2.0));
 		float resT = 1000.0; 	
@@ -1269,21 +1261,21 @@ vec3 Camera()
 			col = col * (1.0-res.w) + res.xyz;
 		}
 
-		// // trees
-		// if(teDistance.y>0.0)
-		// {
-		// 	tmima = vec2(teDistance.y,(teDistance.x>0.0)?teDistance.x:tmima.y);
-		// 	vec4 res = renderTrees(ro,rd,tmima.x,tmima.y,teShadow,resT);
-		// 	col = col*(1.0 - res.w) + res.xyz;
-		// }
+		// trees
+		if(teDistance.y>0.0)
+		{
+			tmima = vec2(teDistance.y,(teDistance.x>0.0)?teDistance.x:tmima.y);
+			vec4 res = renderTrees(ro,rd,tmima.x,tmima.y,teShadow,resT);
+			col = col*(1.0 - res.w) + res.xyz;
+		}
 
-		// //----------------------------------
-		// // clouds
-		// //----------------------------------
-		// {
-		// 	vec4 res = renderClouds( ro, rd, 0.0, (teDistance.x>0.0)?teDistance.x:tmima.y, resT );
-		// 	col = col*(1.0-res.w) + res.xyz;
-		// }
+		//----------------------------------
+		// clouds
+		//----------------------------------
+		{
+			vec4 res = renderClouds( ro, rd, 0.0, (teDistance.x>0.0)?teDistance.x:tmima.y, resT );
+			col = col*(1.0-res.w) + res.xyz;
+		}
 		return col;
 	}
 	
