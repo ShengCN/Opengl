@@ -21,6 +21,7 @@ Global_Variables::Global_Variables()
 	isRBtnPressed = false;
 	lastMMovement = glm::vec2(0.0f, 0.0f);
 	lastMousePos = glm::vec2(0);
+	lastTime = 0.0;
 
 	current_camera = new Camera();
 	current_camera_pos = glm::vec3(0.0);

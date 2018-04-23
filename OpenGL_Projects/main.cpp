@@ -169,7 +169,7 @@ void Idle()
 
 	// Update all time variables
 	const int time_ms = glutGet(GLUT_ELAPSED_TIME);
-	gv->float_uniforms["time"] = 0.001f * time_ms;
+	gv->float_uniforms["time"] = 0.001f * time_ms - gv->lastTime;
 
 	glutPostRedisplay();
 }
@@ -195,6 +195,7 @@ void ReloadShaders()
 			glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
 				gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 	}
+	gv->lastTime = 0.001f*glutGet(GLUT_ELAPSED_TIME);
 }
 
 void Keyboard(unsigned char key, int x, int y)
@@ -224,6 +225,10 @@ void Keyboard(unsigned char key, int x, int y)
 
 	case 'd':
 		gv->current_camera_pos += glm::vec3(1.0, 0.0, 0.0);
+		break;
+
+	case 'n':
+		gv->current_stat++;
 		break;
 
 	default:

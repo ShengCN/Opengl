@@ -21,6 +21,7 @@ public:
 	glm::vec2 windowPos;
 	int mouseX;
 	int mouseY;
+	float lastTime;
 
 	// Camera properties
 	Camera* current_camera;
@@ -32,6 +33,7 @@ public:
 	glm::vec2 lastMousePos;
 	glm::vec2 lastMMovement; // last mouse movement
 	glm::vec2 lastPressedMovement;
+	int current_stat = 1;
 
 	// Variables
 	std::vector<GraphicsBase*> graphics;
