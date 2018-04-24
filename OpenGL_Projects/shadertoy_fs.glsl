@@ -9,7 +9,7 @@ uniform sampler2D noise_tex;
 uniform vec4 camera;
 uniform vec4 slider;
 uniform float angle;
-uniform float globalT;
+uniform float globalTime;
 uniform int octave;
 uniform vec3 camera_pos;
 
@@ -33,9 +33,9 @@ const float cloud_ca_down_begin = 20.0;
 const float cloud_ca_down_end = 25.0;
 const float camera_down_end = 35.0;
 const float spr_end = 45.0;
-const float sum_end = 45.0;
-const float fal_end = 45.0;
-const float win_end = 45.0;
+const float sum_end = 60.0;
+const float fal_end = 75.0;
+const float win_end = 90.0;
 
 //#define LOWQUALITY
 
@@ -58,6 +58,11 @@ vec2 map(vec3 pos);
 //	Tool functions
 // ***********************
 vec3 Lerp(vec3 p1,vec3 p2,float aspect)
+{
+	return p1*(1.0-aspect) + p2*aspect;
+}
+
+float Lerp(float p1,float p2,float aspect)
 {
 	return p1*(1.0-aspect) + p2*aspect;
 }
@@ -98,7 +103,7 @@ vec2 smoothstepd( float a, float b, float x)
 
 float CyclicTime()
 {
-	return mod(globalT, 300.0);
+	return mod(globalTime, 600.0);
 }
 
 vec3 calcNormal(vec3 p)
@@ -277,7 +282,7 @@ vec4 fbmd( in vec3 x )
 {
     const float scale  = 1.5;
 
-    float a = 0.0 + (sin(globalT))*1.2;
+    float a = 0.0 + (sin(globalTime))*1.2;
     float b = 0.5;
 	float f = 1.0;
     vec3  d = vec3(0.0);
@@ -636,8 +641,19 @@ vec4 renderTerrain(in vec3 ro, in vec3 rd, in vec2 tmima, out float teShadow,out
 		vec3 col = vec3(0.18,0.11,0.10)*0.75;
 		//vec3 col = vec3(79.0, 65.0, 57.0)/255.0;
 		vec3 GREEN = vec3(1.0,1.0,0.0)*0.075;
-		//col = 1.0*mix(col,GREEN,smoothstep(min(abs(sin(degree2radus(CyclicTime()*10.0))),0.9),0.9,nor.y));
-		col = 1.0*mix(col,vec3(0.1,0.1,0.0)*0.3,smoothstep(0.7,0.9,nor.y*max(cos(degree2radus(CyclicTime()*10.0)),0.7)));
+		col = 1.0*mix(col,vec3(0.1,0.1,0.0)*0.3,smoothstep(0.7,0.9,nor.y));
+		vec3 spr_color = 1.0*mix(col,GREEN,smoothstep(0.7,0.9,nor.y));
+
+		if(globalTime>camera_down_end&&globalTime<fal_end-5.0)
+		{
+			col = Lerp(col,spr_color,clamp((globalTime-camera_down_end)*0.5,0.0,1.0));
+		}
+		if(globalTime>fal_end)
+		{
+			float lowerNorY = Lerp(0.98,0.6,clamp((globalTime-fal_end)*0.05,0.0,1.0));
+			vec3 win_color = 1.0*mix(col,COLOR_SNOW*0.7,smoothstep(lowerNorY,1.0,nor.y));
+			col = Lerp(spr_color,win_color,clamp((globalTime-fal_end+5.0)*0.03,0.0,1.0));
+		}
 		//col = 1.0*mix(col,COLOR_SNOW*0.7,smoothstep(min(abs(sin(degree2radus(CyclicTime()*10.0))),0.5),0.9,nor.y));
 
 		// shadow
@@ -687,7 +703,16 @@ float treesMap( in vec3 p, in float rt, out float oHei, out float oMat, out floa
         vec2  v = hash2( n +g + vec2(13.1,71.7) );
         vec2  r = g - f + o;
 
-        float height = kMaxTreeHeight * (0.4+0.8*v.x)* max((cos(degree2radus(CyclicTime()))),0.1) ;
+        float height = 0.0;
+		if(globalTime>spr_end-5.0&&globalTime<fal_end-5.0)
+		{
+			height = kMaxTreeHeight * (0.4+0.8*v.x) * clamp((globalTime-spr_end+5.0)*0.07,0.0,1.0);
+		}
+		if(globalTime>fal_end-5.0 && globalTime<fal_end+5.0)
+		{
+			height = kMaxTreeHeight * (0.4+0.8*v.x) * clamp(1.0-(globalTime-fal_end+5.0)*0.1,0.0,1.0);
+		}
+
         float width = 1.15*(0.5 + 0.2*v.x + 0.3*v.y);
         vec3  q = vec3(r.x,p.y-base-height*0.5,r.y);
         float k = sdEllipsoidY( q, vec2(width,0.5*height) );
@@ -795,13 +820,17 @@ vec3 treesShade( in vec3 pos, in vec3 tnor, in vec3 enor, in float hei, in float
 	vec3 green = vec3(0.08,0.09,0.02);
 	vec3 brown = vec3(243.0, 18.0, 27.0)/255.0*0.1;
 
-	float test = abs(sin(globalT*0.1))-0.3;
-    vec3 col = (1.0-test)*green + test*brown;
-         col *= 1.6;
+    vec3 col = green;
+	if(globalTime>sum_end)
+	{
+		col = Lerp(col,brown,clamp((globalTime-sum_end)*0.1,0.0,0.8));
+	}
 
+
+    col *= 1.6;
     // --- brdf * material ---
-       col *= lin;
-       col += spe*1.2*vec3(1.0,1.1,2.5);
+    col *= lin;
+    col += spe*1.2*vec3(1.0,1.1,2.5);
 
     // // --- fog ---
     col = fog( col, rt );
@@ -1148,7 +1177,7 @@ float c_noise( in vec3 x )
 
 float map5( in vec3 p )
 {
-	vec3 q = p - vec3(0.0,0.1,1.0);//*globalT;
+	vec3 q = p - vec3(0.0,0.1,1.0);//*globalTime;
 	float f;
     f  = 0.50000*c_noise( q ); q = q*2.02;
     f += 0.25000*c_noise( q ); q = q*2.03;
@@ -1160,7 +1189,7 @@ float map5( in vec3 p )
 
 float map4( in vec3 p )
 {
-	vec3 q = p - vec3(0.0,0.1,1.0);//*globalT;
+	vec3 q = p - vec3(0.0,0.1,1.0);//*globalTime;
 	float f;
     f  = 0.50000*c_noise( q ); q = q*2.02;
     f += 0.25000*c_noise( q ); q = q*2.03;
@@ -1170,7 +1199,7 @@ float map4( in vec3 p )
 }
 float map3( in vec3 p )
 {
-	vec3 q = p - vec3(0.0,0.1,1.0);//*globalT;
+	vec3 q = p - vec3(0.0,0.1,1.0);//*globalTime;
 	float f;
     f  = 0.50000*c_noise( q ); q = q*2.02;
     f += 0.25000*c_noise( q ); q = q*2.03;
@@ -1179,7 +1208,7 @@ float map3( in vec3 p )
 }
 float map2( in vec3 p )
 {
-	vec3 q = p - vec3(0.0,0.1,1.0);//*globalT;
+	vec3 q = p - vec3(0.0,0.1,1.0);//*globalTime;
 	float f;
     f  = 0.50000*c_noise( q ); q = q*2.02;
     f += 0.25000*c_noise( q );;
@@ -1207,7 +1236,7 @@ vec4 cloud_raymarch(in vec3 ro,in vec3 rd,inout vec3 bgcol, in vec2 px)
 		for(int i = 0; i < 300; i++)
 		{
 			if(sum.a>0.99)	break;
-			vec3 pos = ro + t*rd*2.0 + vec3(-1.5,0.2+0.1*sin(globalT), 8.0) ;
+			vec3 pos = ro + t*rd*2.0 + vec3(-1.5,0.2+0.1*sin(globalTime), 8.0) ;
 			// domain mapping
 			vec3 mpos = vec3(-pos.z,-pos.x,pos.y);
 			//vec3 mpos = pos;
@@ -1225,7 +1254,7 @@ vec4 cloud_raymarch(in vec3 ro,in vec3 rd,inout vec3 bgcol, in vec2 px)
 		for(int i = 0; i < 300; i++)
 		{
 			if(sum.a>0.99)	break;
-			vec3 pos = ro + t*rd*2.0 + vec3(1.5,0.2+0.1*sin(globalT), 13.0) ;
+			vec3 pos = ro + t*rd*2.0 + vec3(1.5,0.2+0.1*sin(globalTime), 13.0) ;
 			// domain mapping
 			vec3 mpos = vec3(-pos.z,-pos.x,pos.y);
 			//vec3 mpos = pos;
@@ -1281,7 +1310,7 @@ vec3 Camera()
 	//--------------------
 	if(CyclicTime()<cloud_time)
 	{
-		vec3 marching_ro = vec3(0.0, 0.0,4.0) + vec3(0.0,0.0,-globalT);
+		vec3 marching_ro = vec3(0.0, 0.0,4.0) + vec3(0.0,0.0,-globalTime);
 		vec3 marching_ta = vec3(0.0, -1.0, -4.0) + marching_ro ;// + vec3(0.0,-3.0,0.0);
 		if(CyclicTime()>cloud_ca_down_begin && CyclicTime()<cloud_ca_down_end)
 		{
@@ -1290,7 +1319,7 @@ vec3 Camera()
 		}
 		if(CyclicTime()>cloud_ca_down_end)
 		{
-			marching_ro += vec3(0.0, 0.0,4.0) + vec3(0.0,-(globalT-cloud_ca_down_end),-cloud_ca_down_end);
+			marching_ro += vec3(0.0, 0.0,4.0) + vec3(0.0,-(globalTime-cloud_ca_down_end),-cloud_ca_down_end);
 			marching_ta = vec3(0.0, -1.0, -4.0) + marching_ro + vec3(0.0,-2.5,0.0)*(cloud_ca_down_end-cloud_ca_down_begin)*0.2;
 		}
 
@@ -1313,13 +1342,13 @@ vec3 Camera()
 
 		vec3 ro = vec3(0.0,-99.25,5.0) + vec3(10.0)*100.0;
 		vec3 ta = 45.0 * vec3(0.0,-8.5 + camera.y,0.0);
-		if(globalT<camera_down_end)
+		if(globalTime<camera_down_end)
 		{
 			// ro.y from 0.0 ---> -7.0
-			ro += vec3(0.0,-7.0,0.0)*100.0 * (globalT-cloud_time)/(camera_down_end-cloud_time);
-			ta += 45.0 * vec3(0.0,-8.5,0.0) *(-(globalT-cloud_time)/(camera_down_end-cloud_time)); 	// 1->0
+			ro += vec3(0.0,-7.0,0.0)*100.0 * (globalTime-cloud_time)/(camera_down_end-cloud_time);
+			ta += 45.0 * vec3(0.0,-8.5,0.0) *(-(globalTime-cloud_time)/(camera_down_end-cloud_time)); 	// 1->0
 
-			float aspect = (globalT-cloud_time)/(camera_down_end-cloud_time); // 0 -> 1
+			float aspect = (globalTime-cloud_time)/(camera_down_end-cloud_time); // 0 -> 1
 			ro = Lerp(vec3(0.0,-99.25,5.0) + vec3(10.0)*100.0,vec3(0.0,-99.25,5.0),aspect);
 			ta = Lerp(45.0 * vec3(0.0,-8.5 + camera.y,0.0),vec3(0.0,0.0 + 1.0,-45.0),aspect);
 		}
@@ -1327,7 +1356,7 @@ vec3 Camera()
 		{
 			// ro += vec3(0.0,-7.0,0.0)*100.0;
 			// ta += 45.0 * vec3(slider.x,-8.5,slider.z)*(-0.98);
-			float ct = degree2radus(globalT-camera_down_end)*10.0;
+			float ct = degree2radus(globalTime-camera_down_end)*10.0;
 			ro = vec3(5.0*sin(ct),-99.25,5.0*cos(ct)) + camera_pos;
 			ta = vec3(0.0,0.0 + 1.0,-45.0);
 		}
@@ -1353,7 +1382,7 @@ vec3 Camera()
 		//----------------------------------
 		// Trees
 		//----------------------------------
-		if(teDistance.y>0.0)
+		if(teDistance.y>0.0 && globalTime>spr_end-5.0 && globalTime<fal_end+5.0)
 		{
 			tmima = vec2(teDistance.y,(teDistance.x>0.0)?teDistance.x:tmima.y);
 			vec4 res = renderTrees(ro,rd,tmima.x,tmima.y,teShadow,resT);
