@@ -387,14 +387,14 @@ float WaterWave(vec3 a)
 
 float sdWaterSurface(vec3 pos)
 {
-	pos.y -= 0.8;
-	vec3 sz = vec3(waterSZ,0.0,waterSZ);
-	return length(max(abs(pos+vec3(0.0,WaterWave(pos),0.0)) - sz, 0.));
+	pos.y = pos.y -(-1.1*100.0);
+	vec3 sz = vec3(waterSZ,0.0,waterSZ)*80.0;
+	return length(max(abs(pos+vec3(0.0,0.0,0.0)) - sz, 0.));
 }
 
 float sdSphere(vec3 pos)
 {
-	return length(pos-vec3(0.0,0.0,0.0)) - 0.5;
+	return length(pos-vec3(10.0,-10.0,-10.0)*10.0) - 8.0;
 }
 
 float sdPlane(vec3 pos)
@@ -618,7 +618,7 @@ vec4 renderTerrain(in vec3 ro, in vec3 rd, in vec2 tmima, out float teShadow,out
 		//vec3 col = vec3(79.0, 65.0, 57.0)/255.0;
 		vec3 GREEN = vec3(1.0,1.0,0.0)*0.075;
 		//col = 1.0*mix(col,GREEN,smoothstep(min(abs(sin(degree2radus(CyclicTime()*10.0))),0.9),0.9,nor.y));
-		col = 1.0*mix(col,vec3(0.1,0.1,0.0)*0.3,smoothstep(0.7,0.9,nor.y));
+		col = 1.0*mix(col,vec3(0.1,0.1,0.0)*0.3,smoothstep(0.7,0.9,nor.y*max(cos(degree2radus(CyclicTime()*10.0)),0.7)));
 		//col = 1.0*mix(col,COLOR_SNOW*0.7,smoothstep(min(abs(sin(degree2radus(CyclicTime()*10.0))),0.5),0.9,nor.y));
 
 		// shadow
@@ -668,8 +668,8 @@ float treesMap( in vec3 p, in float rt, out float oHei, out float oMat, out floa
         vec2  v = hash2( n +g + vec2(13.1,71.7) );
         vec2  r = g - f + o;
 
-        float height = kMaxTreeHeight * (0.4+0.8*v.x) * (cos(degree2radus(CyclicTime())));
-        float width = 0.9*(0.5 + 0.2*v.x + 0.3*v.y);
+        float height = kMaxTreeHeight * (0.4+0.8*v.x)* max((cos(degree2radus(CyclicTime()))),0.1) ;
+        float width = 1.15*(0.5 + 0.2*v.x + 0.3*v.y);
         vec3  q = vec3(r.x,p.y-base-height*0.5,r.y);
         float k = sdEllipsoidY( q, vec2(width,0.5*height) );
 
@@ -1001,13 +1001,10 @@ vec3 Shade(vec3 ro, vec3 rd, vec2 t)
 
 vec2 map(vec3 pos)
 {
-	vec2 d1 = vec2(sdPlane(pos),1.0);
-	vec2 d2 = vec2(sdSphere(pos),2.0);
-	vec2 d3 = vec2(sdWaterSurface(pos),3.0);
+	vec2 d1 = vec2(sdSphere(pos),2.0);
+	vec2 d2 = vec2(sdWaterSurface(pos),3.0);
 
-	if(d2.x<d1.x) d1 = d2;
-	if(d3.x<d1.x) d1 = d3;
-	return d1;
+	return d1.x<d2.x?d1:d2;
 }
 
 // bounding box in the space
@@ -1044,30 +1041,19 @@ vec2 Intersect(vec3 ro, vec3 rd,float tmin, float tmax)
 vec4 volume_map(vec3 pos)
 {
 	// domain mapping
-	mat4 rotate1 = rotationMatrix(vec3(1.0,0.0,0.0),180.0);
-	mat4 rotate2 = rotationMatrix(vec3(0.0,1.0,0.0),90.0);
-	pos = (rotate2*rotate1*vec4(pos,1.0)).xyz;
+	vec3 mpos = vec3(pos.x,-pos.z,pos.y);
+	// pos = (vec4(pos,1.0)).xyz;
 
-	// vec4 tmp_color = vec4(vec3(0.8)*0.1,0.2);
-	if(sin(0.1 * texture(volume_tex,pos).r)>0.0)
-		return vec4(0.0,vec3(0.0));
-	else
-		return vec4(1000.0,vec3(0.0));
+	vec4 tmp_color = vec4(vec3(0.8),0.1);
+	tmp_color = tmp_color * sin(0.015 * texture(volume_tex,pos).r);
+	return tmp_color;
 }
 
 vec4 volume_test_map(vec3 p)
-{
-	// bouding box erosion
-	vec4 d1 = fbmd( p );
-    d1.x -= 0.37;
-	d1.x *= 0.7;
-    d1.yzw = normalize(d1.yzw);
-
-	vec4 d2 = sdBox(p,vec3(1.5));
-	d1 = (d1.x>d2.x)? d1 : d2;
-
-	vec4 d3 = volume_map(p);
-	return d1.x > d3.x? vec4(d3.x,d1.yzw):d1;
+{	
+	vec4 d1 = volume_map(p);
+	return d1;
+	//return d1.x > d3.x? vec4(d3.x,d1.yzw):d1;
 	//return -d1.x>d2.x? -d1:d2;
 }
 
@@ -1083,25 +1069,28 @@ vec3 volume_marching(in vec3 ro, in vec3 rd, in vec2 px)
 		if(sum.a>0.99)	break;
 		vec3 pos = ro + t*rd;
 
-		// if intersect fbm cube, give result
-		vec4 hnor = volume_test_map(pos);
-		if(hnor.x<0.0001)
-		{
-			// shade fbm cube
-			vec3 nor = hnor.yzw;
-			//float occ = calcAO( pos, nor );
-        	float fre = clamp( 1.0+dot(rd,nor), 0.0, 1.0 );
-        	float fro = clamp( dot(nor,-rd), 0.0, 1.0 );
-        	vec3 col = mix( vec3(0.05,0.2,0.3), vec3(1.0,0.95,0.85), 0.5+0.5*nor.y );
-        	//col = 0.5+0.5*nor;
-        	col += 10.0*pow(fro,12.0)*(0.04+0.96*pow(fre,5.0));
-        	//col *= pow(vec3(occ),vec3(1.0,1.1,1.1) );
-			return clamp(col,0.0,1.0);
-		}
+		// // if intersect fbm cube, give result
+		// vec4 hnor = volume_test_map(pos);
+		// if(hnor.x<0.0001)
+		// {
+		// 	// shade fbm cube
+		// 	vec3 nor = hnor.yzw;
+		// 	//float occ = calcAO( pos, nor );
+        // 	float fre = clamp( 1.0+dot(rd,nor), 0.0, 1.0 );
+        // 	float fro = clamp( dot(nor,-rd), 0.0, 1.0 );
+        // 	vec3 col = mix( vec3(0.05,0.2,0.3), vec3(1.0,0.95,0.85), 0.5+0.5*nor.y );
+        // 	//col = 0.5+0.5*nor;
+        // 	col += 10.0*pow(fro,12.0)*(0.04+0.96*pow(fre,5.0));
+        // 	//col *= pow(vec3(occ),vec3(1.0,1.1,1.1) );
+		// 	return clamp(col,0.0,1.0);
+		// }
 
-		// else volume rendering
-		// vec4 col = volume_map(pos);
-		// sum += col*(1.0-sum.a);
+		// // else volume rendering
+		// // vec4 col = volume_map(pos);
+		// // sum += col*(1.0-sum.a);
+
+		sum += vec4(vec3(0.8),0.1) * sin(0.015 * texture(volume_tex,pos).r);
+
 		t += 0.05;
 	}
 
@@ -1140,7 +1129,7 @@ float c_noise( in vec3 x )
 
 float map5( in vec3 p )
 {
-	vec3 q = p - vec3(0.0,0.1,1.0)*iTime;
+	vec3 q = p - vec3(0.0,0.1,1.0);//*iTime;
 	float f;
     f  = 0.50000*c_noise( q ); q = q*2.02;
     f += 0.25000*c_noise( q ); q = q*2.03;
@@ -1152,7 +1141,7 @@ float map5( in vec3 p )
 
 float map4( in vec3 p )
 {
-	vec3 q = p - vec3(0.0,0.1,1.0)*iTime;
+	vec3 q = p - vec3(0.0,0.1,1.0);//*iTime;
 	float f;
     f  = 0.50000*c_noise( q ); q = q*2.02;
     f += 0.25000*c_noise( q ); q = q*2.03;
@@ -1162,7 +1151,7 @@ float map4( in vec3 p )
 }
 float map3( in vec3 p )
 {
-	vec3 q = p - vec3(0.0,0.1,1.0)*iTime;
+	vec3 q = p - vec3(0.0,0.1,1.0);//*iTime;
 	float f;
     f  = 0.50000*c_noise( q ); q = q*2.02;
     f += 0.25000*c_noise( q ); q = q*2.03;
@@ -1171,13 +1160,17 @@ float map3( in vec3 p )
 }
 float map2( in vec3 p )
 {
-	vec3 q = p - vec3(0.0,0.1,1.0)*iTime;
+	vec3 q = p - vec3(0.0,0.1,1.0);//*iTime;
 	float f;
     f  = 0.50000*c_noise( q ); q = q*2.02;
     f += 0.25000*c_noise( q );;
 	return clamp( 1.5 - p.y - 2.0 + 1.75*f, 0.0, 1.0 );
 }
-
+float fetch_density(in vec3 p, in sampler3D volume)
+{
+	//return sin(0.015 * texture(volume_tex,p).r);
+	return clamp(0.0030 * texture(volume_tex,p).r,0.0,1.0);
+}
 
 #define MARCH(STEPS,MAPLOD) for(int i=0; i<STEPS; i++) { vec3  pos = ro + t*rd; if( pos.y<-3.0 || pos.y>2.0 || sum.a > 0.99 ) break; float den = MAPLOD( pos ); if( den>0.01 ) { float dif =  clamp((den - MAPLOD(pos+0.3*sundir))/0.6, 0.0, 1.0 ); sum = integrate( sum, dif, den, bgcol, t ); } t += 0.01; }
 vec4 cloud_raymarch(in vec3 ro,in vec3 rd,inout vec3 bgcol, in vec2 px)
@@ -1185,11 +1178,30 @@ vec4 cloud_raymarch(in vec3 ro,in vec3 rd,inout vec3 bgcol, in vec2 px)
 	vec4 sum = vec4(0.0);
 	float t = 0.0;
 	
-    MARCH(300,map5);
-    MARCH(300,map4);
-    MARCH(300,map3);
-    MARCH(300,map2);
+    // MARCH(300,map5);
+    // MARCH(300,map4);
+    // MARCH(300,map3);
+    // MARCH(300,map2);
 
+	// marching brain
+	t = 0.0;
+	for(int i = 0; i < 300; i++)
+	{
+		if(sum.a>0.99)	break;
+		vec3 pos = ro + t*rd*10.0 + vec3(-1.5,0.7,0.0) + slider.xyz;
+		// vec3 pos = ro + t*rd*2.0 + vec3(-1.5,0.7,0.0) + slider.xyz;
+		// domain mapping
+		//vec3 mpos = vec3(pos.x,-pos.z,pos.y);
+		vec3 mpos = pos;
+		float den = fetch_density(mpos,volume_tex);
+		if(den>0.0)
+		{
+			float dif = den - clamp(fetch_density(mpos+0.3*sundir,volume_tex)/0.6, 0.0, 1.0 );
+			sum = integrate(sum,dif,den,bgcol,t);
+			sum.xyz *= 1.125;
+		}
+		t += 0.01;
+	}
 	return clamp(sum,0.0,1.0);
 }
 
@@ -1197,7 +1209,7 @@ vec4 cloud_render(vec3 ro, vec3 rd, vec2 pixel)
 {
      // background sky     
 	float sun = clamp( dot(sundir,rd), 0.0, 1.0 );
-	vec3 col = vec3(0.6,0.71,0.75) + vec3(8.0) * exp(-CyclicTime()*0.5) - rd.y*0.2*vec3(1.0,0.5,1.0) + 0.15*0.5;
+	vec3 col = vec3(0.6,0.71,0.75) - rd.y*0.2*vec3(1.0,0.5,1.0);// + 0.15*0.5+ vec3(8.0)* exp(-CyclicTime()*0.5);
 	col += 0.2*(vec3(3.0,.6,0.1))*pow( sun, 8.0 );
 
     vec4 res = cloud_raymarch( ro, rd, col, pixel );
@@ -1206,6 +1218,14 @@ vec4 cloud_render(vec3 ro, vec3 rd, vec2 pixel)
     return vec4( col, 1.0 );
 }
 
+vec4 renderLakes(in vec3 ro, in vec3 rd)
+{
+	// find intersect 
+	vec2 t = Intersect(ro,rd,0.0,1000.0);
+	// shading
+	vec3 res = Shade(ro,rd,t);
+	return FloatEqual(t.y,0.0)?vec4(0.0):vec4(res,1.0);
+}
 
 mat3 setCamera( in vec3 ro, in vec3 ta, float cr )
 {
@@ -1224,10 +1244,10 @@ vec3 Camera()
 	// First scene: Cloudy 
 	//--------------------
 	// clouds
-	if(CyclicTime()<0.0)
+	if(CyclicTime()<120.0)
 	{
-		vec3 marching_ro = 4.0*normalize(vec3(0.0, 0.0,1.0));
-		vec3 marching_ta = vec3(0.0, -1.0, 0.0) ;// + vec3(0.0,-3.0,0.0);
+		vec3 marching_ro = vec3(0.0, 0.0,4.0); //+ vec3(0.0,0.0,-iTime);
+		vec3 marching_ta = vec3(0.0, -1.0, -4.0) + marching_ro ;// + vec3(0.0,-3.0,0.0);
 		mat3 ca = setCamera(marching_ro,marching_ta,0.0);
 		vec3 marching_rd = ca*normalize(vec3(p,2.0));
 		//vec3 col = volume_marching(marching_ro,marching_rd,gl_FragCoord.xy);
@@ -1238,7 +1258,7 @@ vec3 Camera()
 	// Second scene: Terrain, season changing
 	//------------------
 	// sky
-	if(CyclicTime()<300.0)
+	if(CyclicTime()<310.0)
 	{
 		// camera anim
 		float cr = 3.0;
@@ -1252,7 +1272,9 @@ vec3 Camera()
 
 		col = renderSky(ro,rd); 
 		
-		// terrain
+		//----------------------------------
+		// Terrain
+		//----------------------------------
 		vec2 teDistance;
 		float teShadow;
 		vec2 tmima = vec2(15.0,1000.0);
@@ -1261,7 +1283,9 @@ vec3 Camera()
 			col = col * (1.0-res.w) + res.xyz;
 		}
 
-		// trees
+		//----------------------------------
+		// Trees
+		//----------------------------------
 		if(teDistance.y>0.0)
 		{
 			tmima = vec2(teDistance.y,(teDistance.x>0.0)?teDistance.x:tmima.y);
@@ -1270,27 +1294,15 @@ vec3 Camera()
 		}
 
 		//----------------------------------
-		// clouds
+		// Clouds
 		//----------------------------------
 		{
 			vec4 res = renderClouds( ro, rd, 0.0, (teDistance.x>0.0)?teDistance.x:tmima.y, resT );
 			col = col*(1.0-res.w) + res.xyz;
 		}
+
 		return col;
 	}
-	
-
-	// water, sphere
-	// vec2 t = Intersect(ro,rd,0.0,1000.0);
-	//col += Shade(ro,rd,t);
-	
-
-	//------------------
-	// Last scene: Bouncing brain
-	//------------------
-
-									// ray max step
-
 }
 
 void main()

@@ -61,7 +61,6 @@ void GraphicsVolumeRendering::Draw()
 	glCullFace(GL_BACK);
 	DrawCube(vao);
 	glDisable(GL_CULL_FACE);
-	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glDrawBuffer(GL_BACK);
 }
