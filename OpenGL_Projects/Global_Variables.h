@@ -22,6 +22,7 @@ public:
 	int mouseX;
 	int mouseY;
 	float lastTime;
+	float gTime;
 
 	// Camera properties
 	Camera* current_camera;

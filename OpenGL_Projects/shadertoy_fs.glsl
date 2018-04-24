@@ -9,6 +9,7 @@ uniform sampler2D noise_tex;
 uniform vec4 camera;
 uniform vec4 slider;
 uniform float angle;
+uniform float globalT;
 uniform int octave;
 uniform vec3 camera_pos;
 
@@ -23,6 +24,19 @@ const float MaxWaveAmplitude = 0.04;
 const float SC = 25.0;
 const float kMaxTreeHeight = 2.0;
 const vec3 COLOR_SNOW = vec3(1.0,1.0,1.1) ;
+
+//-----------------------------
+// Animation Control
+//-----------------------------
+const float cloud_time = 25.0;
+const float cloud_ca_down_begin = 20.0;
+const float cloud_ca_down_end = 25.0;
+const float camera_down_end = 35.0;
+const float spr_end = 45.0;
+const float sum_end = 45.0;
+const float fal_end = 45.0;
+const float win_end = 45.0;
+
 //#define LOWQUALITY
 
 // ***********************
@@ -43,6 +57,11 @@ vec2 map(vec3 pos);
 // ***********************
 //	Tool functions
 // ***********************
+vec3 Lerp(vec3 p1,vec3 p2,float aspect)
+{
+	return p1*(1.0-aspect) + p2*aspect;
+}
+
 float degree2radus(float degree)
 {
 	return degree/180.0*3.1415926;
@@ -79,7 +98,7 @@ vec2 smoothstepd( float a, float b, float x)
 
 float CyclicTime()
 {
-	return mod(iTime, 300.0);
+	return mod(globalT, 300.0);
 }
 
 vec3 calcNormal(vec3 p)
@@ -258,7 +277,7 @@ vec4 fbmd( in vec3 x )
 {
     const float scale  = 1.5;
 
-    float a = 0.0 + (sin(iTime))*1.2;
+    float a = 0.0 + (sin(globalT))*1.2;
     float b = 0.5;
 	float f = 1.0;
     vec3  d = vec3(0.0);
@@ -776,7 +795,7 @@ vec3 treesShade( in vec3 pos, in vec3 tnor, in vec3 enor, in float hei, in float
 	vec3 green = vec3(0.08,0.09,0.02);
 	vec3 brown = vec3(243.0, 18.0, 27.0)/255.0*0.1;
 
-	float test = abs(sin(iTime*0.1))-0.3;
+	float test = abs(sin(globalT*0.1))-0.3;
     vec3 col = (1.0-test)*green + test*brown;
          col *= 1.6;
 
@@ -1129,7 +1148,7 @@ float c_noise( in vec3 x )
 
 float map5( in vec3 p )
 {
-	vec3 q = p - vec3(0.0,0.1,1.0);//*iTime;
+	vec3 q = p - vec3(0.0,0.1,1.0);//*globalT;
 	float f;
     f  = 0.50000*c_noise( q ); q = q*2.02;
     f += 0.25000*c_noise( q ); q = q*2.03;
@@ -1141,7 +1160,7 @@ float map5( in vec3 p )
 
 float map4( in vec3 p )
 {
-	vec3 q = p - vec3(0.0,0.1,1.0);//*iTime;
+	vec3 q = p - vec3(0.0,0.1,1.0);//*globalT;
 	float f;
     f  = 0.50000*c_noise( q ); q = q*2.02;
     f += 0.25000*c_noise( q ); q = q*2.03;
@@ -1151,7 +1170,7 @@ float map4( in vec3 p )
 }
 float map3( in vec3 p )
 {
-	vec3 q = p - vec3(0.0,0.1,1.0);//*iTime;
+	vec3 q = p - vec3(0.0,0.1,1.0);//*globalT;
 	float f;
     f  = 0.50000*c_noise( q ); q = q*2.02;
     f += 0.25000*c_noise( q ); q = q*2.03;
@@ -1160,7 +1179,7 @@ float map3( in vec3 p )
 }
 float map2( in vec3 p )
 {
-	vec3 q = p - vec3(0.0,0.1,1.0);//*iTime;
+	vec3 q = p - vec3(0.0,0.1,1.0);//*globalT;
 	float f;
     f  = 0.50000*c_noise( q ); q = q*2.02;
     f += 0.25000*c_noise( q );;
@@ -1178,30 +1197,47 @@ vec4 cloud_raymarch(in vec3 ro,in vec3 rd,inout vec3 bgcol, in vec2 px)
 	vec4 sum = vec4(0.0);
 	float t = 0.0;
 	
-    // MARCH(300,map5);
-    // MARCH(300,map4);
-    // MARCH(300,map3);
-    // MARCH(300,map2);
+    MARCH(300,map5);
+    MARCH(300,map4);
+    MARCH(300,map3);
+    MARCH(300,map2);
 
 	// marching brain
-	t = 0.0;
-	for(int i = 0; i < 300; i++)
-	{
-		if(sum.a>0.99)	break;
-		vec3 pos = ro + t*rd*10.0 + vec3(-1.5,0.7,0.0) + slider.xyz;
-		// vec3 pos = ro + t*rd*2.0 + vec3(-1.5,0.7,0.0) + slider.xyz;
-		// domain mapping
-		//vec3 mpos = vec3(pos.x,-pos.z,pos.y);
-		vec3 mpos = pos;
-		float den = fetch_density(mpos,volume_tex);
-		if(den>0.0)
+		t = 0.0;
+		for(int i = 0; i < 300; i++)
 		{
-			float dif = den - clamp(fetch_density(mpos+0.3*sundir,volume_tex)/0.6, 0.0, 1.0 );
-			sum = integrate(sum,dif,den,bgcol,t);
-			sum.xyz *= 1.125;
+			if(sum.a>0.99)	break;
+			vec3 pos = ro + t*rd*2.0 + vec3(-1.5,0.2+0.1*sin(globalT), 8.0) ;
+			// domain mapping
+			vec3 mpos = vec3(-pos.z,-pos.x,pos.y);
+			//vec3 mpos = pos;
+			float den = fetch_density(mpos,volume_tex);
+			if(den>0.0)
+			{
+				float dif = den - clamp(fetch_density(mpos+0.3*sundir,volume_tex)/0.6, 0.0, 1.0 );
+				sum = integrate(sum,dif,den,bgcol,t);
+				sum.xyz *= 1.155;// * sin(degree2radus(CyclicTime()*15.0));
+			}
+			t += 0.01;
 		}
-		t += 0.01;
-	}
+
+		t = 0.0;
+		for(int i = 0; i < 300; i++)
+		{
+			if(sum.a>0.99)	break;
+			vec3 pos = ro + t*rd*2.0 + vec3(1.5,0.2+0.1*sin(globalT), 13.0) ;
+			// domain mapping
+			vec3 mpos = vec3(-pos.z,-pos.x,pos.y);
+			//vec3 mpos = pos;
+			float den = fetch_density(mpos,volume_tex);
+			if(den>0.0)
+			{
+				float dif = den - clamp(fetch_density(mpos+0.3*sundir,volume_tex)/0.6, 0.0, 1.0 );
+				sum = integrate(sum,dif,den,bgcol,t);
+				sum.xyz *= 1.155;//* sin(degree2radus(CyclicTime()*15.0));
+			}
+			t += 0.01;
+		}
 	return clamp(sum,0.0,1.0);
 }
 
@@ -1209,7 +1245,7 @@ vec4 cloud_render(vec3 ro, vec3 rd, vec2 pixel)
 {
      // background sky     
 	float sun = clamp( dot(sundir,rd), 0.0, 1.0 );
-	vec3 col = vec3(0.6,0.71,0.75) - rd.y*0.2*vec3(1.0,0.5,1.0);// + 0.15*0.5+ vec3(8.0)* exp(-CyclicTime()*0.5);
+	vec3 col = vec3(0.6,0.71,0.75) - rd.y*0.2*vec3(1.0,0.5,1.0) + 0.15*0.5+ vec3(8.0)* exp(-CyclicTime()*0.5);
 	col += 0.2*(vec3(3.0,.6,0.1))*pow( sun, 8.0 );
 
     vec4 res = cloud_raymarch( ro, rd, col, pixel );
@@ -1243,29 +1279,60 @@ vec3 Camera()
 	//--------------------
 	// First scene: Cloudy 
 	//--------------------
-	// clouds
-	if(CyclicTime()<120.0)
+	if(CyclicTime()<cloud_time)
 	{
-		vec3 marching_ro = vec3(0.0, 0.0,4.0); //+ vec3(0.0,0.0,-iTime);
+		vec3 marching_ro = vec3(0.0, 0.0,4.0) + vec3(0.0,0.0,-globalT);
 		vec3 marching_ta = vec3(0.0, -1.0, -4.0) + marching_ro ;// + vec3(0.0,-3.0,0.0);
+		if(CyclicTime()>cloud_ca_down_begin && CyclicTime()<cloud_ca_down_end)
+		{
+			// switching animations
+			marching_ta = marching_ta + vec3(0.0,-2.5,0.0)*(CyclicTime()-cloud_ca_down_begin)*0.2;
+		}
+		if(CyclicTime()>cloud_ca_down_end)
+		{
+			marching_ro += vec3(0.0, 0.0,4.0) + vec3(0.0,-(globalT-cloud_ca_down_end),-cloud_ca_down_end);
+			marching_ta = vec3(0.0, -1.0, -4.0) + marching_ro + vec3(0.0,-2.5,0.0)*(cloud_ca_down_end-cloud_ca_down_begin)*0.2;
+		}
+
 		mat3 ca = setCamera(marching_ro,marching_ta,0.0);
 		vec3 marching_rd = ca*normalize(vec3(p,2.0));
 		//vec3 col = volume_marching(marching_ro,marching_rd,gl_FragCoord.xy);
 		col = cloud_render(marching_ro ,marching_rd,gl_FragCoord.xy).xyz;
 		return col;
 	}
+
+
 	//------------------
 	// Second scene: Terrain, season changing
 	//------------------
 	// sky
-	if(CyclicTime()<310.0)
+	if(CyclicTime()>cloud_time)
 	{
 		// camera anim
-		float cr = 3.0;
 		float cTime = (15.0) * 3.1415 / 20.0;
 
-		vec3 ro = vec3(0.0,-99.25,5.0) + camera_pos;
-		vec3 ta = vec3(ro.x,ro.y + 1.0,ro.z) + 45.0 * vec3(sin(cTime),camera.y,cos(cTime)) ;
+		vec3 ro = vec3(0.0,-99.25,5.0) + vec3(10.0)*100.0;
+		vec3 ta = 45.0 * vec3(0.0,-8.5 + camera.y,0.0);
+		if(globalT<camera_down_end)
+		{
+			// ro.y from 0.0 ---> -7.0
+			ro += vec3(0.0,-7.0,0.0)*100.0 * (globalT-cloud_time)/(camera_down_end-cloud_time);
+			ta += 45.0 * vec3(0.0,-8.5,0.0) *(-(globalT-cloud_time)/(camera_down_end-cloud_time)); 	// 1->0
+
+			float aspect = (globalT-cloud_time)/(camera_down_end-cloud_time); // 0 -> 1
+			ro = Lerp(vec3(0.0,-99.25,5.0) + vec3(10.0)*100.0,vec3(0.0,-99.25,5.0),aspect);
+			ta = Lerp(45.0 * vec3(0.0,-8.5 + camera.y,0.0),vec3(0.0,0.0 + 1.0,-45.0),aspect);
+		}
+		else
+		{
+			// ro += vec3(0.0,-7.0,0.0)*100.0;
+			// ta += 45.0 * vec3(slider.x,-8.5,slider.z)*(-0.98);
+			float ct = degree2radus(globalT-camera_down_end)*10.0;
+			ro = vec3(5.0*sin(ct),-99.25,5.0*cos(ct)) + camera_pos;
+			ta = vec3(0.0,0.0 + 1.0,-45.0);
+		}
+		ta += ro;
+
 		mat3 ca = setCamera(ro,ta,0.0);
 		vec3 rd = ca * normalize(vec3(p,2.0));
 		float resT = 1000.0; 	

@@ -78,8 +78,8 @@ Global_Variables::Global_Variables()
 	script_fs = ".\\script_fs.glsl";
 
 	volume_dir = ".\\Materials\\Volume\\";
-	//volume_data = ".\\ch2better\\ch2better.nii.gz";
-	volume_data = ".\\Human\\human";
+	volume_data = ".\\ch2better\\ch2better.nii.gz";
+	//volume_data = ".\\Human\\human";
 
 	isF_MouseMovement = true;
 	isImguiOpen = true;
