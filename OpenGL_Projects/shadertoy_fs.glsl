@@ -893,7 +893,9 @@ vec3 renderSky(in vec3 ro, in vec3 rd)
 // clouds density and its gradient
 vec4 cloudsMap(in vec3 pos)
 {
-	vec3 p = pos + vec3(-100.0,-100.0,-100.0) + sin(vec3(degree2radus(CyclicTime()*10.0),degree2radus(CyclicTime()*10.0),degree2radus(CyclicTime()*10.0)))*10.0;
+	vec3 p = pos + vec3(-100.0,-100.0,-100.0) 
+	+ sin(vec3(degree2radus(CyclicTime()*20.0),degree2radus(CyclicTime()*20.0),degree2radus(CyclicTime()*20.0)))
+	*10.0;
 	vec4 n = fbmd_8(p*0.003*vec3(0.6,1.0,0.6)-vec3(0.1,1.9,2.8));
 	vec2 h = smoothstepd(-60,10.0,p.y) - smoothstepd(10.0,500.0,p.y);
     h.x = 2.0*n.x + h.x - 1.4;
@@ -1308,7 +1310,7 @@ vec3 Camera()
 	//--------------------
 	// First scene: Cloudy 
 	//--------------------
-	if(CyclicTime()<cloud_time)
+	if(CyclicTime()<cloud_time + 5.0)
 	{
 		vec3 marching_ro = vec3(0.0, 0.0,4.0) + vec3(0.0,0.0,-globalTime);
 		vec3 marching_ta = vec3(0.0, -1.0, -4.0) + marching_ro ;// + vec3(0.0,-3.0,0.0);
@@ -1327,7 +1329,7 @@ vec3 Camera()
 		vec3 marching_rd = ca*normalize(vec3(p,2.0));
 		//vec3 col = volume_marching(marching_ro,marching_rd,gl_FragCoord.xy);
 		col = cloud_render(marching_ro ,marching_rd,gl_FragCoord.xy).xyz;
-		return col;
+		// return col;
 	}
 
 
@@ -1397,8 +1399,16 @@ vec3 Camera()
 			col = col*(1.0-res.w) + res.xyz;
 		}
 
-		return col;
+		// sun 
+		float sun = clamp( dot(kSunDir,rd), 0.0, 1.0 );
+    	col += 0.25*vec3(1.0,0.4,0.2)*pow( sun, 4.0 );
 	}
+
+
+	// gamma
+	col = sqrt(col);
+	
+	return col;
 }
 
 void main()
