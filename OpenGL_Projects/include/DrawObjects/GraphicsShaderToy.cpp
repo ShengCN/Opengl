@@ -61,8 +61,4 @@ void GraphicsShaderToy::ReleaseBuffers()
 {
 }
 
-void GraphicsShaderToy::SetTexture(const GLuint texture_id)
-{
-	m_texture = texture_id;
-}
 

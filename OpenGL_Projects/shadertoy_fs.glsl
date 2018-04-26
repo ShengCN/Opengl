@@ -28,14 +28,14 @@ const vec3 COLOR_SNOW = vec3(1.0,1.0,1.1) ;
 //-----------------------------
 // Animation Control
 //-----------------------------
-const float cloud_time = 25.0;
-const float cloud_ca_down_begin = 20.0;
-const float cloud_ca_down_end = 25.0;
+const float cloud_time = 30.0;
+const float cloud_ca_down_begin = 25.0;
+const float cloud_ca_down_end = 30.0;
 const float camera_down_end = 35.0;
-const float spr_end = 45.0;
-const float sum_end = 60.0;
-const float fal_end = 75.0;
-const float win_end = 90.0;
+const float spr_end = 50.0;
+const float sum_end = 65.0;
+const float fal_end = 80.0;
+const float win_end = 95.0;
 
 //#define LOWQUALITY
 
@@ -399,40 +399,6 @@ vec4 sdBox( vec3 p, vec3 b ) // distance and normal
     return vec4( x, n );
 }
 
-float WaveAmplitude() 
-{
-	return MaxWaveAmplitude * exp(-CyclicTime() / 10.);
-}
-
-float WaterWave(vec3 a) 
-{
-	return WaveAmplitude() * sin((2. * a.x * a.x + 2. * a.z * a.z) - 10. * CyclicTime());
-}
-
-float sdWaterSurface(vec3 pos)
-{
-	pos.y = pos.y -(-1.1*100.0);
-	vec3 sz = vec3(waterSZ,0.0,waterSZ)*80.0;
-	return length(max(abs(pos+vec3(0.0,0.0,0.0)) - sz, 0.));
-}
-
-float sdSphere(vec3 pos)
-{
-	return length(pos-vec3(10.0,-10.0,-10.0)*10.0) - 8.0;
-}
-
-float sdPlane(vec3 pos)
-{
-	vec4 plane = vec4(0.0,1.0,0.0,0.0);
-	//vec3 nor = noise(pos.xz);
-	return dot(pos,plane.xyz) + 0.5;
-}
-
-bool IsWater(vec3 pos)
-{
-	return (pos.y < (waterHeight-MaxWaveAmplitude));
-}
-
 bool FloatEqual(float a, float b)
 {
 	return abs(a-b)<0.1;
@@ -487,37 +453,6 @@ vec3 Lighting(vec3 pos, vec3 normal, vec3 eye, MaterialInfo m, vec3 lightColor, 
 
 	// return color / dot(lightDir,lightDir);
 	return color;
-}
-
-/**********************
-	0	background
-	1	ground
-	2   sphere     ---- for debug
-**********************/
-MaterialInfo Material(vec3 pos) {
-	MaterialInfo m;
-
-	vec2 itsct = map(pos);
-
-	if(FloatEqual(itsct.y,1.0)) 			// plane
-	{
-		m.Kd = vec3(1.0);
-		m.Shininess = 0.0;
-	}
-
-	if(FloatEqual(itsct.y,2.0))				// sphere
-	{
-		m.Kd = vec3(0.1);
-		m.Shininess = 10.0;
-	}
-
-	if(FloatEqual(itsct.y,3.0))				// water
-	{
-		m.Kd = WaterColor;
-		m.Shininess = 120.0;
-	}
-
-	return m;
 }
 
 vec2 terrainMap(in vec2 p)
@@ -1007,56 +942,6 @@ vec4 renderClouds(in vec3 ro, in vec3 rd, float tmin, float tmax, inout float re
     return clamp( sum, 0.0, 1.0 );
 }
 
-vec3 Shade(vec3 ro, vec3 rd, vec2 t)
-{
-	float id = t.y;
-	// normal calculate
-	vec3 pos = ro + t.x * rd;
-	vec3 nor = calcNormal(pos);
-	MaterialInfo m = Material(pos);
-
-	vec3 color 	= vec3(0.0);
-
-	if(FloatEqual(id,0))					// sky
-	{
-		color = vec3(0.0);
-	}
-	if(FloatEqual(id,1.0))					// ground
-	{
-		color = Lighting(pos,nor,ro,m,vec3(1.0),LightPos);
-	}
-	if(FloatEqual(id,2.0))					// sphere
-	{
-		color = Lighting(pos,nor,ro,m,vec3(1.0),LightPos);
-	}
-	if(FloatEqual(id,3.0))					// water
-	{
-		vec3 surfaceColor = Lighting(pos,nor,ro,m,vec3(1.0),LightPos);
-		bool isSurface = !IsWater(pos); 
-
-		// refract
-		vec3 refractionDir = refract(normalize(rd),nor,0.9);
-		vec2 refractTrace = refractIntersect(pos,refractionDir); 
-		pos += refractionDir * refractTrace.x;
-		nor = calcNormal(pos);
-		m = Material(pos);
-
-		color = Lighting(pos,nor,ro,m,vec3(1.0),LightPos);
-		color *= WaterColor;
-		if(isSurface)	color+= surfaceColor;
-	}
-
-	return color;
-}
-
-vec2 map(vec3 pos)
-{
-	vec2 d1 = vec2(sdSphere(pos),2.0);
-	vec2 d2 = vec2(sdWaterSurface(pos),3.0);
-
-	return d1.x<d2.x?d1:d2;
-}
-
 // bounding box in the space
 vec2 iBox( in vec3 ro, in vec3 rd, in vec3 rad ) 
 {
@@ -1238,7 +1123,7 @@ vec4 cloud_raymarch(in vec3 ro,in vec3 rd,inout vec3 bgcol, in vec2 px)
 		for(int i = 0; i < 300; i++)
 		{
 			if(sum.a>0.99)	break;
-			vec3 pos = ro + t*rd*2.0 + vec3(-1.5,0.2+0.1*sin(globalTime), 8.0) ;
+			vec3 pos = ro + t*rd*2.0 + vec3(-1.5,0.2+0.1*sin(globalTime), 15.0) ;
 			// domain mapping
 			vec3 mpos = vec3(-pos.z,-pos.x,pos.y);
 			//vec3 mpos = pos;
@@ -1256,7 +1141,7 @@ vec4 cloud_raymarch(in vec3 ro,in vec3 rd,inout vec3 bgcol, in vec2 px)
 		for(int i = 0; i < 300; i++)
 		{
 			if(sum.a>0.99)	break;
-			vec3 pos = ro + t*rd*2.0 + vec3(1.5,0.2+0.1*sin(globalTime), 13.0) ;
+			vec3 pos = ro + t*rd*2.0 + vec3(1.5,0.2+0.1*sin(globalTime), 20.0) ;
 			// domain mapping
 			vec3 mpos = vec3(-pos.z,-pos.x,pos.y);
 			//vec3 mpos = pos;
@@ -1276,22 +1161,13 @@ vec4 cloud_render(vec3 ro, vec3 rd, vec2 pixel)
 {
      // background sky     
 	float sun = clamp( dot(sundir,rd), 0.0, 1.0 );
-	vec3 col = vec3(0.6,0.71,0.75) - rd.y*0.2*vec3(1.0,0.5,1.0) + 0.15*0.5+ vec3(8.0)* exp(-CyclicTime()*0.5);
+	vec3 col = vec3(0.6,0.71,0.75) - rd.y*0.2*vec3(1.0,0.5,1.0) + 0.15*0.5+ vec3(8.0)* exp(-CyclicTime()*0.3);
 	col += 0.2*(vec3(3.0,.6,0.1))*pow( sun, 8.0 );
 
     vec4 res = cloud_raymarch( ro, rd, col, pixel );
     col = col*(1.0-res.w) + res.xyz;
 
     return vec4( col, 1.0 );
-}
-
-vec4 renderLakes(in vec3 ro, in vec3 rd)
-{
-	// find intersect 
-	vec2 t = Intersect(ro,rd,0.0,1000.0);
-	// shading
-	vec3 res = Shade(ro,rd,t);
-	return FloatEqual(t.y,0.0)?vec4(0.0):vec4(res,1.0);
 }
 
 mat3 setCamera( in vec3 ro, in vec3 ta, float cr )

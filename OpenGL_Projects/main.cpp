@@ -107,7 +107,7 @@ void Init_Global()
 {
 	auto gv = Global_Variables::Instance();
 	gv->current_camera->Position *= 1.0;
-	gv->isImguiOpen = true;
+	gv->isImguiOpen = false;
 	
 	gv->int_uniforms["keyboard"] = 0;
 	gv->float_uniforms["cameraSpeed"] = 0.5f;
@@ -125,17 +125,11 @@ void Init_Global()
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].r, gv->vec4_uniforms["Backgound_Color"].g,
 		gv->vec4_uniforms["Backgound_Color"].b, gv->vec4_uniforms["Backgound_Color"].a);
 
-	GraphicsBase *volume = new GraphicsVolumeRendering();
-	volume->Init_Shaders(gv->volume_vs, gv->volume_fs);
-	volume->Init_Buffers();
-	gv->graphics.push_back(volume);
-
 	GraphicsBase* shadertoy = new GraphicsShaderToy();
 	shadertoy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
 	shadertoy->Init_Buffers();
 	std::string noisefile = "./Materials/color_noise.png";
 	shadertoy->Load_Texture(noisefile);
-	static_cast<GraphicsShaderToy*>(shadertoy)->SetTexture(static_cast<GraphicsVolumeRendering*>(volume)->GetVolumeResult());
 	gv->graphics.push_back(shadertoy);
 }
 
