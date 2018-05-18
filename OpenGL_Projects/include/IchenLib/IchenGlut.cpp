@@ -15,7 +15,8 @@ void InitDefaultGlutEnvironment(int argc, char** argv)
 #endif
 	glutInitContextVersion(4, 3);
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
+	glutSetOption(GLUT_MULTISAMPLE, 4);
 	glutInitWindowPosition(static_cast<int>(gv->windowPos.x), static_cast<int>(gv->windowPos.y));
 	glutInitWindowSize(gv->width, gv->height);
 	windowID = glutCreateWindow("Ichen");

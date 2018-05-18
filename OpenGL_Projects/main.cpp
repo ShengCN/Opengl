@@ -25,9 +25,10 @@
 #include "GraphicsVolumeRendering.h"
 #include "GraphicsScripts.h"
 #include "SaveTexture2D.h"
+#include "InkPaintingVis.h"
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
-// #define DEBUG_REGISTER
+//#define DEBUG_REGISTER
 #define AUTO_GENERATE
 
 void Init_Global();
@@ -96,6 +97,8 @@ void InitOpenGL()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
+	//glEnable(GL_SAMPLE_SHADING);
 	// glEnable(GL_CULL_FACE);
 
 	ImGui_ImplGlut_Init();
@@ -107,7 +110,6 @@ void Init_Global()
 {
 	auto gv = Global_Variables::Instance();
 	gv->current_camera->Position *= 1.0;
-	gv->isImguiOpen = false;
 	
 	gv->int_uniforms["keyboard"] = 0;
 	gv->float_uniforms["cameraSpeed"] = 0.5f;
@@ -119,18 +121,19 @@ void Init_Global()
 	gv->vec3_uniforms["light_position"] = glm::vec3(0.0f, 20.0f, 0.0);
 	gv->vec3_uniforms["light_color"] = glm::vec3(1.0f);
 
-	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(1.0f);
 	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
 
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].r, gv->vec4_uniforms["Backgound_Color"].g,
 		gv->vec4_uniforms["Backgound_Color"].b, gv->vec4_uniforms["Backgound_Color"].a);
 
-	GraphicsBase* shadertoy = new GraphicsShaderToy();
-	shadertoy->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
-	shadertoy->Init_Buffers();
-	std::string noisefile = "./Materials/color_noise.png";
-	shadertoy->Load_Texture(noisefile);
-	gv->graphics.push_back(shadertoy);
+	// process ink image
+
+	GraphicsBase *inkpainting = new InkPaintingVis();
+	dynamic_cast<InkPaintingVis*>(inkpainting)->InitSize(2,2,std::unordered_map<int, float>{std::pair<int, float>(0, 1.0f), std::pair<int, float>(1, 1.0f), std::pair<int, float>(2, 1.0f),std::pair<int,float>(3, 1.0f)});
+	inkpainting->Init_Shaders(gv->ink_painting_vs, gv->ink_painting_fs);
+	inkpainting->Init_Buffers();
+	gv->graphics.push_back(inkpainting);
 }
 
 void Display()

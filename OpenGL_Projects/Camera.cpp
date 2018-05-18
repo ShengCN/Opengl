@@ -7,7 +7,7 @@ Camera::Camera()
 	MovementSpeed = 1.5f;
 	MouseSensitivity = 0.1f;
 	Zoom = 45.0f;
-	Position = glm::vec3(0.0f, -0.2f, 3.0f);
+	Position = glm::vec3(0.0f, 2.0f, 3.0f);
 	WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);;
 	Yaw = -90.0f;
 	Pitch = 0.0f;

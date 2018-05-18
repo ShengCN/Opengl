@@ -108,6 +108,10 @@ public:
 	std::string script_fs;
 	std::string test_model;
 
+	// Ink painting 
+	std::string ink_painting_vs;
+	std::string ink_painting_fs;
+
 	// Time 
 	int last_frame_time;
 	int delta_time;

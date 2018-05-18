@@ -153,6 +153,7 @@
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
     <ClCompile Include="include\imgui\imgui_draw.cpp" />
     <ClCompile Include="include\imgui\imgui_impl_glut.cpp" />
+    <ClCompile Include="InkPaintingVis.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SaveTexture2D.cpp" />
   </ItemGroup>
@@ -193,6 +194,7 @@
     <ClInclude Include="include\imgui\stb_rect_pack.h" />
     <ClInclude Include="include\imgui\stb_textedit.h" />
     <ClInclude Include="include\imgui\stb_truetype.h" />
+    <ClInclude Include="InkPaintingVis.h" />
     <ClInclude Include="SaveTexture2D.h" />
   </ItemGroup>
   <ItemGroup>
