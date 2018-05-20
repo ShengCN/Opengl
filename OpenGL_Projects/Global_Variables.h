@@ -109,6 +109,7 @@ public:
 	std::string test_model;
 
 	// Ink painting 
+	std::string ink_image;
 	std::string ink_painting_vs;
 	std::string ink_painting_fs;
 

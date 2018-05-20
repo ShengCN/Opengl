@@ -81,6 +81,7 @@ Global_Variables::Global_Variables()
 	volume_data = ".\\ch2better\\ch2better.nii.gz";
 	//volume_data = ".\\Human\\human";
 
+	ink_image = ".\\Materials\\input.png";
 	ink_painting_vs = ".\\int_painting_vs.glsl";
 	ink_painting_fs = ".\\int_painting_fs.glsl";
 

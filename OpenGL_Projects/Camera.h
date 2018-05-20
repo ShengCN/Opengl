@@ -10,7 +10,9 @@ enum class Camera_Movement
 	FORWARD,
 	BACKWARD,
 	LEFT,
-	RIGHT
+	RIGHT,
+	Up,
+	Down
 };
 
 class Camera

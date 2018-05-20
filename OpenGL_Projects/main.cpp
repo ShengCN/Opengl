@@ -26,6 +26,7 @@
 #include "GraphicsScripts.h"
 #include "SaveTexture2D.h"
 #include "InkPaintingVis.h"
+#include <FreeImage.h>
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 //#define DEBUG_REGISTER
@@ -64,19 +65,19 @@ void ImGui_Update()
 
 	ImGui_ImplGlut_NewFrame();
 	static bool isShown = true;
-	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);	
-	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);	
+	auto isBegin = ImGui::Begin("Debug", &isShown, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::ColorEdit4("Background Color", &gv->vec4_uniforms["Backgound_Color"][0]);
 	ImGui::SliderFloat3("Light Position", &gv->vec3_uniforms["light_position"][0], -20.0f, 20.0f);
 	ImGui::SliderFloat3("Object Position", &gv->vec3_uniforms["translate"][0], -20.0f, 20.0f);
 	ImGui::ColorEdit3("Light Color", &gv->vec3_uniforms["light_color"][0]);
-	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);		
+	ImGui::SliderFloat("Angle", &gv->float_uniforms["angle"], 0.0f, 360.0f);
 	ImGui::SliderFloat("Global time", &gv->gTime, 0.0, 300.0);
 
 #ifdef AUTO_GENERATE
 	int i = 0;
 	for (auto g : gv->graphics)
 	{
-	 	g->Generate_ImGui("test" + std::to_string(i++));
+		g->Generate_ImGui("test" + std::to_string(i++));
 	}
 #endif
 	//static bool show_test = true;
@@ -84,7 +85,6 @@ void ImGui_Update()
 
 	ImGui::End();
 	ImGui::Render();
-
 }
 
 void InitOpenGL()
@@ -110,10 +110,10 @@ void Init_Global()
 {
 	auto gv = Global_Variables::Instance();
 	gv->current_camera->Position *= 1.0;
-	
+
 	gv->int_uniforms["keyboard"] = 0;
 	gv->float_uniforms["cameraSpeed"] = 0.5f;
-	
+
 	gv->vec3_uniforms["cameraPos"] = glm::vec3(0.0f, -0.2f, 3.0f);
 	gv->vec3_uniforms["cameraFront"] = glm::vec3(0.0f, 0.0f, -1.0f);
 	gv->vec3_uniforms["cameraUp"] = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -122,15 +122,33 @@ void Init_Global()
 	gv->vec3_uniforms["light_color"] = glm::vec3(1.0f);
 
 	gv->vec4_uniforms["Backgound_Color"] = glm::vec4(1.0f);
-	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<float>(GetCurrentWindowHeight());
+	gv->current_camera->aspect = gv->float_uniforms["aspect"] = static_cast<float>(GetCurrentWindowWidth()) / static_cast<
+		float>(GetCurrentWindowHeight());
 
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].r, gv->vec4_uniforms["Backgound_Color"].g,
-		gv->vec4_uniforms["Backgound_Color"].b, gv->vec4_uniforms["Backgound_Color"].a);
+	             gv->vec4_uniforms["Backgound_Color"].b, gv->vec4_uniforms["Backgound_Color"].a);
 
 	// process ink image
+	std::unordered_map<int, float> heightMap;
+	FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(gv->ink_image.c_str());
+	FIBITMAP *bmp = FreeImage_Load(fif, gv->ink_image.c_str());
 
-	GraphicsBase *inkpainting = new InkPaintingVis();
-	dynamic_cast<InkPaintingVis*>(inkpainting)->InitSize(2,2,std::unordered_map<int, float>{std::pair<int, float>(0, 1.0f), std::pair<int, float>(1, 1.0f), std::pair<int, float>(2, 1.0f),std::pair<int,float>(3, 1.0f)});
+	unsigned width = FreeImage_GetWidth(bmp);
+	unsigned height = FreeImage_GetHeight(bmp);
+	for (GLuint j = 0; j < height; ++j)
+	{
+		for (GLuint i = 0; i < width; ++i)
+		{
+			RGBQUAD color;
+			FreeImage_GetPixelColor(bmp, i, height - j, &color);
+			heightMap[width * j + i] = 0.3 * float(color.rgbRed) + 0.59 * float(color.rgbGreen) + 0.11 * float(color.rgbBlue);
+		}
+	}
+	
+	if (bmp) FreeImage_Unload(bmp);
+
+	GraphicsBase* inkpainting = new InkPaintingVis();
+	dynamic_cast<InkPaintingVis*>(inkpainting)->InitSize(width, height, heightMap);
 	inkpainting->Init_Shaders(gv->ink_painting_vs, gv->ink_painting_fs);
 	inkpainting->Init_Buffers();
 	gv->graphics.push_back(inkpainting);
@@ -143,7 +161,7 @@ void Display()
 	gv->last_frame_time = glutGet(GLUT_ELAPSED_TIME);
 
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
-		gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
+	             gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	for (auto g : gv->graphics)
@@ -152,7 +170,7 @@ void Display()
 		g->Draw();
 	}
 
-	if(gv->isImguiOpen)
+	if (gv->isImguiOpen)
 		ImGui_Update();
 	glutSwapBuffers();
 }
@@ -184,12 +202,12 @@ void ReloadShaders()
 	for (auto g : gv->graphics)
 	{
 		g->Reload();
-		g->Get_Shader()==-1?
-			glClearColor(1.0f, 0.0f, 1.0f, 0.0f):
-			glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
-				gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
+		g->Get_Shader() == -1
+			? glClearColor(1.0f, 0.0f, 1.0f, 0.0f)
+			: glClearColor(gv->vec4_uniforms["Backgound_Color"].x, gv->vec4_uniforms["Backgound_Color"].y,
+			               gv->vec4_uniforms["Backgound_Color"].z, gv->vec4_uniforms["Backgound_Color"].a);
 	}
-	gv->lastTime = 0.001f*glutGet(GLUT_ELAPSED_TIME);
+	gv->lastTime = 0.001f * glutGet(GLUT_ELAPSED_TIME);
 }
 
 void Keyboard(unsigned char key, int x, int y)
@@ -204,27 +222,12 @@ void Keyboard(unsigned char key, int x, int y)
 	case 'R':
 		ReloadShaders();
 		break;
-
-	case 'w':
-		gv->current_camera_pos += glm::vec3(0.0, 0.0, 1.0);
-		break;
-
 	case 'a':
-		gv->current_camera_pos -= glm::vec3(1.0, 0.0, 0.0);
+		gv->current_camera->ProcessKeyboard(Camera_Movement::Up, gv->delta_time);
 		break;
-
-	case 's':
-		gv->current_camera_pos -= glm::vec3(0.0, 0.0, 1.0);
+	case 'z':
+		gv->current_camera->ProcessKeyboard(Camera_Movement::Down, gv->delta_time);
 		break;
-
-	case 'd':
-		gv->current_camera_pos += glm::vec3(1.0, 0.0, 0.0);
-		break;
-
-	case 'n':
-		gv->current_stat++;
-		break;
-
 	default:
 		break;
 	}
