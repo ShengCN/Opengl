@@ -1,7 +1,6 @@
 #include "InkPaintingVis.h"
 #include "Global_Variables.h"
 #include "IchenLib/Utilities.h"
-#include "../Gui demo/include/glm/detail/type_mat.hpp"
 
 InkPaintingVis::InkPaintingVis():xSize(-1),ySize(-1)
 {

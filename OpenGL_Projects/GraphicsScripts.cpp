@@ -2,7 +2,7 @@
 #include "Global_Variables.h"
 #include "IchenLib/Utilities.h"
 #include "Common.h"
-#include "../Gui demo/include/FreeImage.h"
+#include "FreeImage.h"
 
 
 GraphicsScripts::GraphicsScripts()

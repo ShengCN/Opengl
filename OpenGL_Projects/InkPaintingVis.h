@@ -1,7 +1,6 @@
 #pragma once
 #include "DrawObjects/GraphicsBase.h"
 #include "DrawObjects/IBufferManager.h"
-#include "../Gui demo/include/glm/detail/type_mat.hpp"
 
 class InkPaintingVis :
 	public GraphicsBase, public IBufferManager
