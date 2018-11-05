@@ -128,30 +128,10 @@ void Init_Global()
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].r, gv->vec4_uniforms["Backgound_Color"].g,
 	             gv->vec4_uniforms["Backgound_Color"].b, gv->vec4_uniforms["Backgound_Color"].a);
 
-	// process ink image
-	std::unordered_map<int, float> heightMap;
-	FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(gv->ink_image.c_str());
-	FIBITMAP *bmp = FreeImage_Load(fif, gv->ink_image.c_str());
-
-	unsigned width = FreeImage_GetWidth(bmp);
-	unsigned height = FreeImage_GetHeight(bmp);
-	for (GLuint j = 0; j < height; ++j)
-	{
-		for (GLuint i = 0; i < width; ++i)
-		{
-			RGBQUAD color;
-			FreeImage_GetPixelColor(bmp, i, height - j, &color);
-			heightMap[width * j + i] = 0.3 * float(color.rgbRed) + 0.59 * float(color.rgbGreen) + 0.11 * float(color.rgbBlue);
-		}
-	}
-	
-	if (bmp) FreeImage_Unload(bmp);
-
-	GraphicsBase* inkpainting = new InkPaintingVis();
-	dynamic_cast<InkPaintingVis*>(inkpainting)->InitSize(width, height, heightMap);
-	inkpainting->Init_Shaders(gv->ink_painting_vs, gv->ink_painting_fs);
-	inkpainting->Init_Buffers();
-	gv->graphics.push_back(inkpainting);
+	GraphicsBase *base = new GraphicsShaderToy();
+	base->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
+	base->Init_Buffers();
+	gv->graphics.push_back(base);
 }
 
 void Display()
