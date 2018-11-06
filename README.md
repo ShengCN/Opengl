@@ -1,7 +1,7 @@
 # Samples rendered by OpenGL
 This is not an open source project technically (currently). The codes are not cleaned. But I have used this to render some very interesting scenes. 
 
-Maybe using scripts to capsulate it is a good future work.
+Maybe using scripts to wrap it is a good future work.
 
 ## Samples
 ### When learning basics of OpenGL
