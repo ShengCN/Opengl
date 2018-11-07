@@ -5,6 +5,12 @@ Maybe using scripts to wrap it is a good future work.
 
 ## Samples
 ### When learning basics of OpenGL
+![Glass](./Demos/Circles.png)
+![Ocean](./src/optixOcean/thumb.png)
+![ProgressivePhotonMap](./src/optixProgressivePhotonMap/thumb.png)
+![Vox](./src/optixVox/thumb.png)
+![ParticleVolumes](./src/optixParticleVolumes/thumb.png)
+
 use simple commands to draw some beautiful pictures:
 ![alt text](https://github.com/ShengCN/Opengl/blob/Develop/Demos/Circles.png)
 
