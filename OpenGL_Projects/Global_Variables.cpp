@@ -61,6 +61,7 @@ Global_Variables::Global_Variables()
 	shadertoy_vs = ".\\shadertoy_vs.glsl";
 	shadertoy_fs = ".\\shadertoy_fs.glsl";
 	raymarching_fs = ".\\raymarching_fs.glsl";
+	cubemapFolder = ".\\Materials\\Cubemaps";
 
 	framebuffer_vs = ".\\framebuffer_vs.glsl";
 	framebuffer_fs = ".\\framebuffer_fs.glsl";

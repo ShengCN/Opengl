@@ -82,6 +82,7 @@ public:
 	std::string shadertoy_vs;
 	std::string shadertoy_fs;
 	std::string raymarching_fs;
+	std::string cubemapFolder;
 
 	// Framebuffer object
 	std::string framebuffer_vs;

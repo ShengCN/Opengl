@@ -15,9 +15,11 @@ public:
 	void Init_Buffers() override;
 	void BufferManage() override;
 	void ReleaseBuffers() override;
+	void InitCubemap(std::string cubemapFiles);
 
 private:
 	GLuint vao,vbo,ebo;
 	GLuint m_volume_texture;
+	GLuint m_cubemap;
 };
 

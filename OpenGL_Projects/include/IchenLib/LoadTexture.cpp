@@ -65,9 +65,8 @@ GLuint LoadTexture(const std::string& fname, float* aspect)
 
 GLuint LoadCube(const std::string& fname)
 {
-
    GLuint tex_id;
-   const std::string faces[6] = { "posx.jpg", "negx.jpg", "posy.jpg", "negy.jpg", "posz.jpg", "negz.jpg" };
+   const std::string faces[6] = { "posx.tiff", "negx.tiff", "posy.tiff", "negy.tiff", "posz.tiff", "negz.tiff" };
 
    glGenTextures(1, &tex_id);
    glBindTexture(GL_TEXTURE_CUBE_MAP, tex_id);

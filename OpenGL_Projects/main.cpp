@@ -16,17 +16,8 @@
 #include "Global_Variables.h"
 #include "DrawObjects/GraphicsLight.h"
 #include "IchenLib/Utilities.h"
-#include "GraphicsBezier.h"
-#include "GraphicsParticleSystem.h"
-#include "IchenLib/DebugCallback.h"
 #include "DrawObjects/GraphicsShaderToy.h"
-#include "DrawObjects/GraphicsFish.h"
-#include "GraphicsInstancePoints.h"
-#include "GraphicsVolumeRendering.h"
-#include "GraphicsScripts.h"
-#include "SaveTexture2D.h"
-#include "InkPaintingVis.h"
-#include <FreeImage.h>
+
 
 #define DEBUG(x,y) std::cout<<x<<"\t"<<y<<std::endl;
 //#define DEBUG_REGISTER
@@ -128,9 +119,10 @@ void Init_Global()
 	glClearColor(gv->vec4_uniforms["Backgound_Color"].r, gv->vec4_uniforms["Backgound_Color"].g,
 	             gv->vec4_uniforms["Backgound_Color"].b, gv->vec4_uniforms["Backgound_Color"].a);
 
-	GraphicsBase *base = new GraphicsShaderToy();
+	GraphicsShaderToy *base = new GraphicsShaderToy();
 	base->Init_Shaders(gv->shadertoy_vs, gv->shadertoy_fs);
 	base->Init_Buffers();
+	base->InitCubemap(gv->cubemapFolder);
 	gv->graphics.push_back(base);
 }
 

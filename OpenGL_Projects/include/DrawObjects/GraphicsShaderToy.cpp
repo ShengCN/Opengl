@@ -15,18 +15,15 @@ void GraphicsShaderToy::Draw()
 {
 	glUseProgram(shader_program);
 	glBindVertexArray(vao);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_3D, m_volume_texture);
-	glUniform1i(glGetUniformLocation(shader_program,"volume_tex"), 0);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_textureId);
-	glUniform1i(glGetUniformLocation(shader_program, "noise_tex"), 1);
 	glUniform1f(glGetUniformLocation(shader_program, "globalT"), Global_Variables::Instance()->gTime);
-
 	glUniform3fv(glGetUniformLocation(shader_program, "camera_pos"),1, glm::value_ptr(Global_Variables::Instance()->current_camera_pos));
+
+	// cubemap
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemap);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
 void GraphicsShaderToy::Draw_Shader_Uniforms()
@@ -50,7 +47,6 @@ void GraphicsShaderToy::Init_Buffers()
 	auto gv = Global_Variables::Instance();
 	glUseProgram(shader_program);
 	InitQuad(vao, vbo, ebo);
-	m_volume_texture = LoadTexture3D(gv->volume_dir + gv->volume_data);
 }
 
 void GraphicsShaderToy::BufferManage()
@@ -59,6 +55,11 @@ void GraphicsShaderToy::BufferManage()
 
 void GraphicsShaderToy::ReleaseBuffers()
 {
+}
+
+void GraphicsShaderToy::InitCubemap(std::string cubemapFolder)
+{
+	m_cubemap = LoadCube(cubemapFolder);
 }
 
 
