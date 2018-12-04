@@ -61,7 +61,7 @@ void LootAt(in vec3 ro, in vec3 lat, in vec3 up, out vec3 a, out vec3 b)
 {
 	vec3 rd = normalize(lat-ro);
 	a = cross(rd, up);
-	b = up;
+	b = cross(rd, a);
 }
 
 Ray GetRay(in vec3 ro, in vec3 lat, in vec3 up)
@@ -70,7 +70,7 @@ Ray GetRay(in vec3 ro, in vec3 lat, in vec3 up)
 	LootAt(ro, lat, up, a, b);
 
 	vec3 rd = cross(a,b);
-	vec2 uv = (2.0 * gl_FragCoord.xy / iResolution - 1.0) * vec2(iResolution.x/iResolution.y,1.0);
+	vec2 uv = (2.0 * gl_FragCoord.xy / iResolution - 1.0) * vec2(iResolution.x/iResolution.y,-1.0);
 
 	Ray ret;
 	ret.ro = ro;
@@ -115,9 +115,9 @@ vec3 TraceScene(Ray r)
 void main()
 {
 	vec3 cameraC = vec3(0.0);
-	vec3 target = vec3(0.0, 0.0, 1.0);
-	// mat3 rotMat = SetRotate(2,angle/20.0 * 360.0);
-	// target = rotMat * target;
+	vec3 target = vec3(0.0, 0.0, -1.0);
+	mat3 rotMat = SetRotate(2,angle/20.0 * 360.0);
+	target = rotMat * target;
 
 	Ray r = GetRay(cameraC, target, vec3(0.0,1.0,0.0));
 
