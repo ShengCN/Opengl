@@ -121,7 +121,7 @@ vec3 TraceScene(Ray r)
 		vec3 n = nSphere(pos);
 
 		vec3 ld = normalize(gv_lightPos - pos);
-		float ka = 0.2;
+		float ka = clamp(0.2 + 0.2 * n.y,0.0,1.0);
 		float kd = max(dot(ld,n),0.0);
 
 		col = vec3(1.0)*(ka + (1.0-ka)*kd);
@@ -133,7 +133,8 @@ vec3 TraceScene(Ray r)
 void main()
 {
 	// update GV
-	gv_lightPos = gv_C + vec3(0.0, 20.0,0.0) + light_pos;
+	gv_lightPos = gv_C + vec3(0.0, 20.0, 10.0) + light_pos;
+	gv_C.x = 0.5 * cos(iTime);
 
 	vec3 cameraC = vec3(0.0);
 	vec3 target = vec3(0.0, 0.0, -1.0);
@@ -144,5 +145,6 @@ void main()
 	vec3 col = vec3(0.0);
 	col = TraceScene(r);
     // fragColor=vec4(col,1.0);
+	col = sqrt(col);
 	fragColor=vec4(col,1.0);
 }
