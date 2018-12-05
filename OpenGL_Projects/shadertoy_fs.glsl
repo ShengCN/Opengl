@@ -9,14 +9,17 @@ uniform vec4 slider;
 uniform float angle;
 uniform float globalTime;
 uniform vec3 camera_pos;
+uniform vec3 light_pos;
 uniform samplerCube cubemap;
 
 out vec4 fragColor;
 
+/************************ GLOBAL VARIABLES ***********************/
 float PI = 3.1415926;
+vec3 gv_lightPos;
 
 struct PPC{
-	vec3 C;
+	vec3 gv_C;
 	vec3 a;
 	vec3 b;
 	vec3 c;
@@ -79,22 +82,27 @@ Ray GetRay(in vec3 ro, in vec3 lat, in vec3 up)
 	return ret;
 }
 
-vec3 C = vec3(0.0, 0.0,-5.0);
-float radius = 1.0;
+vec3 gv_C = vec3(0.0, 0.0,-5.0);
+float radius = 1.5;
 float sdSphere(Ray r)
 {
 	vec3 ro = r.ro;
 	vec3 rd = r.rd;
 	// |xyz|^2 = r^2
-	// |xyz| = |p-C| = ro - C + rd * t
-	// rd^2 * t^2 + 2 * rd * (ro - C) * t + (ro - C)^2 - r^2 = 0
+	// |xyz| = |p-gv_C| = ro - gv_C + rd * t
+	// rd^2 * t^2 + 2 * rd * (ro - gv_C) * t + (ro - gv_C)^2 - r^2 = 0
 	float a = dot(rd, rd);
-	float b = 2.0 * dot(rd, ro - C);
-	float c = dot(ro-C, ro-C) - radius*radius;
+	float b = 2.0 * dot(rd, ro - gv_C);
+	float c = dot(ro-gv_C, ro-gv_C) - radius*radius;
 	float h = b * b - 4.0 * c;
 	if(h < 0.0)	return -1.0;
 	float t = (-b - sqrt(h))/(2.0*a);
 	return t;
+}
+
+vec3 nSphere(vec3 p)
+{
+	return normalize(p-gv_C);
 }
 
 vec3 TraceScene(Ray r)
@@ -107,18 +115,30 @@ vec3 TraceScene(Ray r)
 	float t = sdSphere(r);
 
 	if(t>0.0)
-		col = vec3(0.5);
+	{
+		// do shading
+		vec3 pos = r.ro + r.rd * t;
+		vec3 n = nSphere(pos);
+
+		vec3 ld = normalize(gv_lightPos - pos);
+		float ka = 0.2;
+		float kd = max(dot(ld,n),0.0);
+
+		col = vec3(1.0)*(ka + (1.0-ka)*kd);
+	}
 
 	return col;
 }
 
 void main()
 {
+	// update GV
+	gv_lightPos = gv_C + vec3(0.0, 20.0,0.0) + light_pos;
+
 	vec3 cameraC = vec3(0.0);
 	vec3 target = vec3(0.0, 0.0, -1.0);
 	mat3 rotMat = SetRotate(2,angle/20.0 * 360.0);
 	target = rotMat * target;
-
 	Ray r = GetRay(cameraC, target, vec3(0.0,1.0,0.0));
 
 	vec3 col = vec3(0.0);
