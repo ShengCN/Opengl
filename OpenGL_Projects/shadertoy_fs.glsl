@@ -105,6 +105,39 @@ vec3 nSphere(vec3 p)
 	return normalize(p-gv_C);
 }
 
+// Given the point on the surface, return the theta and alpha for the point
+void getSphereAngle(vec3 pos,vec3 center, out float alpha, out float theta)
+{
+	// x = r * cos(theta) * sin(alpha)
+	// y = r * sin(theta)
+	// z = r * cos(theta) * cos(alpha)
+
+	vec3 rVec = normalize(pos - center);
+	float ux = rVec.x;
+	float uy = rVec.y;
+	float uz = rVec.z;
+
+	theta = asin(uy);  // (-pi/2,pi/2)
+	if(theta > 0.0)
+	{
+		if(ux < 0.0)
+			theta = PI - theta;
+	}
+	else
+	{
+		if(ux < 0.0)
+			theta = PI - theta;
+		else
+			theta = 2.0 * PI + theta;
+	}
+
+	alpha = atan(uz,ux);
+	if(alpha < 0.0)
+	{
+		alpha = 2.0 * PI + alpha;
+	}
+}
+
 vec3 TraceScene(Ray r)
 {
 	vec3 col = vec3(0.0);
@@ -124,7 +157,21 @@ vec3 TraceScene(Ray r)
 		float ka = clamp(0.2 + 0.2 * n.y,0.0,1.0);
 		float kd = max(dot(ld,n),0.0);
 
-		col = vec3(1.0)*(ka + (1.0-ka)*kd);
+		// visualize color
+		float alpha = 0.0;   // (0, 2.0 * PI)
+		float theta = 0.0;   // (0, 2.0 * PI)
+
+		// rotate the sphere
+		float angDeg = sin(iTime * 0.01) * PI * 360.0;
+		mat3 rotY = SetRotate(2, angDeg);
+        vec3 relativePos = pos - gv_C;
+		relativePos = rotY * relativePos;
+		pos = gv_C + relativePos;
+		getSphereAngle(pos, gv_C, alpha, theta);
+		//vec3 vColor = vec3(alpha / (2.0f * PI), theta/(2.0f * PI),0.5f);
+
+		vec3 vColor = vec3(sin(theta * 10.0) * cos(alpha * 10.0));
+		col = vColor * (ka + (1.0-ka)*kd);
 	}
 
 	return col;
@@ -134,7 +181,7 @@ void main()
 {
 	// update GV
 	gv_lightPos = gv_C + vec3(0.0, 20.0, 10.0) + light_pos;
-	gv_C.x = 0.5 * cos(iTime);
+	// gv_C.x = 0.5 * cos(iTime);
 
 	vec3 cameraC = vec3(0.0);
 	vec3 target = vec3(0.0, 0.0, -1.0);
