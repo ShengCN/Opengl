@@ -18,6 +18,8 @@ GPU Real-time raytracing, implemented in fragment shader. Learned many tricks fr
 
 Credits: fbm generation of this mountain and cloud and using cylinder to approximate trees are coming from Inigo quilez shadertoy project:
 
+See this youtube: https://www.youtube.com/watch?v=3K4kuJRChb0
+
 Spring: 
 ![alt text](https://github.com/ShengCN/Opengl/blob/Develop/Demos/spring.png)
 
